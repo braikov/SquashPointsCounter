@@ -1,0 +1,164 @@
+(function () {
+    var slots = Array.from(document.querySelectorAll(".pin-slot"));
+    var keypad = document.querySelector(".keypad");
+    var entryPanel = document.getElementById("panel-entry");
+    var summaryPanel = document.getElementById("panel-summary");
+    var pinError = document.getElementById("pinError");
+    var chooseAnotherMatch = document.getElementById("chooseAnotherMatch");
+    var startMatchLink = document.getElementById("startMatchLink");
+    var lastPin = null;
+    var storedPin = sessionStorage.getItem("matchPin");
+    if (storedPin) {
+        lastPin = storedPin;
+    }
+
+    if (!slots.length || !keypad) {
+        return;
+    }
+
+    function setActive(index) {
+        slots.forEach(function (slot, i) {
+            slot.classList.toggle("is-active", i === index);
+        });
+    }
+
+    function getActiveIndex() {
+        for (var i = 0; i < slots.length; i++) {
+            if (slots[i].classList.contains("is-active")) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
+    function moveToNextEmpty(start) {
+        for (var i = start; i < slots.length; i++) {
+            if (!slots[i].textContent) {
+                setActive(i);
+                return;
+            }
+        }
+        setActive(slots.length - 1);
+    }
+
+    function resetPin() {
+        slots.forEach(function (slot) {
+            slot.textContent = "";
+            slot.classList.remove("is-active");
+        });
+
+        if (slots.length > 0) {
+            slots[0].classList.add("is-active");
+        }
+    }
+
+    function isComplete() {
+        return slots.every(function (slot) {
+            return slot.textContent && slot.textContent.trim().length > 0;
+        });
+    }
+
+    slots.forEach(function (slot, index) {
+        slot.addEventListener("click", function () {
+            setActive(index);
+        });
+    });
+
+    keypad.addEventListener("click", function (event) {
+        var target = event.target;
+        if (!(target instanceof HTMLButtonElement)) {
+            return;
+        }
+
+        var value = target.textContent;
+        if (!value) {
+            return;
+        }
+
+        var wasComplete = isComplete();
+        var activeIndex = getActiveIndex();
+        slots[activeIndex].textContent = value;
+        moveToNextEmpty(activeIndex + 1);
+
+        if (!wasComplete && isComplete()) {
+            var code = slots.map(function (slot) { return slot.textContent || ""; }).join("");
+            fetch("/api/refferee/match?pin=" + encodeURIComponent(code))
+                .then(function (response) { return response.json(); })
+                .then(function (data) {
+                    if (!data || data.success !== true) {
+                        if (pinError) {
+                            pinError.style.display = "block";
+                        }
+                        resetPin();
+                        return;
+                    }
+
+                    if (pinError) {
+                        pinError.style.display = "none";
+                    }
+
+                    if (entryPanel && summaryPanel) {
+                        entryPanel.classList.add("is-hidden");
+                        summaryPanel.classList.remove("is-hidden");
+                    }
+
+                    lastPin = code;
+                    sessionStorage.setItem("matchPin", code);
+                    if (startMatchLink) {
+                        startMatchLink.dataset.pin = code;
+                    }
+
+                    if (data.match) {
+                        var playerOneName = document.getElementById("playerOneName");
+                        var playerOneNation = document.getElementById("playerOneNation");
+                        var playerTwoName = document.getElementById("playerTwoName");
+                        var playerTwoNation = document.getElementById("playerTwoNation");
+                        var matchDraw = document.getElementById("matchDraw");
+                        var matchCourt = document.getElementById("matchCourt");
+
+                        if (playerOneName) playerOneName.textContent = data.match.firstPlayer?.name || "";
+                        if (playerOneNation) playerOneNation.textContent = data.match.firstPlayer?.nationality || "";
+                        if (playerTwoName) playerTwoName.textContent = data.match.secondPlayer?.name || "";
+                        if (playerTwoNation) playerTwoNation.textContent = data.match.secondPlayer?.nationality || "";
+                        if (matchDraw) matchDraw.textContent = data.match.draw || "";
+                        if (matchCourt) matchCourt.textContent = data.match.court || "";
+                    }
+                })
+                .catch(function () {
+                    if (pinError) {
+                        pinError.style.display = "block";
+                    }
+                    resetPin();
+                });
+        }
+    });
+
+    if (chooseAnotherMatch) {
+        chooseAnotherMatch.addEventListener("click", function () {
+            resetPin();
+
+            if (pinError) {
+                pinError.style.display = "none";
+            }
+
+            if (entryPanel && summaryPanel) {
+                summaryPanel.classList.add("is-hidden");
+                entryPanel.classList.remove("is-hidden");
+            }
+            sessionStorage.removeItem("matchPin");
+            lastPin = null;
+        });
+    }
+
+    if (startMatchLink) {
+        startMatchLink.addEventListener("click", function (event) {
+            var pin = lastPin || startMatchLink.dataset.pin || sessionStorage.getItem("matchPin");
+            if (!pin) {
+                event.preventDefault();
+                return;
+            }
+
+            window.location.href = "/kiosk/referee?pin=" + encodeURIComponent(pin);
+        });
+    }
+})();

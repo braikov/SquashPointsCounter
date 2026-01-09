@@ -1,0 +1,60 @@
+@model Squash.Web.Areas.Kiosk.Models.RefereeMatchViewModel
+@{
+    Layout = null;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Referee</title>
+    <link rel="stylesheet" href="~/css/kiosk/referee.css" />
+</head>
+<body>
+    <main class="screen">
+        <section class="panel header-card">
+            <div class="header-players">
+                <div class="player">
+                    <div class="avatar">A</div>
+                    <div class="meta">
+                        <div class="name">@Model.FirstPlayer.Name</div>
+                        <div class="flag">@Model.FirstPlayer.Nationality</div>
+                    </div>
+                </div>
+                <div class="score">@Model.GameScore</div>
+                <div class="player">
+                    <div class="avatar">B</div>
+                    <div class="meta">
+                        <div class="name">@Model.SecondPlayer.Name</div>
+                        <div class="flag">@Model.SecondPlayer.Nationality</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel server-card">
+            Server: Player A <span class="server-toggle">Serves from LEFT</span>
+        </section>
+
+        <section class="button-grid">
+            <button class="action-button" type="button">Point A</button>
+            <button class="action-button" type="button">Point B</button>
+            <button class="action-button wide" type="button">Let</button>
+            <button class="action-button" type="button">Stroke A</button>
+            <button class="action-button" type="button">Stroke B</button>
+        </section>
+
+        <section class="panel log-card">
+            <div class="log-title">Event log</div>
+            <div class="log-body">
+                Current game: @Model.CurrentGameScore
+            </div>
+        </section>
+
+        <section class="button-grid">
+            <button class="action-button" type="button">Undo</button>
+            <a class="action-button" href="/kiosk/referee/more">More</a>
+        </section>
+    </main>
+</body>
+</html>

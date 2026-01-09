@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Squash.Processors": {
+      "commandName": "Project",
+      "commandLineArgs": "Download"
+    }
+  }
+}

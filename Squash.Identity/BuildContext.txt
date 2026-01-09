@@ -1,0 +1,11 @@
+Add-Migration InitialMigration  -Project Squash.Identity -StartupProject Squash.API -Context ApplicationDbContext
+
+ Update-Database  -Project Squash.Identity -StartupProject Squash.API -Context ApplicationDbContext
+
+Remove-Migration  -Project Squash.Identity -StartupProject Squash.API -Context ApplicationDbContext
+
+
+Add-Migration ShortCodeToToken  -Project Squash.Identity -StartupProject Squash.API -Context ApplicationDbContext
+
+
+Add-Migration ShortCodeToTokenIndexes  -Project Squash.Identity -StartupProject Squash.API -Context ApplicationDbContext

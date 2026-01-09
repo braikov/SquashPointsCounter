@@ -1,0 +1,5 @@
+Add-Migration InitialMigration  -Project Squash.SqlServer -StartupProject Squash.API -Context Squash.SqlServer.DataContext
+
+ Update-Database  -Project Squash.SqlServer -StartupProject Squash.API -Context Squash.SqlServer.DataContext
+
+Remove-Migration  -Project Squash.SqlServer -StartupProject Squash.API -Context Squash.SqlServer.DataContext

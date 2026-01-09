@@ -1,0 +1,146 @@
+:root {
+    --bg: #f5f2eb;
+    --ink: #1c1a17;
+    --muted: #6b645c;
+    --accent: #d1662f;
+    --panel: #ffffff;
+    --border: #d9d2c8;
+    --shadow: 0 12px 30px rgba(28, 26, 23, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Space Grotesk", "Segoe UI", Tahoma, sans-serif;
+    color: var(--ink);
+    background:
+        radial-gradient(circle at 10% 10%, #fdf7ee 0, transparent 45%),
+        radial-gradient(circle at 90% 20%, #f7efe4 0, transparent 55%),
+        var(--bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.screen {
+    width: min(560px, 100%);
+    display: grid;
+    gap: 18px;
+}
+
+.panel {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+}
+
+.header-card {
+    text-align: center;
+}
+
+.header-players {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+}
+
+.player {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #f0e7db;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+}
+
+.name {
+    font-weight: 700;
+}
+
+.flag {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.score {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.server-card {
+    text-align: center;
+    font-weight: 600;
+}
+
+.server-toggle {
+    color: var(--accent);
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.action-button {
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    background: #fbf9f6;
+    color: var(--ink);
+    font-size: 16px;
+    font-weight: 700;
+    padding: 16px 0;
+    cursor: pointer;
+    transition: transform 120ms ease, border-color 120ms ease;
+    text-align: center;
+    text-decoration: none;
+}
+
+.action-button:active {
+    transform: translateY(2px);
+    border-color: var(--accent);
+}
+
+.action-button.wide {
+    grid-column: span 2;
+}
+
+.log-card {
+    min-height: 140px;
+}
+
+.log-title {
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.log-body {
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+    .header-players {
+        grid-template-columns: 1fr;
+    }
+
+    .score {
+        order: 2;
+    }
+}

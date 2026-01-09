@@ -1,0 +1,24 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Squash/copilot-chat/258b6c8d/sessions
+/.vs/Squash/CopilotIndices/17.14.1561.44479
+/.vs/Squash/DesignTimeBuild
+/.vs/Squash/FileContentIndex
+/.vs/Squash/v17
+/Squash.API/bin/Debug/net8.0
+/Squash.API/obj
+/Squash.DataAccess/bin/Debug/net8.0
+/Squash.DataAccess/obj
+/Squash.Identity/bin/Debug/net8.0
+/Squash.Identity/obj
+/Squash.Processors/bin/Debug/net8.0
+/Squash.Processors/obj
+/Squash.Shared/bin/Debug/net8.0
+/Squash.Shared/obj
+/Squash.SqlServer/bin/Debug/net8.0
+/Squash.SqlServer/obj
+/Squash.Web/bin/Debug/net8.0
+/Squash.Web/obj
+/.vs/Squash/config

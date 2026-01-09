@@ -1,0 +1,111 @@
+@{
+    Layout = null;
+}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Enter Match PIN</title>
+    <link rel="stylesheet" href="~/css/kiosk/match-pin.css" />
+</head>
+<body>
+    <main class="screen">
+        <div class="title">Bulgarian Juniour Open</div>
+
+        <section class="panel-group" id="panel-entry">
+            <section class="panel pin-box">
+                <div>Enter Match PIN</div>
+                <div class="pin-value" id="pinSlots">
+                    <div class="pin-slot is-active" data-index="0"></div>
+                    <div class="pin-slot" data-index="1"></div>
+                    <div class="pin-slot" data-index="2"></div>
+                    <div class="pin-slot" data-index="3"></div>
+                    <div class="pin-slot" data-index="4"></div>
+                    <div class="pin-slot" data-index="5"></div>
+                </div>
+            </section>
+
+            <section class="panel status" id="pinError">
+                Invalid PIN. Correct and try again.
+            </section>
+
+            <section class="panel">
+                <div class="keypad" aria-label="PIN keypad">
+                    <button type="button">1</button>
+                    <button type="button">2</button>
+                    <button type="button">3</button>
+                    <button type="button">4</button>
+                    <button type="button">5</button>
+                    <button type="button">6</button>
+                    <button type="button">7</button>
+                    <button type="button">8</button>
+                    <button type="button">9</button>
+                    <button type="button">A</button>
+                    <button type="button">B</button>
+                    <button type="button">C</button>
+                    <button type="button">D</button>
+                    <button type="button">E</button>
+                    <button type="button">F</button>
+                    <button type="button">G</button>
+                    <button type="button">H</button>
+                    <button type="button">I</button>
+                    <button type="button">J</button>
+                    <button type="button">K</button>
+                    <button type="button">L</button>
+                    <button type="button">M</button>
+                    <button type="button">N</button>
+                    <button type="button">O</button>
+                    <button type="button">P</button>
+                    <button type="button">Q</button>
+                    <button type="button">R</button>
+                    <button type="button">S</button>
+                    <button type="button">T</button>
+                    <button type="button">U</button>
+                    <button type="button">V</button>
+                    <button type="button">W</button>
+                    <button type="button">X</button>
+                    <button type="button">Y</button>
+                    <button type="button">Z</button>
+                </div>
+            </section>
+        </section>
+
+        <section class="panel-group is-hidden" id="panel-summary">
+            <section class="panel summary-card">
+                <div class="summary-title">Match Summary</div>
+                <div class="summary-players">
+                    <div class="summary-player" id="playerOne">
+                        <div class="summary-avatar">A</div>
+                        <div>
+                            <div class="summary-name" id="playerOneName"></div>
+                            <div class="summary-nation" id="playerOneNation"></div>
+                        </div>
+                    </div>
+                    <div class="summary-vs">vs</div>
+                    <div class="summary-player" id="playerTwo">
+                        <div class="summary-avatar">B</div>
+                        <div>
+                            <div class="summary-name" id="playerTwoName"></div>
+                            <div class="summary-nation" id="playerTwoNation"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="summary-meta">
+                    <div id="matchDraw"></div>
+                    <div id="matchCourt"></div>
+                </div>
+            </section>
+
+            <button class="panel action-button" id="startMatchLink" type="button">
+                Start match / Resume match
+            </button>
+
+            <section class="panel action-button" id="chooseAnotherMatch">
+                Choose another match
+            </section>
+        </section>
+    </main>
+    <script src="~/js/kiosk/match-pin.js"></script>
+</body>
+</html>
