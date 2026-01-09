@@ -38,6 +38,8 @@ namespace Squash.Web.Controllers
                 return Ok(new RefereeMatchResponse { Success = false });
             }
 
+            HttpContext.Session.SetString("MatchPin", normalizedPin);
+
             var response = new RefereeMatchResponse
             {
                 Success = true,

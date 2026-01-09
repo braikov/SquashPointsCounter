@@ -38,6 +38,14 @@ namespace Squash.Web
 
                 builder.Services.AddControllersWithViews();
                 builder.Services.AddRazorPages();
+                builder.Services.AddDistributedMemoryCache();
+                builder.Services.AddSession(options =>
+                {
+                    options.Cookie.Name = ".Squash.Session";
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.IsEssential = true;
+                    options.IdleTimeout = TimeSpan.FromHours(2);
+                });
 
                 builder.Services.SetupIdentityCore<IdentityUser, IdentityRole>(builder.Configuration, connectionString)
                                .SetupWebAuthentication();
@@ -70,6 +78,7 @@ namespace Squash.Web
 
                 app.UseHttpsRedirection();
                 app.UseStaticFiles();
+                app.UseSession();
                 app.UseRouting();
 
                 app.UseAuthentication();

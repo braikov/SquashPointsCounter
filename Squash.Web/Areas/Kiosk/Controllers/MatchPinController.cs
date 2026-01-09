@@ -7,6 +7,7 @@ namespace Squash.Web.Areas.Kiosk.Controllers
     {
         public IActionResult Index()
         {
+            HttpContext.Session.Remove("MatchPin");
             return View();
         }
     }

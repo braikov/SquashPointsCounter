@@ -15,8 +15,9 @@ namespace Squash.Web.Areas.Kiosk.Controllers
             _dataContext = dataContext;
         }
 
-        public IActionResult Index(string pin)
+        public IActionResult Index()
         {
+            var pin = HttpContext.Session.GetString("MatchPin");
             if (string.IsNullOrWhiteSpace(pin))
             {
                 return Redirect("/m");
