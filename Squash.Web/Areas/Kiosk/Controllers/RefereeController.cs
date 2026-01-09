@@ -42,8 +42,10 @@ namespace Squash.Web.Areas.Kiosk.Controllers
                 FirstPlayer = MapPlayer(match.Player1),
                 SecondPlayer = MapPlayer(match.Player2),
                 MatchGameId = match.Games.FirstOrDefault()?.Id ?? 0,
-                GameScore = "0:0",
-                CurrentGameScore = "0:0"
+                GameScoreFirst = 0,
+                GameScoreSecond = 0,
+                CurrentGameScoreFirst = 0,
+                CurrentGameScoreSecond = 0
             };
 
             return View(model);
@@ -51,7 +53,38 @@ namespace Squash.Web.Areas.Kiosk.Controllers
 
         public IActionResult More()
         {
-            return View();
+            var pin = HttpContext.Session.GetString("MatchPin");
+            if (string.IsNullOrWhiteSpace(pin))
+            {
+                return Redirect("/m");
+            }
+
+            var match = _dataContext.Matches
+                .Include(m => m.Draw)
+                .Include(m => m.Court)
+                .Include(m => m.Player1)!.ThenInclude(p => p.Nationality)
+                .Include(m => m.Player2)!.ThenInclude(p => p.Nationality)
+                .FirstOrDefault(m => m.PinCode == pin);
+
+            if (match == null)
+            {
+                return Redirect("/m");
+            }
+
+            var model = new RefereeMatchViewModel
+            {
+                Draw = match.Draw?.Name ?? string.Empty,
+                Court = match.Court?.Name ?? string.Empty,
+                FirstPlayer = MapPlayer(match.Player1),
+                SecondPlayer = MapPlayer(match.Player2),
+                MatchGameId = match.Games.FirstOrDefault()?.Id ?? 0,
+                GameScoreFirst = 0,
+                GameScoreSecond = 0,
+                CurrentGameScoreFirst = 0,
+                CurrentGameScoreSecond = 0
+            };
+
+            return View(model);
         }
 
         private static RefereePlayerViewModel MapPlayer(Squash.DataAccess.Entities.Player? player)
@@ -71,7 +104,7 @@ namespace Squash.Web.Areas.Kiosk.Controllers
                 Nationality = nationalityName ?? string.Empty,
                 NationalityFlagUrl = string.IsNullOrWhiteSpace(nationalityCode)
                     ? string.Empty
-                    : $"/images/flags/{nationalityCode.ToLowerInvariant()}.png"
+                    : $"/images/flags/{nationalityCode.ToLowerInvariant()}.svg"
             };
         }
     }

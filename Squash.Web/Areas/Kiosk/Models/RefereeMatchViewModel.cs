@@ -7,8 +7,10 @@ namespace Squash.Web.Areas.Kiosk.Models
         public RefereePlayerViewModel FirstPlayer { get; set; } = new();
         public RefereePlayerViewModel SecondPlayer { get; set; } = new();
         public int MatchGameId { get; set; }
-        public string GameScore { get; set; } = "0:0";
-        public string CurrentGameScore { get; set; } = "0:0";
+        public byte GameScoreFirst { get; set; }
+        public byte GameScoreSecond { get; set; }
+        public byte CurrentGameScoreFirst { get; set; }
+        public byte CurrentGameScoreSecond { get; set; }
     }
 
     public class RefereePlayerViewModel

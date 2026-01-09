@@ -78,24 +78,63 @@ body {
     font-size: 14px;
 }
 
+.flag-image {
+    width: 32px;
+    height: 22px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    object-fit: cover;
+}
+
 .score {
     font-size: 20px;
     font-weight: 700;
 }
 
-.server-card {
+.serve-question {
+    display: none;
+    gap: 14px;
     text-align: center;
+}
+
+.serve-title {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.serve-actions {
+    display: grid;
+    gap: 12px;
+}
+
+.serve-sides {
+    display: inline-flex;
+    gap: 18px;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
     font-weight: 600;
 }
 
-.server-toggle {
-    color: var(--accent);
+.serve-side {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.is-disabled {
+    opacity: 0.5;
+    pointer-events: none;
 }
 
 .button-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
+}
+
+.button-grid.three {
+    grid-template-columns: repeat(3, 1fr);
 }
 
 .action-button {
@@ -117,9 +156,6 @@ body {
     border-color: var(--accent);
 }
 
-.action-button.wide {
-    grid-column: span 2;
-}
 
 .log-card {
     min-height: 140px;

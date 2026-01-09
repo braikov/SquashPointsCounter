@@ -11,7 +11,11 @@
     <link rel="stylesheet" href="~/css/kiosk/referee.css" />
 </head>
 <body>
-    <main class="screen">
+    <main class="screen"
+          data-game-score-first="@Model.GameScoreFirst"
+          data-game-score-second="@Model.GameScoreSecond"
+          data-current-game-score-first="@Model.CurrentGameScoreFirst"
+          data-current-game-score-second="@Model.CurrentGameScoreSecond">
         <section class="panel header-card">
             <div class="header-players">
                 <div class="player">
@@ -20,41 +24,61 @@
                         <div class="name">@Model.FirstPlayer.Name</div>
                         <div class="flag">@Model.FirstPlayer.Nationality</div>
                     </div>
+                    <img class="flag-image" src="@Model.FirstPlayer.NationalityFlagUrl" alt="" />
                 </div>
-                <div class="score">@Model.GameScore</div>
+                <div class="score">@Model.GameScoreFirst:@Model.GameScoreSecond</div>
                 <div class="player">
                     <div class="avatar">B</div>
                     <div class="meta">
                         <div class="name">@Model.SecondPlayer.Name</div>
                         <div class="flag">@Model.SecondPlayer.Nationality</div>
                     </div>
+                    <img class="flag-image" src="@Model.SecondPlayer.NationalityFlagUrl" alt="" />
                 </div>
             </div>
         </section>
 
-        <section class="panel server-card">
-            Server: Player A <span class="server-toggle">Serves from LEFT</span>
+        <section class="panel serve-question" id="serveQuestion">
+            <div class="serve-title">Who serves first?</div>
+            <div class="serve-actions">
+                <button class="action-button serve-choice" type="button" data-serve="A">@Model.FirstPlayer.Name serves first</button>
+                <button class="action-button serve-choice" type="button" data-serve="B">@Model.SecondPlayer.Name serves first</button>
+            </div>
+            <div class="serve-sides">
+                <label class="serve-side">
+                    <input type="radio" name="serveSide" value="left" />
+                    Serve on left
+                </label>
+                <label class="serve-side">
+                    <input type="radio" name="serveSide" value="right" checked />
+                    Serve on right
+                </label>
+            </div>
         </section>
 
         <section class="button-grid">
-            <button class="action-button" type="button">Point A</button>
-            <button class="action-button" type="button">Point B</button>
-            <button class="action-button wide" type="button">Let</button>
-            <button class="action-button" type="button">Stroke A</button>
-            <button class="action-button" type="button">Stroke B</button>
+            <button class="action-button referee-action" type="button">Point A</button>
+            <button class="action-button referee-action" type="button">Point B</button>
+        </section>
+
+        <section class="button-grid three">
+            <button class="action-button referee-action" type="button">Yes, let</button>
+            <button class="action-button referee-action" type="button">Stroke A</button>
+            <button class="action-button referee-action" type="button">Stroke B</button>
         </section>
 
         <section class="panel log-card">
             <div class="log-title">Event log</div>
             <div class="log-body">
-                Current game: @Model.CurrentGameScore
+                Current game: @Model.CurrentGameScoreFirst:@Model.CurrentGameScoreSecond
             </div>
         </section>
 
         <section class="button-grid">
-            <button class="action-button" type="button">Undo</button>
-            <a class="action-button" href="/kiosk/referee/more">More</a>
+            <button class="action-button referee-action" type="button">Undo</button>
+            <a class="action-button referee-action" href="/kiosk/referee/more">More</a>
         </section>
     </main>
+    <script src="~/js/kiosk/referee.js"></script>
 </body>
 </html>

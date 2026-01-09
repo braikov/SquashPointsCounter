@@ -72,7 +72,7 @@ namespace Squash.Web.Controllers
                 Nationality = nationalityName ?? string.Empty,
                 NationalityFlagUrl = string.IsNullOrWhiteSpace(nationalityCode)
                     ? string.Empty
-                    : $"/images/flags/{nationalityCode.ToLowerInvariant()}.png"
+                    : $"/images/flags/{nationalityCode.ToLowerInvariant()}.svg"
             };
         }
     }

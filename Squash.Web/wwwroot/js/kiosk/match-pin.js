@@ -115,8 +115,10 @@
                     if (data.match) {
                         var playerOneName = document.getElementById("playerOneName");
                         var playerOneNation = document.getElementById("playerOneNation");
+                        var playerOneFlag = document.getElementById("playerOneFlag");
                         var playerTwoName = document.getElementById("playerTwoName");
                         var playerTwoNation = document.getElementById("playerTwoNation");
+                        var playerTwoFlag = document.getElementById("playerTwoFlag");
                         var matchDraw = document.getElementById("matchDraw");
                         var matchCourt = document.getElementById("matchCourt");
 
@@ -124,6 +126,18 @@
                         if (playerOneNation) playerOneNation.textContent = data.match.firstPlayer?.nationality || "";
                         if (playerTwoName) playerTwoName.textContent = data.match.secondPlayer?.name || "";
                         if (playerTwoNation) playerTwoNation.textContent = data.match.secondPlayer?.nationality || "";
+                        if (playerOneFlag) {
+                            var flagOne = data.match.firstPlayer?.nationalityFlagUrl || "";
+                            playerOneFlag.src = flagOne;
+                            playerOneFlag.alt = data.match.firstPlayer?.nationality || "";
+                            playerOneFlag.style.display = flagOne ? "block" : "none";
+                        }
+                        if (playerTwoFlag) {
+                            var flagTwo = data.match.secondPlayer?.nationalityFlagUrl || "";
+                            playerTwoFlag.src = flagTwo;
+                            playerTwoFlag.alt = data.match.secondPlayer?.nationality || "";
+                            playerTwoFlag.style.display = flagTwo ? "block" : "none";
+                        }
                         if (matchDraw) matchDraw.textContent = data.match.draw || "";
                         if (matchCourt) matchCourt.textContent = data.match.court || "";
                     }
