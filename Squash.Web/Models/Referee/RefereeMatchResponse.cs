@@ -12,6 +12,8 @@ namespace Squash.Web.Models.Referee
         public string Court { get; set; } = string.Empty;
         public RefereePlayer FirstPlayer { get; set; } = new();
         public RefereePlayer SecondPlayer { get; set; } = new();
+        public int GameScoreFirst { get; set; }
+        public int GameScoreSecond { get; set; }
     }
 
     public class RefereePlayer

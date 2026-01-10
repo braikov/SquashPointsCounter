@@ -26,7 +26,9 @@ namespace Squash.DataAccess.Entities
         WarningA = 19,
         WarningB = 20,
         ConductStrokeA = 21,
-        ConductStrokeB = 22
+        ConductStrokeB = 22,
+        EndGame = 23,
+        EndMatch = 24
 
     }
 }

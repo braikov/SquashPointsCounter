@@ -182,6 +182,11 @@
             }
             updateServeStatus();
             updateScoreDisplay();
+
+            if (isGameOver()) {
+                var winner = matchState.currentGameScoreFirst > matchState.currentGameScoreSecond ? "A" : "B";
+                applyEndOfGame(winner);
+            }
         }
 
         if (eventName === "ARetires") {
@@ -211,16 +216,61 @@
         }
     }
 
+    function isGameOver() {
+        var a = matchState.currentGameScoreFirst;
+        var b = matchState.currentGameScoreSecond;
+        var maxScore = Math.max(a, b);
+        var diff = Math.abs(a - b);
+        return maxScore >= 11 && diff >= 2;
+    }
+
+    function applyEndOfGame(winner) {
+        if (winner === "A") {
+            matchState.gameScoreFirst += 1;
+        } else {
+            matchState.gameScoreSecond += 1;
+        }
+
+        matchState.currentGameScoreFirst = 0;
+        matchState.currentGameScoreSecond = 0;
+        matchState.lastPointWinner = winner;
+        matchState.currentServer = winner;
+        setServeSide(false);
+        showServeSideToggle(false);
+        updateServeStatus();
+        updateScoreDisplay();
+
+        logDerivedEvent("EndGame", "Game to " + (serveNames[winner] || winner));
+
+        if (matchState.gameScoreFirst >= 3 || matchState.gameScoreSecond >= 3) {
+            logDerivedEvent("EndMatch", "Match won by " + (serveNames[winner] || winner));
+        }
+    }
+
+    function logDerivedEvent(eventName, labelOverride) {
+        eventHistory.push(eventName);
+        appendLog(formatLog(eventName, labelOverride));
+        sendEvent(eventName);
+    }
+
     function updateScoreDisplay() {
         var matchPoints = document.getElementById("matchPoints")
             || document.querySelector(".match-header__match-score");
-        if (!matchPoints) {
-            return;
+        if (matchPoints) {
+            if (!matchPoints.id) {
+                matchPoints.id = "matchPoints";
+            }
+            matchPoints.textContent = matchState.currentGameScoreFirst + ":" + matchState.currentGameScoreSecond;
         }
-        if (!matchPoints.id) {
-            matchPoints.id = "matchPoints";
+
+        var matchGames = document.getElementById("matchGames")
+            || document.querySelector(".match-header__separator");
+        if (matchGames) {
+            if (!matchGames.id) {
+                matchGames.id = "matchGames";
+            }
+            matchGames.textContent = matchState.gameScoreFirst + " - " + matchState.gameScoreSecond;
         }
-        matchPoints.textContent = matchState.currentGameScoreFirst + ":" + matchState.currentGameScoreSecond;
     }
 
     function handleEvent(eventName, labelOverride) {
@@ -245,6 +295,7 @@
         showServeStatus(true);
         showServeSideToggle(false);
     }
+    updateScoreDisplay();
 
     if (serveQuestion) {
         serveQuestion.addEventListener("click", function (event) {

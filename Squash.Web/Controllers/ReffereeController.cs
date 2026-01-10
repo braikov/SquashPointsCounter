@@ -29,6 +29,7 @@ namespace Squash.Web.Controllers
             var match = _dataContext.Matches
                 .Include(m => m.Draw)
                 .Include(m => m.Court)
+                .Include(m => m.Games)
                 .Include(m => m.Player1)!.ThenInclude(p => p.Nationality)
                 .Include(m => m.Player2)!.ThenInclude(p => p.Nationality)
                 .FirstOrDefault(m => m.PinCode == normalizedPin);
@@ -48,7 +49,9 @@ namespace Squash.Web.Controllers
                     Draw = match.Draw?.Name ?? string.Empty,
                     Court = match.Court?.Name ?? string.Empty,
                     FirstPlayer = MapPlayer(match.Player1),
-                    SecondPlayer = MapPlayer(match.Player2)
+                    SecondPlayer = MapPlayer(match.Player2),
+                    GameScoreFirst = match.Games.Count(g => g.WinnerSide == 1),
+                    GameScoreSecond = match.Games.Count(g => g.WinnerSide == 2)
                 }
             };
 

@@ -55,6 +55,16 @@
         }
     }
 
+    function updateStartMatchLabel(match) {
+        if (!startMatchLink) {
+            return;
+        }
+        var firstScore = match && typeof match.gameScoreFirst === "number" ? match.gameScoreFirst : 0;
+        var secondScore = match && typeof match.gameScoreSecond === "number" ? match.gameScoreSecond : 0;
+        var label = (firstScore === 0 && secondScore === 0) ? "Start match" : "Resume match";
+        startMatchLink.textContent = label;
+    }
+
     function isComplete() {
         return slots.every(function (slot) {
             return slot.textContent && slot.textContent.trim().length > 0;
@@ -140,6 +150,7 @@
                         }
                         if (matchDraw) matchDraw.textContent = data.match.draw || "";
                         if (matchCourt) matchCourt.textContent = data.match.court || "";
+                        updateStartMatchLabel(data.match);
                     }
                 })
                 .catch(function () {
@@ -179,4 +190,6 @@
             startMatchLink.setAttribute("href", "/kiosk/referee?pin=" + encodeURIComponent(pin));
         });
     }
+
+    updateStartMatchLabel(null);
 })();
