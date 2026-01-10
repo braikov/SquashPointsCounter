@@ -51,7 +51,9 @@ namespace Squash.Web.Controllers
                     FirstPlayer = MapPlayer(match.Player1),
                     SecondPlayer = MapPlayer(match.Player2),
                     GameScoreFirst = match.Games.Count(g => g.WinnerSide == 1),
-                    GameScoreSecond = match.Games.Count(g => g.WinnerSide == 2)
+                    GameScoreSecond = match.Games.Count(g => g.WinnerSide == 2),
+#warning TODO: Replace hardcoded match format once it is stored in the database.
+                    GamesToWin = 3
                 }
             };
 

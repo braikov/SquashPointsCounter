@@ -33,6 +33,15 @@ body {
     gap: 18px;
 }
 
+.panel-stack {
+    display: grid;
+    gap: 18px;
+}
+
+.is-hidden {
+    display: none;
+}
+
 .panel {
     background: var(--panel);
     border: 2px solid var(--border);
@@ -118,6 +127,23 @@ body {
     border-color: var(--accent);
 }
 
+.back-button {
+    text-decoration: none;
+    color: var(--ink);
+    cursor: pointer;
+}
+
+.double-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+@media (max-width: 520px) {
+    .double-row {
+        grid-template-columns: 1fr;
+    }
+}
 
 .log-card {
     min-height: 140px;
@@ -138,4 +164,7 @@ body {
     display: grid;
     gap: 6px;
     color: var(--muted);
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 6px;
 }

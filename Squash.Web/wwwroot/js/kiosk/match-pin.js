@@ -12,7 +12,7 @@
         lastPin = storedPin;
     }
     if (startMatchLink && lastPin) {
-        startMatchLink.setAttribute("href", "/kiosk/referee?pin=" + encodeURIComponent(lastPin));
+        startMatchLink.setAttribute("href", "/kiosk/referee");
     }
 
     if (!slots.length || !keypad) {
@@ -119,7 +119,7 @@
                     sessionStorage.setItem("matchPin", code);
                     if (startMatchLink) {
                         startMatchLink.dataset.pin = code;
-                        startMatchLink.setAttribute("href", "/kiosk/referee?pin=" + encodeURIComponent(code));
+                        startMatchLink.setAttribute("href", "/kiosk/referee");
                     }
 
                     if (data.match) {
@@ -187,7 +187,7 @@
                 return;
             }
 
-            startMatchLink.setAttribute("href", "/kiosk/referee?pin=" + encodeURIComponent(pin));
+            startMatchLink.setAttribute("href", "/kiosk/referee");
         });
     }
 

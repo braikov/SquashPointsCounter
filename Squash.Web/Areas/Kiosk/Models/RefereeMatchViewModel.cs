@@ -11,6 +11,7 @@ namespace Squash.Web.Areas.Kiosk.Models
         public byte GameScoreSecond { get; set; }
         public byte CurrentGameScoreFirst { get; set; }
         public byte CurrentGameScoreSecond { get; set; }
+        public byte GamesToWin { get; set; }
     }
 
     public class RefereePlayerViewModel

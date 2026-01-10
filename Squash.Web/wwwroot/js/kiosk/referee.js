@@ -6,12 +6,18 @@
 
     var serveQuestion = document.getElementById("serveQuestion");
     var actionButtons = Array.from(document.querySelectorAll(".referee-action"));
+    var actionPanels = Array.from(document.querySelectorAll(".button-grid, .log-card"));
     var serveButtons = Array.from(document.querySelectorAll(".serve-choice"));
     var eventLog = document.getElementById("eventLog");
     var serveStatus = document.getElementById("serveStatus");
     var serveStatusText = document.getElementById("serveStatusText");
+    var nextGameButton = document.getElementById("nextGameButton");
     var serveSideToggle = document.getElementById("serveSideToggle");
     var serveOnLeft = document.getElementById("serveOnLeft");
+    var refereePanel = document.getElementById("refereePanel");
+    var morePanel = document.getElementById("morePanel");
+    var showMoreButton = document.getElementById("showMoreButton");
+    var backToMatchButton = document.getElementById("backToMatch");
     var serveNames = {
         A: serveButtons[0] ? serveButtons[0].textContent.replace(" serves first", "").trim() : "Player A",
         B: serveButtons[1] ? serveButtons[1].textContent.replace(" serves first", "").trim() : "Player B"
@@ -22,6 +28,7 @@
         gameScoreSecond: parseByte(root.dataset.gameScoreSecond),
         currentGameScoreFirst: parseByte(root.dataset.currentGameScoreFirst),
         currentGameScoreSecond: parseByte(root.dataset.currentGameScoreSecond),
+        gamesToWin: parseByte(root.dataset.gamesToWin),
         lastPointWinner: null,
         currentServer: null,
         serveSide: "right",
@@ -30,6 +37,8 @@
     };
 
     var eventHistory = [];
+    var storageKey = "refereeState:" + (sessionStorage.getItem("matchPin") || "default");
+    var activePanel = "referee";
 
     function parseByte(value) {
         var parsed = parseInt(value, 10);
@@ -65,6 +74,19 @@
         });
     }
 
+    function showActionPanels(show) {
+        actionPanels.forEach(function (panel) {
+            panel.style.display = show ? "" : "none";
+        });
+    }
+
+    function isVisible(element) {
+        if (!element) {
+            return false;
+        }
+        return window.getComputedStyle(element).display !== "none";
+    }
+
     function setServeButtonsDisabled(disabled) {
         serveButtons.forEach(function (button) {
             button.disabled = disabled;
@@ -77,6 +99,7 @@
             return;
         }
         serveQuestion.style.display = show ? "grid" : "none";
+        ensureServeTogglePlacement();
     }
 
     function showServeButtons(show) {
@@ -99,6 +122,7 @@
             return;
         }
         serveStatus.style.display = show ? "block" : "none";
+        ensureServeTogglePlacement();
     }
 
     function showServeSideToggle(show) {
@@ -106,6 +130,19 @@
             return;
         }
         serveSideToggle.style.display = show ? "inline-flex" : "none";
+        ensureServeTogglePlacement();
+    }
+
+    function ensureServeTogglePlacement() {
+        if (!serveSideToggle || !serveQuestion || !serveStatus) {
+            return;
+        }
+
+        var serveQuestionVisible = serveQuestion.style.display !== "none";
+        var target = serveQuestionVisible ? serveQuestion : serveStatus;
+        if (serveSideToggle.parentElement !== target) {
+            target.appendChild(serveSideToggle);
+        }
     }
 
     function enableAfterServeChoice() {
@@ -113,14 +150,27 @@
         setActionsDisabled(false);
         setServeButtonsDisabled(false);
         showServeStatus(true);
+        showActionPanels(true);
         showServeSideToggle(false);
         matchState.awaitingSideChoice = false;
+        hideNextGameButton();
+        saveState();
     }
 
     function setServeSide(isLeft) {
         matchState.serveSide = isLeft ? "left" : "right";
         if (serveOnLeft) {
             serveOnLeft.checked = isLeft;
+        }
+    }
+
+    function showPanel(name) {
+        activePanel = name;
+        if (refereePanel) {
+            refereePanel.classList.toggle("is-hidden", name !== "referee");
+        }
+        if (morePanel) {
+            morePanel.classList.toggle("is-hidden", name !== "more");
         }
     }
 
@@ -131,6 +181,107 @@
         var item = document.createElement("div");
         item.textContent = text;
         eventLog.prepend(item);
+    }
+
+    function clearLog() {
+        if (!eventLog) {
+            return;
+        }
+        eventLog.innerHTML = "";
+    }
+
+    function saveState() {
+        if (!storageKey) {
+            return;
+        }
+        var logEntries = eventLog ? Array.from(eventLog.children).map(function (entry) {
+            return entry.textContent || "";
+        }) : [];
+
+        var state = {
+            matchState: matchState,
+            activePanel: activePanel,
+            ui: {
+                serveQuestionVisible: isVisible(serveQuestion),
+                actionPanelsVisible: actionPanels.length > 0 ? isVisible(actionPanels[0]) : false,
+                serveStatusVisible: isVisible(serveStatus),
+                serveSideToggleVisible: isVisible(serveSideToggle),
+                nextGameAction: nextGameButton ? nextGameButton.dataset.action || "" : "",
+                nextGameText: nextGameButton ? nextGameButton.textContent || "" : "",
+                serveStatusText: serveStatusText ? serveStatusText.textContent || "" : ""
+            },
+            log: logEntries
+        };
+
+        sessionStorage.setItem(storageKey, JSON.stringify(state));
+    }
+
+    function restoreState() {
+        if (!storageKey) {
+            return false;
+        }
+        var raw = sessionStorage.getItem(storageKey);
+        if (!raw) {
+            return false;
+        }
+
+        var saved;
+        try {
+            saved = JSON.parse(raw);
+        } catch (error) {
+            return false;
+        }
+
+        if (!saved || !saved.matchState) {
+            return false;
+        }
+
+        Object.keys(saved.matchState).forEach(function (key) {
+            if (Object.prototype.hasOwnProperty.call(matchState, key)) {
+                matchState[key] = saved.matchState[key];
+            }
+        });
+
+        showPanel(saved.activePanel === "more" ? "more" : "referee");
+
+        if (serveOnLeft) {
+            serveOnLeft.checked = matchState.serveSide === "left";
+        }
+
+        if (saved.ui) {
+            showServeQuestion(!!saved.ui.serveQuestionVisible);
+            showActionPanels(!!saved.ui.actionPanelsVisible);
+            showServeStatus(!!saved.ui.serveStatusVisible);
+            showServeSideToggle(!!saved.ui.serveSideToggleVisible);
+
+            if (nextGameButton) {
+                if (saved.ui.nextGameAction) {
+                    nextGameButton.dataset.action = saved.ui.nextGameAction;
+                    nextGameButton.textContent = saved.ui.nextGameText || nextGameButton.textContent;
+                    nextGameButton.style.display = "inline-flex";
+                } else {
+                    hideNextGameButton();
+                }
+            }
+
+            if (serveStatusText && saved.ui.serveStatusText) {
+                serveStatusText.textContent = saved.ui.serveStatusText;
+            }
+        }
+
+        if (Array.isArray(saved.log)) {
+            clearLog();
+            for (var i = saved.log.length - 1; i >= 0; i -= 1) {
+                appendLog(saved.log[i]);
+            }
+        }
+
+        updateScoreDisplay();
+        if (!nextGameButton || !nextGameButton.dataset.action) {
+            updateServeStatus();
+        }
+
+        return true;
     }
 
     function sendEvent(eventName) {
@@ -237,14 +388,21 @@
         matchState.currentServer = winner;
         setServeSide(false);
         showServeSideToggle(false);
+        showActionPanels(false);
+        showServeQuestion(false);
         updateServeStatus();
         updateScoreDisplay();
 
         logDerivedEvent("EndGame", "Game to " + (serveNames[winner] || winner));
 
-        if (matchState.gameScoreFirst >= 3 || matchState.gameScoreSecond >= 3) {
+        var gamesToWin = matchState.gamesToWin || 3;
+        if (matchState.gameScoreFirst >= gamesToWin || matchState.gameScoreSecond >= gamesToWin) {
             logDerivedEvent("EndMatch", "Match won by " + (serveNames[winner] || winner));
+            showFinishButton(winner);
+        } else {
+            showNextGameButton();
         }
+        saveState();
     }
 
     function logDerivedEvent(eventName, labelOverride) {
@@ -278,24 +436,86 @@
         appendLog(formatLog(eventName, labelOverride));
         sendEvent(eventName);
         applyEvent(eventName);
+        saveState();
     }
 
-    if (scoresAreZero()) {
-        showServeQuestion(true);
-        showServeButtons(true);
-        setActionsDisabled(true);
-        setServeButtonsDisabled(false);
-        showServeStatus(true);
-        showServeSideToggle(true);
-        if (serveStatusText) {
-            serveStatusText.textContent = "";
+    var restored = restoreState();
+    if (!restored) {
+        showPanel("referee");
+        if (scoresAreZero()) {
+            showServeQuestion(true);
+            showServeButtons(true);
+            setActionsDisabled(true);
+            setServeButtonsDisabled(false);
+            showServeStatus(false);
+            showActionPanels(false);
+            showServeSideToggle(true);
+            hideNextGameButton();
+            if (serveStatusText) {
+                serveStatusText.textContent = "";
+            }
+        } else {
+            showServeQuestion(false);
+            showServeStatus(true);
+            showActionPanels(true);
+            showServeSideToggle(false);
+            hideNextGameButton();
         }
-    } else {
-        showServeQuestion(false);
-        showServeStatus(true);
-        showServeSideToggle(false);
+        updateScoreDisplay();
+        saveState();
     }
-    updateScoreDisplay();
+
+    function showNextGameButton() {
+        if (!nextGameButton || !serveStatusText) {
+            return;
+        }
+        var nextGameNumber = matchState.gameScoreFirst + matchState.gameScoreSecond + 1;
+        nextGameButton.textContent = "Start game " + nextGameNumber;
+        nextGameButton.dataset.action = "next-game";
+        nextGameButton.style.display = "inline-flex";
+        serveStatusText.textContent = "Game to " + (serveNames[matchState.currentServer] || matchState.currentServer);
+    }
+
+    function showFinishButton(winner) {
+        if (!nextGameButton || !serveStatusText) {
+            return;
+        }
+        nextGameButton.textContent = "Finish";
+        nextGameButton.dataset.action = "finish-match";
+        nextGameButton.style.display = "inline-flex";
+        serveStatusText.textContent = "Match to " + (serveNames[winner] || winner);
+    }
+
+    function hideNextGameButton() {
+        if (!nextGameButton) {
+            return;
+        }
+        nextGameButton.style.display = "none";
+        delete nextGameButton.dataset.action;
+    }
+
+    function startNextGame() {
+        showActionPanels(true);
+        showServeStatus(true);
+        showServeQuestion(false);
+        showServeSideToggle(true);
+        matchState.awaitingSideChoice = false;
+        setServeSide(false);
+        clearLog();
+        updateServeStatus();
+        saveState();
+    }
+
+    if (nextGameButton) {
+        nextGameButton.addEventListener("click", function () {
+            if (nextGameButton.dataset.action === "finish-match") {
+                window.location.href = "/m";
+                return;
+            }
+            hideNextGameButton();
+            startNextGame();
+        });
+    }
 
     if (serveQuestion) {
         serveQuestion.addEventListener("click", function (event) {
@@ -325,6 +545,7 @@
                 }
                 enableAfterServeChoice();
                 updateServeStatus();
+                saveState();
             }
         });
     }
@@ -333,6 +554,21 @@
         serveOnLeft.addEventListener("change", function () {
             setServeSide(serveOnLeft.checked);
             updateServeStatus();
+            saveState();
+        });
+    }
+
+    if (showMoreButton) {
+        showMoreButton.addEventListener("click", function () {
+            showPanel("more");
+            saveState();
+        });
+    }
+
+    if (backToMatchButton) {
+        backToMatchButton.addEventListener("click", function () {
+            showPanel("referee");
+            saveState();
         });
     }
 

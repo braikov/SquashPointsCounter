@@ -16,45 +16,77 @@
           data-game-score-first="@Model.GameScoreFirst"
           data-game-score-second="@Model.GameScoreSecond"
           data-current-game-score-first="@Model.CurrentGameScoreFirst"
-          data-current-game-score-second="@Model.CurrentGameScoreSecond">
+          data-current-game-score-second="@Model.CurrentGameScoreSecond"
+          data-games-to-win="@Model.GamesToWin">
         @await Html.PartialAsync("_MatchHeader", Model)
 
-        <section class="panel serve-question" id="serveQuestion">
-            <div class="serve-title">Who serves first?</div>
-            <div class="serve-actions">
-                <button class="action-button serve-choice" type="button" data-serve="A">@Model.FirstPlayer.Name serves first</button>
-                <button class="action-button serve-choice" type="button" data-serve="B">@Model.SecondPlayer.Name serves first</button>
-            </div>
+        <section class="panel-stack" id="refereePanel">
+            <section class="panel serve-question" id="serveQuestion">
+                <div class="serve-title">Who serves first?</div>
+                <div class="serve-actions">
+                    <button class="action-button serve-choice" type="button" data-serve="A">@Model.FirstPlayer.Name serves first</button>
+                    <button class="action-button serve-choice" type="button" data-serve="B">@Model.SecondPlayer.Name serves first</button>
+                </div>
+                <label class="serve-side-toggle" id="serveSideToggle">
+                    <input type="checkbox" id="serveOnLeft" />
+                    Serve on left
+                </label>
+            </section>
+
+            <section class="panel serve-status" id="serveStatus">
+                <span id="serveStatusText"></span>
+                <button class="action-button" id="nextGameButton" type="button" style="display: none;">Start game</button>
+            </section>
+
+            <section class="button-grid">
+                <button class="action-button referee-action" type="button" data-event="PointA">Point A</button>
+                <button class="action-button referee-action" type="button" data-event="PointB">Point B</button>
+            </section>
+
+            <section class="button-grid three">
+                <button class="action-button referee-action" type="button" data-event="Let">Yes, let</button>
+                <button class="action-button referee-action" type="button" data-event="StrokeA">Stroke A</button>
+                <button class="action-button referee-action" type="button" data-event="StrokeB">Stroke B</button>
+            </section>
+
+            <section class="panel log-card">
+                <div class="log-body">
+                    <div class="log-entries" id="eventLog"></div>
+                </div>
+            </section>
+
+            <section class="button-grid">
+                <button class="action-button referee-action" type="button" data-event="Undo">Undo</button>
+                <button class="action-button referee-action" id="showMoreButton" type="button">More</button>
+            </section>
         </section>
 
-        <section class="panel serve-status" id="serveStatus">
-            <span id="serveStatusText"></span>
-            <label class="serve-side-toggle" id="serveSideToggle">
-                <input type="checkbox" id="serveOnLeft" />
-                Serve on left
-            </label>
-        </section>
+        <section class="panel-stack is-hidden" id="morePanel">
+            <button class="panel back-button" id="backToMatch" type="button">Back to match</button>
 
-        <section class="button-grid">
-            <button class="action-button referee-action" type="button" data-event="PointA">Point A</button>
-            <button class="action-button referee-action" type="button" data-event="PointB">Point B</button>
-        </section>
+            <a class="panel action-button referee-action" data-event="LockMatch" href="/m">Lock match</a>
+            <section class="double-row">
+                <section class="panel action-button referee-action" data-event="InjuryTimeoutA">Injury timeout A</section>
+                <section class="panel action-button referee-action" data-event="InjuryTimeoutB">Injury timeout B</section>
+            </section>
+            <section class="panel action-button referee-action" data-event="EquipmentIssue">Equipment issue</section>
+            <section class="double-row">
+                <section class="panel action-button referee-action" data-event="ARetires">A retires</section>
+                <section class="panel action-button referee-action" data-event="BRetires">B retires</section>
+            </section>
+            <section class="double-row">
+                <section class="panel action-button referee-action" data-event="ARequestReview">A request review (2 left)</section>
+                <section class="panel action-button referee-action" data-event="BRequestReview">B request review (2 left)</section>
+            </section>
+            <section class="double-row">
+                <section class="panel action-button referee-action" data-event="WarningA">Warning A</section>
+                <section class="panel action-button referee-action" data-event="WarningB">Warning B</section>
+            </section>
 
-        <section class="button-grid three">
-            <button class="action-button referee-action" type="button" data-event="Let">Yes, let</button>
-            <button class="action-button referee-action" type="button" data-event="StrokeA">Stroke A</button>
-            <button class="action-button referee-action" type="button" data-event="StrokeB">Stroke B</button>
-        </section>
-
-        <section class="panel log-card">
-            <div class="log-body">
-                <div class="log-entries" id="eventLog"></div>
-            </div>
-        </section>
-
-        <section class="button-grid">
-            <button class="action-button referee-action" type="button" data-event="Undo">Undo</button>
-            <a class="action-button referee-action" href="/kiosk/referee/more">More</a>
+            <section class="double-row">
+                <section class="panel action-button referee-action" data-event="ConductStrokeA">Conduct stroke A</section>
+                <section class="panel action-button referee-action" data-event="ConductStrokeB">Conduct stroke B</section>
+            </section>
         </section>
     </main>
     <script src="~/js/kiosk/referee.js"></script>
