@@ -14,17 +14,25 @@
         B: serveButtons[1] ? serveButtons[1].textContent.replace(" serves first", "").trim() : "Player B"
     };
 
+    var matchState = {
+        gameScoreFirst: parseByte(root.dataset.gameScoreFirst),
+        gameScoreSecond: parseByte(root.dataset.gameScoreSecond),
+        currentGameScoreFirst: parseByte(root.dataset.currentGameScoreFirst),
+        currentGameScoreSecond: parseByte(root.dataset.currentGameScoreSecond)
+    };
+
+    var eventHistory = [];
+
     function parseByte(value) {
         var parsed = parseInt(value, 10);
         return Number.isNaN(parsed) ? 0 : parsed;
     }
 
     function scoresAreZero() {
-        var gameFirst = parseByte(root.dataset.gameScoreFirst);
-        var gameSecond = parseByte(root.dataset.gameScoreSecond);
-        var currentFirst = parseByte(root.dataset.currentGameScoreFirst);
-        var currentSecond = parseByte(root.dataset.currentGameScoreSecond);
-        return gameFirst === 0 && gameSecond === 0 && currentFirst === 0 && currentSecond === 0;
+        return matchState.gameScoreFirst === 0
+            && matchState.gameScoreSecond === 0
+            && matchState.currentGameScoreFirst === 0
+            && matchState.currentGameScoreSecond === 0;
     }
 
     function setActionsDisabled(disabled) {
@@ -69,6 +77,92 @@
         setServeButtonsDisabled(false);
     }
 
+    function appendLog(text) {
+        if (!eventLog) {
+            return;
+        }
+        var item = document.createElement("div");
+        item.textContent = text;
+        eventLog.prepend(item);
+    }
+
+    function sendEvent(eventName) {
+        fetch("/api/refferee/game-log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(eventName)
+        });
+    }
+
+    function formatLog(eventName, labelOverride) {
+        if (labelOverride) {
+            return labelOverride;
+        }
+
+        return eventName;
+    }
+
+    function applyEvent(eventName) {
+        var needsPointA = eventName === "PointA" || eventName === "StrokeA" || eventName === "ConductStrokeA";
+        var needsPointB = eventName === "PointB" || eventName === "StrokeB" || eventName === "ConductStrokeB";
+
+        if (needsPointA) {
+            matchState.currentGameScoreFirst += 1;
+        }
+        if (needsPointB) {
+            matchState.currentGameScoreSecond += 1;
+        }
+
+        if (needsPointA || needsPointB) {
+            updateScoreDisplay();
+        }
+
+        if (eventName === "ARetires") {
+            if (confirm("A retires. B wins the match. Continue?")) {
+                window.location.href = "/m";
+            }
+            return;
+        }
+
+        if (eventName === "BRetires") {
+            if (confirm("B retires. A wins the match. Continue?")) {
+                window.location.href = "/m";
+            }
+            return;
+        }
+
+        if (eventName === "InjuryTimeoutA" || eventName === "InjuryTimeoutB") {
+            return;
+        }
+
+        if (eventName === "EquipmentIssue") {
+            return;
+        }
+
+        if (needsPointA || needsPointB) {
+            // Placeholder: add game-end logic later.
+        }
+    }
+
+    function updateScoreDisplay() {
+        var matchPoints = document.getElementById("matchPoints")
+            || document.querySelector(".match-header__match-score");
+        if (!matchPoints) {
+            return;
+        }
+        if (!matchPoints.id) {
+            matchPoints.id = "matchPoints";
+        }
+        matchPoints.textContent = matchState.currentGameScoreFirst + ":" + matchState.currentGameScoreSecond;
+    }
+
+    function handleEvent(eventName, labelOverride) {
+        eventHistory.push(eventName);
+        appendLog(formatLog(eventName, labelOverride));
+        sendEvent(eventName);
+        applyEvent(eventName);
+    }
+
     if (scoresAreZero()) {
         showServeQuestion(true);
         setActionsDisabled(true);
@@ -98,42 +192,20 @@
                     var playerName = serveNames[target.dataset.serve] || "Player";
                     var sideLabel = isLeft ? "left" : "right";
                     var label = playerName + " serves first on " + sideLabel;
-                    appendLog(label);
-                    logEvent(serveEvent);
+                    handleEvent(serveEvent, label);
                 }
                 enableAfterServeChoice();
             }
         });
     }
 
-    function appendLog(text) {
-        if (!eventLog) {
-            return;
-        }
-        var item = document.createElement("div");
-        item.textContent = text;
-        eventLog.prepend(item);
-    }
-
-    function logEvent(eventName) {
-        fetch("/api/refferee/game-log", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(eventName)
-        });
-    }
-
     actionButtons.forEach(function (button) {
-        if (!(button instanceof HTMLButtonElement)) {
-            return;
-        }
         var eventName = button.dataset.event;
         if (!eventName) {
             return;
         }
         button.addEventListener("click", function () {
-            appendLog(eventName);
-            logEvent(eventName);
+            handleEvent(eventName);
         });
     });
 })();
