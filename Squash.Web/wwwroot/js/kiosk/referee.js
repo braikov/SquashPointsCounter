@@ -9,6 +9,7 @@
     var actionPanels = Array.from(document.querySelectorAll(".button-grid, .log-card"));
     var serveButtons = Array.from(document.querySelectorAll(".serve-choice"));
     var eventLog = document.getElementById("eventLog");
+    var scoreLog = document.getElementById("scoreLog");
     var serveStatus = document.getElementById("serveStatus");
     var serveStatusText = document.getElementById("serveStatusText");
     var nextGameButton = document.getElementById("nextGameButton");
@@ -183,11 +184,99 @@
         eventLog.prepend(item);
     }
 
+    function appendScoreLogEntry(side, score, sideLetter, allowSideUpdate) {
+        if (!scoreLog) {
+            return;
+        }
+
+        var row = document.createElement("div");
+        row.className = "score-log__row";
+        row.dataset.type = "entry";
+        row.dataset.side = side;
+        row.dataset.score = String(score);
+        row.dataset.sideChoice = allowSideUpdate ? "true" : "false";
+
+        var leftCell = document.createElement("div");
+        leftCell.className = "score-log__cell score-log__cell--left";
+
+        var rightCell = document.createElement("div");
+        rightCell.className = "score-log__cell score-log__cell--right";
+
+        var text = String(score) + sideLetter;
+        if (side === "A") {
+            leftCell.textContent = text;
+        } else {
+            rightCell.textContent = text;
+        }
+
+        row.appendChild(leftCell);
+        row.appendChild(rightCell);
+        scoreLog.appendChild(row);
+        scrollScoreLogToBottom();
+    }
+
+    function appendScoreLogFull(text) {
+        if (!scoreLog) {
+            return;
+        }
+
+        var row = document.createElement("div");
+        row.className = "score-log__row score-log__row--full";
+        row.dataset.type = "full";
+
+        var cell = document.createElement("div");
+        cell.className = "score-log__cell score-log__cell--full";
+        cell.textContent = text;
+
+        row.appendChild(cell);
+        scoreLog.appendChild(row);
+        scrollScoreLogToBottom();
+    }
+
+    function scrollScoreLogToBottom() {
+        if (!scoreLog) {
+            return;
+        }
+        scoreLog.scrollTop = scoreLog.scrollHeight;
+    }
+
+    function updateLastScoreLogSide(sideLetter) {
+        if (!scoreLog || !scoreLog.lastElementChild) {
+            return;
+        }
+
+        var row = scoreLog.lastElementChild;
+        if (row.dataset.type !== "entry" || row.dataset.sideChoice !== "true") {
+            return;
+        }
+
+        var score = row.dataset.score || "0";
+        var text = score + sideLetter;
+        if (row.dataset.side === "A") {
+            var leftCell = row.querySelector(".score-log__cell--left");
+            if (leftCell) {
+                leftCell.textContent = text;
+            }
+        } else {
+            var rightCell = row.querySelector(".score-log__cell--right");
+            if (rightCell) {
+                rightCell.textContent = text;
+            }
+        }
+    }
+
     function clearLog() {
         if (!eventLog) {
             return;
         }
         eventLog.innerHTML = "";
+    }
+
+    function clearScoreLog() {
+        if (!scoreLog) {
+            return;
+        }
+        scoreLog.innerHTML = "";
     }
 
     function saveState() {
@@ -196,6 +285,23 @@
         }
         var logEntries = eventLog ? Array.from(eventLog.children).map(function (entry) {
             return entry.textContent || "";
+        }) : [];
+        var scoreEntries = scoreLog ? Array.from(scoreLog.children).map(function (row) {
+            if (row.dataset.type === "full") {
+                return {
+                    type: "full",
+                    text: row.textContent || ""
+                };
+            }
+
+            return {
+                type: "entry",
+                side: row.dataset.side || "",
+                score: row.dataset.score || "",
+                sideChoice: row.dataset.sideChoice || "false",
+                left: row.querySelector(".score-log__cell--left")?.textContent || "",
+                right: row.querySelector(".score-log__cell--right")?.textContent || ""
+            };
         }) : [];
 
         var state = {
@@ -210,7 +316,8 @@
                 nextGameText: nextGameButton ? nextGameButton.textContent || "" : "",
                 serveStatusText: serveStatusText ? serveStatusText.textContent || "" : ""
             },
-            log: logEntries
+            log: logEntries,
+            scoreLog: scoreEntries
         };
 
         sessionStorage.setItem(storageKey, JSON.stringify(state));
@@ -276,6 +383,40 @@
             }
         }
 
+        if (scoreLog && Array.isArray(saved.scoreLog)) {
+            clearScoreLog();
+            saved.scoreLog.forEach(function (entry) {
+                if (!entry) {
+                    return;
+                }
+                if (entry.type === "full") {
+                    appendScoreLogFull(entry.text || "");
+                    return;
+                }
+                if (!entry.side) {
+                    return;
+                }
+                var row = document.createElement("div");
+                row.className = "score-log__row";
+                row.dataset.type = "entry";
+                row.dataset.side = entry.side;
+                row.dataset.score = entry.score || "0";
+                row.dataset.sideChoice = entry.sideChoice || "false";
+
+                var leftCell = document.createElement("div");
+                leftCell.className = "score-log__cell score-log__cell--left";
+                leftCell.textContent = entry.left || "";
+
+                var rightCell = document.createElement("div");
+                rightCell.className = "score-log__cell score-log__cell--right";
+                rightCell.textContent = entry.right || "";
+
+                row.appendChild(leftCell);
+                row.appendChild(rightCell);
+                scoreLog.appendChild(row);
+            });
+        }
+
         updateScoreDisplay();
         if (!nextGameButton || !nextGameButton.dataset.action) {
             updateServeStatus();
@@ -292,16 +433,73 @@
         });
     }
 
-    function formatLog(eventName, labelOverride) {
+    function formatLog(eventName, labelOverride, scoreSnapshot) {
         if (labelOverride) {
             return labelOverride;
         }
-        return eventName;
+
+        function nameFor(side) {
+            return serveNames[side] || side;
+        }
+
+        function scoreText(snapshot) {
+            if (snapshot) {
+                return snapshot.a + ":" + snapshot.b;
+            }
+            return matchState.currentGameScoreFirst + ":" + matchState.currentGameScoreSecond;
+        }
+
+        function pointLabel(prefix, side) {
+            return prefix + " " + nameFor(side) + " (" + scoreText(scoreSnapshot) + ")";
+        }
+
+        switch (eventName) {
+            case "PointA":
+                return pointLabel("Point to", "A");
+            case "PointB":
+                return pointLabel("Point to", "B");
+            case "StrokeA":
+                return pointLabel("Stroke to", "A");
+            case "StrokeB":
+                return pointLabel("Stroke to", "B");
+            case "ConductStrokeA":
+                return pointLabel("Conduct stroke to", "A");
+            case "ConductStrokeB":
+                return pointLabel("Conduct stroke to", "B");
+            case "WarningA":
+                return "Warning to " + nameFor("A");
+            case "WarningB":
+                return "Warning to " + nameFor("B");
+            case "ARequestReview":
+                return nameFor("A") + " requests review";
+            case "BRequestReview":
+                return nameFor("B") + " requests review";
+            case "ARetires":
+                return nameFor("A") + " retires";
+            case "BRetires":
+                return nameFor("B") + " retires";
+            case "InjuryTimeoutA":
+                return "Injury timeout for " + nameFor("A");
+            case "InjuryTimeoutB":
+                return "Injury timeout for " + nameFor("B");
+            case "EquipmentIssue":
+                return "Equipment issue";
+            case "Let":
+                return "Yes, let";
+            case "Undo":
+                return "Undo";
+            case "LockMatch":
+                return "Lock match";
+            default:
+                return eventName;
+        }
     }
 
     function applyEvent(eventName) {
         var needsPointA = eventName === "PointA" || eventName === "StrokeA" || eventName === "ConductStrokeA";
         var needsPointB = eventName === "PointB" || eventName === "StrokeB" || eventName === "ConductStrokeB";
+        var scoreSnapshot = null;
+        var scoreLogSnapshot = null;
 
         if (needsPointA) {
             matchState.currentGameScoreFirst += 1;
@@ -311,6 +509,10 @@
         }
 
         if (needsPointA || needsPointB) {
+            scoreSnapshot = {
+                a: matchState.currentGameScoreFirst,
+                b: matchState.currentGameScoreSecond
+            };
             var currentWinner = needsPointA ? "A" : "B";
             var isHandout = matchState.lastPointWinner && matchState.lastPointWinner !== currentWinner;
 
@@ -331,6 +533,15 @@
             if (!isHandout && matchState.currentServer === currentWinner) {
                 matchState.serveSide = matchState.serveSide === "left" ? "right" : "left";
             }
+
+            scoreLogSnapshot = {
+                side: currentWinner,
+                score: currentWinner === "A"
+                    ? matchState.currentGameScoreFirst
+                    : matchState.currentGameScoreSecond,
+                sideLetter: matchState.serveSide === "left" ? "L" : "R",
+                allowSideUpdate: isHandout
+            };
             updateServeStatus();
             updateScoreDisplay();
 
@@ -341,17 +552,19 @@
         }
 
         if (eventName === "ARetires") {
-            if (confirm("A retires. B wins the match. Continue?")) {
-                window.location.href = "/m";
+            if (!confirm("A retires. B wins the match. Continue?")) {
+                return { cancelled: true };
             }
-            return;
+            window.location.href = "/m";
+            return { scoreSnapshot: scoreSnapshot, scoreLogSnapshot: scoreLogSnapshot };
         }
 
         if (eventName === "BRetires") {
-            if (confirm("B retires. A wins the match. Continue?")) {
-                window.location.href = "/m";
+            if (!confirm("B retires. A wins the match. Continue?")) {
+                return { cancelled: true };
             }
-            return;
+            window.location.href = "/m";
+            return { scoreSnapshot: scoreSnapshot, scoreLogSnapshot: scoreLogSnapshot };
         }
 
         if (eventName === "InjuryTimeoutA" || eventName === "InjuryTimeoutB") {
@@ -362,9 +575,7 @@
             return;
         }
 
-        if (needsPointA || needsPointB) {
-            // Placeholder: add game-end logic later.
-        }
+        return { scoreSnapshot: scoreSnapshot, scoreLogSnapshot: scoreLogSnapshot };
     }
 
     function isGameOver() {
@@ -394,6 +605,8 @@
         updateScoreDisplay();
 
         logDerivedEvent("EndGame", "Game to " + (serveNames[winner] || winner));
+        appendScoreLogFull("---------");
+        appendScoreLogFull(matchState.gameScoreFirst + " : " + matchState.gameScoreSecond);
 
         var gamesToWin = matchState.gamesToWin || 3;
         if (matchState.gameScoreFirst >= gamesToWin || matchState.gameScoreSecond >= gamesToWin) {
@@ -433,9 +646,20 @@
 
     function handleEvent(eventName, labelOverride) {
         eventHistory.push(eventName);
-        appendLog(formatLog(eventName, labelOverride));
+        var result = applyEvent(eventName);
+        if (result && result.cancelled) {
+            return;
+        }
+        appendLog(formatLog(eventName, labelOverride, result ? result.scoreSnapshot : null));
+        if (result && result.scoreLogSnapshot) {
+            appendScoreLogEntry(
+                result.scoreLogSnapshot.side,
+                result.scoreLogSnapshot.score,
+                result.scoreLogSnapshot.sideLetter,
+                result.scoreLogSnapshot.allowSideUpdate
+            );
+        }
         sendEvent(eventName);
-        applyEvent(eventName);
         saveState();
     }
 
@@ -502,6 +726,8 @@
         matchState.awaitingSideChoice = false;
         setServeSide(false);
         clearLog();
+        clearScoreLog();
+        appendScoreLogEntry(matchState.currentServer, 0, "R", true);
         updateServeStatus();
         saveState();
     }
@@ -542,6 +768,13 @@
                     matchState.currentServer = target.dataset.serve;
                     matchState.initialServeChosen = true;
                     handleEvent(serveEvent, label);
+                    clearScoreLog();
+                    appendScoreLogEntry(
+                        target.dataset.serve,
+                        0,
+                        isLeft ? "L" : "R",
+                        true
+                    );
                 }
                 enableAfterServeChoice();
                 updateServeStatus();
@@ -554,6 +787,7 @@
         serveOnLeft.addEventListener("change", function () {
             setServeSide(serveOnLeft.checked);
             updateServeStatus();
+            updateLastScoreLogSide(serveOnLeft.checked ? "L" : "R");
             saveState();
         });
     }

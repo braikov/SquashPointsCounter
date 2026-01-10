@@ -127,6 +127,18 @@ body {
     border-color: var(--accent);
 }
 
+.log-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+
+@media (max-width: 520px) {
+    .log-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 .back-button {
     text-decoration: none;
     color: var(--ink);
@@ -167,4 +179,35 @@ body {
     max-height: 220px;
     overflow-y: auto;
     padding-right: 6px;
+}
+
+.score-log {
+    font-weight: 700;
+}
+
+.score-log__row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+
+.score-log__cell {
+    color: var(--muted);
+}
+
+.score-log__cell--left {
+    text-align: left;
+}
+
+.score-log__cell--right {
+    text-align: right;
+}
+
+.score-log__row--full {
+    grid-template-columns: 1fr;
+}
+
+.score-log__cell--full {
+    text-align: center;
+    color: var(--muted);
 }
