@@ -25,16 +25,14 @@
                 <button class="action-button serve-choice" type="button" data-serve="A">@Model.FirstPlayer.Name serves first</button>
                 <button class="action-button serve-choice" type="button" data-serve="B">@Model.SecondPlayer.Name serves first</button>
             </div>
-            <div class="serve-sides">
-                <label class="serve-side">
-                    <input type="radio" name="serveSide" value="left" />
-                    Serve on left
-                </label>
-                <label class="serve-side">
-                    <input type="radio" name="serveSide" value="right" checked />
-                    Serve on right
-                </label>
-            </div>
+        </section>
+
+        <section class="panel serve-status" id="serveStatus">
+            <span id="serveStatusText"></span>
+            <label class="serve-side-toggle" id="serveSideToggle">
+                <input type="checkbox" id="serveOnLeft" />
+                Serve on left
+            </label>
         </section>
 
         <section class="button-grid">

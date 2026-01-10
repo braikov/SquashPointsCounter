@@ -8,7 +8,10 @@
     var actionButtons = Array.from(document.querySelectorAll(".referee-action"));
     var serveButtons = Array.from(document.querySelectorAll(".serve-choice"));
     var eventLog = document.getElementById("eventLog");
-    var serveSideInputs = Array.from(document.querySelectorAll("input[name='serveSide']"));
+    var serveStatus = document.getElementById("serveStatus");
+    var serveStatusText = document.getElementById("serveStatusText");
+    var serveSideToggle = document.getElementById("serveSideToggle");
+    var serveOnLeft = document.getElementById("serveOnLeft");
     var serveNames = {
         A: serveButtons[0] ? serveButtons[0].textContent.replace(" serves first", "").trim() : "Player A",
         B: serveButtons[1] ? serveButtons[1].textContent.replace(" serves first", "").trim() : "Player B"
@@ -18,7 +21,12 @@
         gameScoreFirst: parseByte(root.dataset.gameScoreFirst),
         gameScoreSecond: parseByte(root.dataset.gameScoreSecond),
         currentGameScoreFirst: parseByte(root.dataset.currentGameScoreFirst),
-        currentGameScoreSecond: parseByte(root.dataset.currentGameScoreSecond)
+        currentGameScoreSecond: parseByte(root.dataset.currentGameScoreSecond),
+        lastPointWinner: null,
+        currentServer: null,
+        serveSide: "right",
+        initialServeChosen: false,
+        awaitingSideChoice: false
     };
 
     var eventHistory = [];
@@ -71,10 +79,49 @@
         serveQuestion.style.display = show ? "grid" : "none";
     }
 
+    function showServeButtons(show) {
+        serveButtons.forEach(function (button) {
+            button.style.display = show ? "block" : "none";
+        });
+    }
+
+    function updateServeStatus() {
+        if (!serveStatus || !serveStatusText || !matchState.currentServer) {
+            return;
+        }
+        var name = serveNames[matchState.currentServer] || matchState.currentServer;
+        serveStatusText.textContent = name + " serves on " + matchState.serveSide;
+        serveStatus.style.display = "block";
+    }
+
+    function showServeStatus(show) {
+        if (!serveStatus) {
+            return;
+        }
+        serveStatus.style.display = show ? "block" : "none";
+    }
+
+    function showServeSideToggle(show) {
+        if (!serveSideToggle) {
+            return;
+        }
+        serveSideToggle.style.display = show ? "inline-flex" : "none";
+    }
+
     function enableAfterServeChoice() {
         showServeQuestion(false);
         setActionsDisabled(false);
         setServeButtonsDisabled(false);
+        showServeStatus(true);
+        showServeSideToggle(false);
+        matchState.awaitingSideChoice = false;
+    }
+
+    function setServeSide(isLeft) {
+        matchState.serveSide = isLeft ? "left" : "right";
+        if (serveOnLeft) {
+            serveOnLeft.checked = isLeft;
+        }
     }
 
     function appendLog(text) {
@@ -98,7 +145,6 @@
         if (labelOverride) {
             return labelOverride;
         }
-
         return eventName;
     }
 
@@ -114,6 +160,27 @@
         }
 
         if (needsPointA || needsPointB) {
+            var currentWinner = needsPointA ? "A" : "B";
+            var isHandout = matchState.lastPointWinner && matchState.lastPointWinner !== currentWinner;
+
+            if (isHandout) {
+                matchState.currentServer = currentWinner;
+                showServeQuestion(false);
+                showServeButtons(false);
+                showServeStatus(true);
+                setServeSide(false);
+                showServeSideToggle(true);
+                matchState.awaitingSideChoice = true;
+            } else {
+                matchState.awaitingSideChoice = false;
+                showServeSideToggle(false);
+            }
+
+            matchState.lastPointWinner = currentWinner;
+            if (!isHandout && matchState.currentServer === currentWinner) {
+                matchState.serveSide = matchState.serveSide === "left" ? "right" : "left";
+            }
+            updateServeStatus();
             updateScoreDisplay();
         }
 
@@ -165,10 +232,18 @@
 
     if (scoresAreZero()) {
         showServeQuestion(true);
+        showServeButtons(true);
         setActionsDisabled(true);
         setServeButtonsDisabled(false);
+        showServeStatus(true);
+        showServeSideToggle(true);
+        if (serveStatusText) {
+            serveStatusText.textContent = "";
+        }
     } else {
         showServeQuestion(false);
+        showServeStatus(true);
+        showServeSideToggle(false);
     }
 
     if (serveQuestion) {
@@ -179,8 +254,8 @@
             }
 
             if (target.dataset.serve) {
-                var side = serveSideInputs.find(function (input) { return input.checked; });
-                var isLeft = side && side.value === "left";
+                var isLeft = serveOnLeft ? serveOnLeft.checked : false;
+                setServeSide(isLeft);
                 var serveEvent = null;
                 if (target.dataset.serve === "A") {
                     serveEvent = isLeft ? "AServersFirstOnLeft" : "AServersFirst";
@@ -192,10 +267,21 @@
                     var playerName = serveNames[target.dataset.serve] || "Player";
                     var sideLabel = isLeft ? "left" : "right";
                     var label = playerName + " serves first on " + sideLabel;
+                    matchState.lastPointWinner = target.dataset.serve;
+                    matchState.currentServer = target.dataset.serve;
+                    matchState.initialServeChosen = true;
                     handleEvent(serveEvent, label);
                 }
                 enableAfterServeChoice();
+                updateServeStatus();
             }
+        });
+    }
+
+    if (serveOnLeft) {
+        serveOnLeft.addEventListener("change", function () {
+            setServeSide(serveOnLeft.checked);
+            updateServeStatus();
         });
     }
 

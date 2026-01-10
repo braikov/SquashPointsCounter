@@ -58,19 +58,30 @@ body {
     gap: 12px;
 }
 
-.serve-sides {
+.serve-side {
     display: inline-flex;
-    gap: 18px;
+    gap: 8px;
     align-items: center;
     justify-content: center;
     color: var(--muted);
     font-weight: 600;
 }
 
-.serve-side {
-    display: inline-flex;
-    gap: 8px;
+.serve-status {
+    display: none;
     align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--muted);
+}
+
+.serve-side-toggle {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
 }
 
 .is-disabled {
