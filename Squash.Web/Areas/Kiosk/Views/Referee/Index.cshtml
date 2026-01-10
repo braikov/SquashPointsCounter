@@ -8,6 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Referee</title>
+    <link rel="stylesheet" href="~/css/kiosk/match-header.css" />
     <link rel="stylesheet" href="~/css/kiosk/referee.css" />
 </head>
 <body>
@@ -16,27 +17,7 @@
           data-game-score-second="@Model.GameScoreSecond"
           data-current-game-score-first="@Model.CurrentGameScoreFirst"
           data-current-game-score-second="@Model.CurrentGameScoreSecond">
-        <section class="panel header-card">
-            <div class="header-players">
-                <div class="player">
-                    <div class="avatar">A</div>
-                    <div class="meta">
-                        <div class="name">@Model.FirstPlayer.Name</div>
-                        <div class="flag">@Model.FirstPlayer.Nationality</div>
-                    </div>
-                    <img class="flag-image" src="@Model.FirstPlayer.NationalityFlagUrl" alt="" />
-                </div>
-                <div class="score">@Model.GameScoreFirst:@Model.GameScoreSecond</div>
-                <div class="player">
-                    <div class="avatar">B</div>
-                    <div class="meta">
-                        <div class="name">@Model.SecondPlayer.Name</div>
-                        <div class="flag">@Model.SecondPlayer.Nationality</div>
-                    </div>
-                    <img class="flag-image" src="@Model.SecondPlayer.NationalityFlagUrl" alt="" />
-                </div>
-            </div>
-        </section>
+        @await Html.PartialAsync("_MatchHeader", Model)
 
         <section class="panel serve-question" id="serveQuestion">
             <div class="serve-title">Who serves first?</div>
@@ -57,25 +38,24 @@
         </section>
 
         <section class="button-grid">
-            <button class="action-button referee-action" type="button">Point A</button>
-            <button class="action-button referee-action" type="button">Point B</button>
+            <button class="action-button referee-action" type="button" data-event="PointA">Point A</button>
+            <button class="action-button referee-action" type="button" data-event="PointB">Point B</button>
         </section>
 
         <section class="button-grid three">
-            <button class="action-button referee-action" type="button">Yes, let</button>
-            <button class="action-button referee-action" type="button">Stroke A</button>
-            <button class="action-button referee-action" type="button">Stroke B</button>
+            <button class="action-button referee-action" type="button" data-event="Let">Yes, let</button>
+            <button class="action-button referee-action" type="button" data-event="StrokeA">Stroke A</button>
+            <button class="action-button referee-action" type="button" data-event="StrokeB">Stroke B</button>
         </section>
 
         <section class="panel log-card">
-            <div class="log-title">Event log</div>
             <div class="log-body">
-                Current game: @Model.CurrentGameScoreFirst:@Model.CurrentGameScoreSecond
+                <div class="log-entries" id="eventLog"></div>
             </div>
         </section>
 
         <section class="button-grid">
-            <button class="action-button referee-action" type="button">Undo</button>
+            <button class="action-button referee-action" type="button" data-event="Undo">Undo</button>
             <a class="action-button referee-action" href="/kiosk/referee/more">More</a>
         </section>
     </main>

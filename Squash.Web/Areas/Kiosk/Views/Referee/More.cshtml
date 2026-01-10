@@ -8,57 +8,39 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Referee More</title>
+    <link rel="stylesheet" href="~/css/kiosk/match-header.css" />
     <link rel="stylesheet" href="~/css/kiosk/referee-more.css" />
 </head>
 <body>
     <main class="screen">
         <a class="panel back-button" href="/kiosk/referee">Back to match</a>
 
-        <section class="panel header-card">
-            <div class="header-players">
-                <div class="player">
-                    <div class="avatar">A</div>
-                    <div class="meta">
-                        <div class="name">@Model.FirstPlayer.Name</div>
-                        <div class="flag">@Model.FirstPlayer.Nationality</div>
-                    </div>
-                    <img class="flag-image" src="@Model.FirstPlayer.NationalityFlagUrl" alt="" />
-                </div>
-                <div class="score">@Model.GameScoreFirst:@Model.GameScoreSecond</div>
-                <div class="player">
-                    <div class="avatar">B</div>
-                    <div class="meta">
-                        <div class="name">@Model.SecondPlayer.Name</div>
-                        <div class="flag">@Model.SecondPlayer.Nationality</div>
-                    </div>
-                    <img class="flag-image" src="@Model.SecondPlayer.NationalityFlagUrl" alt="" />
-                </div>
-            </div>
-        </section>
+        @await Html.PartialAsync("_MatchHeader", Model)
 
-        <a class="panel action-button" href="/m">Lock match</a>
+        <a class="panel action-button referee-action" data-event="LockMatch" href="/m">Lock match</a>
         <section class="double-row">
-            <section class="panel action-button">Injury timeout A</section>
-            <section class="panel action-button">Injury timeout B</section>
+            <section class="panel action-button referee-action" data-event="InjuryTimeoutA">Injury timeout A</section>
+            <section class="panel action-button referee-action" data-event="InjuryTimeoutB">Injury timeout B</section>
         </section>
-        <section class="panel action-button">Equipment issue</section>
+        <section class="panel action-button referee-action" data-event="EquipmentIssue">Equipment issue</section>
         <section class="double-row">
-            <section class="panel action-button">A retires</section>
-            <section class="panel action-button">B retires</section>
-        </section>
-        <section class="double-row">
-            <section class="panel action-button">A request review (2 left)</section>
-            <section class="panel action-button">B request review (2 left)</section>
+            <section class="panel action-button referee-action" data-event="ARetires">A retires</section>
+            <section class="panel action-button referee-action" data-event="BRetires">B retires</section>
         </section>
         <section class="double-row">
-            <section class="panel action-button">Warning A</section>
-            <section class="panel action-button">Warning B</section>
+            <section class="panel action-button referee-action" data-event="ARequestReview">A request review (2 left)</section>
+            <section class="panel action-button referee-action" data-event="BRequestReview">B request review (2 left)</section>
+        </section>
+        <section class="double-row">
+            <section class="panel action-button referee-action" data-event="WarningA">Warning A</section>
+            <section class="panel action-button referee-action" data-event="WarningB">Warning B</section>
         </section>
 
         <section class="double-row">
-            <section class="panel action-button">Conduct stroke A</section>
-            <section class="panel action-button">Conduct stroke B</section>
+            <section class="panel action-button referee-action" data-event="ConductStrokeA">Conduct stroke A</section>
+            <section class="panel action-button referee-action" data-event="ConductStrokeB">Conduct stroke B</section>
         </section>
     </main>
+    <script src="~/js/kiosk/referee-more.js"></script>
 </body>
 </html>

@@ -55,6 +55,13 @@ namespace Squash.Web.Controllers
             return Ok(response);
         }
 
+        [HttpPost("game-log")]
+        public IActionResult GameLog([FromBody] string gameEvent)
+        {
+            // Placeholder: wire up persistence later.
+            return Ok(new { Success = true });
+        }
+
         private static RefereePlayer MapPlayer(Squash.DataAccess.Entities.Player? player)
         {
             if (player == null)

@@ -7,6 +7,12 @@
     var serveQuestion = document.getElementById("serveQuestion");
     var actionButtons = Array.from(document.querySelectorAll(".referee-action"));
     var serveButtons = Array.from(document.querySelectorAll(".serve-choice"));
+    var eventLog = document.getElementById("eventLog");
+    var serveSideInputs = Array.from(document.querySelectorAll("input[name='serveSide']"));
+    var serveNames = {
+        A: serveButtons[0] ? serveButtons[0].textContent.replace(" serves first", "").trim() : "Player A",
+        B: serveButtons[1] ? serveButtons[1].textContent.replace(" serves first", "").trim() : "Player B"
+    };
 
     function parseByte(value) {
         var parsed = parseInt(value, 10);
@@ -79,8 +85,55 @@
             }
 
             if (target.dataset.serve) {
+                var side = serveSideInputs.find(function (input) { return input.checked; });
+                var isLeft = side && side.value === "left";
+                var serveEvent = null;
+                if (target.dataset.serve === "A") {
+                    serveEvent = isLeft ? "AServersFirstOnLeft" : "AServersFirst";
+                } else if (target.dataset.serve === "B") {
+                    serveEvent = isLeft ? "BServersFirstOnLeft" : "BServersFirst";
+                }
+
+                if (serveEvent) {
+                    var playerName = serveNames[target.dataset.serve] || "Player";
+                    var sideLabel = isLeft ? "left" : "right";
+                    var label = playerName + " serves first on " + sideLabel;
+                    appendLog(label);
+                    logEvent(serveEvent);
+                }
                 enableAfterServeChoice();
             }
         });
     }
+
+    function appendLog(text) {
+        if (!eventLog) {
+            return;
+        }
+        var item = document.createElement("div");
+        item.textContent = text;
+        eventLog.prepend(item);
+    }
+
+    function logEvent(eventName) {
+        fetch("/api/refferee/game-log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(eventName)
+        });
+    }
+
+    actionButtons.forEach(function (button) {
+        if (!(button instanceof HTMLButtonElement)) {
+            return;
+        }
+        var eventName = button.dataset.event;
+        if (!eventName) {
+            return;
+        }
+        button.addEventListener("click", function () {
+            appendLog(eventName);
+            logEvent(eventName);
+        });
+    });
 })();

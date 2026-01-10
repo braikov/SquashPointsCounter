@@ -1,0 +1,19 @@
+@model Squash.Web.Areas.Kiosk.Models.RefereeMatchViewModel
+<section class="panel match-header">
+    <div class="match-header__player match-header__player--left">
+        <div class="match-header__name-row">
+            <img class="match-header__flag" src="@Model.FirstPlayer.NationalityFlagUrl" alt="" />
+            <div class="match-header__name">@Model.FirstPlayer.Name</div>
+        </div>
+    </div>
+    <div class="match-header__center">
+        <div class="match-header__separator">1 - 2</div>
+        <div class="match-header__match-score">@Model.GameScoreFirst : @Model.GameScoreSecond</div>
+    </div>
+    <div class="match-header__player match-header__player--right">
+        <div class="match-header__name-row">
+            <img class="match-header__flag" src="@Model.SecondPlayer.NationalityFlagUrl" alt="" />
+            <div class="match-header__name">@Model.SecondPlayer.Name</div>
+        </div>
+    </div>
+</section>
