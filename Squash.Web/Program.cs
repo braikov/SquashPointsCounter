@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Squash.DataAccess;
 using Squash.Identity;
+using Squash.Shared.Logging;
 using Squash.SqlServer;
 
 namespace Squash.Web
@@ -35,6 +36,7 @@ namespace Squash.Web
 
                 string? connectionString = builder.Configuration.GetConnectionString("DataContext");
                 ArgumentException.ThrowIfNullOrEmpty(connectionString);
+                Log4NetTableEnsurer.Ensure(connectionString);
 
                 builder.Services.AddControllersWithViews();
                 builder.Services.AddRazorPages();
@@ -201,5 +203,6 @@ namespace Squash.Web
 
             Log.Warn($"Failed to seed admin user {adminEmail}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
         }
+
     }
 }

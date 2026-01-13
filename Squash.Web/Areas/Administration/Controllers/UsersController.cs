@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
@@ -46,7 +47,17 @@ namespace Squash.Web.Areas.Administration.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View(new UserCreateViewModel { Email = string.Empty, Password = string.Empty, ConfirmPassword = string.Empty });
+            return View(new UserCreateViewModel
+            {
+                Email = string.Empty,
+                Password = string.Empty,
+                ConfirmPassword = string.Empty,
+                Name = string.Empty,
+                Phone = string.Empty,
+                Zip = string.Empty,
+                City = string.Empty,
+                Address = string.Empty
+            });
         }
 
         [HttpPost]
@@ -60,6 +71,13 @@ namespace Squash.Web.Areas.Administration.Controllers
 
             var existing = await _userManager.FindByEmailAsync(model.Email);
             if (existing != null)
+            {
+                ModelState.AddModelError(nameof(model.Email), "Email already exists.");
+                return View(model);
+            }
+
+            var existingAppUser = _dataContext.Users.FirstOrDefault(u => u.Email == model.Email);
+            if (existingAppUser != null)
             {
                 ModelState.AddModelError(nameof(model.Email), "Email already exists.");
                 return View(model);
@@ -81,6 +99,21 @@ namespace Squash.Web.Areas.Administration.Controllers
                 }
                 return View(model);
             }
+
+            var appUser = new Squash.DataAccess.Entities.User
+            {
+                IdentityUserId = user.Id,
+                Email = model.Email,
+                Name = model.Name,
+                Phone = model.Phone,
+                BirthDate = model.BirthDate ?? DateTime.MinValue,
+                Zip = model.Zip,
+                City = model.City,
+                Address = model.Address
+            };
+
+            _dataContext.Users.Add(appUser);
+            await _dataContext.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

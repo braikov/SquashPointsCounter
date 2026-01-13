@@ -43,12 +43,12 @@ namespace Squash.SqlServer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TournamentId")
+                    b.Property<int>("VenueId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TournamentId");
+                    b.HasIndex("VenueId");
 
                     b.ToTable("Courts");
                 });
@@ -304,20 +304,23 @@ namespace Squash.SqlServer.Migrations
                     b.Property<DateTime>("DateUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("EsfMemberId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("ExternalPlayerId")
                         .HasColumnType("int");
 
                     b.Property<int>("LastOperationUserId")
                         .HasColumnType("int");
 
-                    b.Property<string>("MemberId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("NationalityId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -327,7 +330,7 @@ namespace Squash.SqlServer.Migrations
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("Squash.DataAccess.Entities.ReferredMatch", b =>
+            modelBuilder.Entity("Squash.DataAccess.Entities.PlayerTournament", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -344,22 +347,19 @@ namespace Squash.SqlServer.Migrations
                     b.Property<int>("LastOperationUserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MatchId")
+                    b.Property<int>("PlayerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("PinCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.PrimitiveCollection<string>("Referee")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MatchId");
+                    b.HasIndex("PlayerId");
 
-                    b.ToTable("ReferredMatches");
+                    b.HasIndex("TournamentId");
+
+                    b.ToTable("PlayerTournaments");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Round", b =>
@@ -401,10 +401,16 @@ namespace Squash.SqlServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("ClosingSigninDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ExternalCode")
@@ -421,9 +427,58 @@ namespace Squash.SqlServer.Migrations
                     b.Property<string>("OrganizationCode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Regulations")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SourceUrls")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TournamentSource")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Tournaments");
+                });
+
+            modelBuilder.Entity("Squash.DataAccess.Entities.TournamentCourt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourtId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LastOperationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourtId");
+
+                    b.HasIndex("TournamentId");
+
+                    b.ToTable("TournamentCourts");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.TournamentDay", b =>
@@ -457,6 +512,38 @@ namespace Squash.SqlServer.Migrations
                     b.HasIndex("TournamentId");
 
                     b.ToTable("TournamentDays");
+                });
+
+            modelBuilder.Entity("Squash.DataAccess.Entities.TournamentVenue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LastOperationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VenueId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TournamentId");
+
+                    b.HasIndex("VenueId");
+
+                    b.ToTable("TournamentVenues");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.User", b =>
@@ -516,6 +603,9 @@ namespace Squash.SqlServer.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int?>("PlayerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("StripeCustomerId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
@@ -533,18 +623,83 @@ namespace Squash.SqlServer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("IdentityUserId")
+                        .IsUnique();
+
+                    b.HasIndex("PlayerId")
+                        .IsUnique()
+                        .HasFilter("[PlayerId] IS NOT NULL");
+
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Address = "System",
+                            BirthDate = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            City = "System",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "system@squash.local",
+                            EmailNotificationsEnabled = false,
+                            IdentityUserId = "SYSTEM",
+                            LastOperationUserId = 0,
+                            Name = "System",
+                            Phone = "N/A",
+                            Verified = true,
+                            Zip = "0000"
+                        });
+                });
+
+            modelBuilder.Entity("Squash.DataAccess.Entities.Venue", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LastOperationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Venues");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Court", b =>
                 {
-                    b.HasOne("Squash.DataAccess.Entities.Tournament", "Tournament")
+                    b.HasOne("Squash.DataAccess.Entities.Venue", "Venue")
                         .WithMany("Courts")
-                        .HasForeignKey("TournamentId")
+                        .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Tournament");
+                    b.Navigation("Venue");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Draw", b =>
@@ -653,15 +808,23 @@ namespace Squash.SqlServer.Migrations
                     b.Navigation("Nationality");
                 });
 
-            modelBuilder.Entity("Squash.DataAccess.Entities.ReferredMatch", b =>
+            modelBuilder.Entity("Squash.DataAccess.Entities.PlayerTournament", b =>
                 {
-                    b.HasOne("Squash.DataAccess.Entities.Match", "Match")
-                        .WithMany()
-                        .HasForeignKey("MatchId")
+                    b.HasOne("Squash.DataAccess.Entities.Player", "Player")
+                        .WithMany("PlayerTournaments")
+                        .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Match");
+                    b.HasOne("Squash.DataAccess.Entities.Tournament", "Tournament")
+                        .WithMany("PlayerTournaments")
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Player");
+
+                    b.Navigation("Tournament");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Round", b =>
@@ -675,6 +838,36 @@ namespace Squash.SqlServer.Migrations
                     b.Navigation("Draw");
                 });
 
+            modelBuilder.Entity("Squash.DataAccess.Entities.Tournament", b =>
+                {
+                    b.HasOne("Squash.DataAccess.Entities.User", "User")
+                        .WithMany("Tournaments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Squash.DataAccess.Entities.TournamentCourt", b =>
+                {
+                    b.HasOne("Squash.DataAccess.Entities.Court", "Court")
+                        .WithMany("TournamentCourts")
+                        .HasForeignKey("CourtId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Squash.DataAccess.Entities.Tournament", "Tournament")
+                        .WithMany("TournamentCourts")
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Court");
+
+                    b.Navigation("Tournament");
+                });
+
             modelBuilder.Entity("Squash.DataAccess.Entities.TournamentDay", b =>
                 {
                     b.HasOne("Squash.DataAccess.Entities.Tournament", "Tournament")
@@ -686,9 +879,40 @@ namespace Squash.SqlServer.Migrations
                     b.Navigation("Tournament");
                 });
 
+            modelBuilder.Entity("Squash.DataAccess.Entities.TournamentVenue", b =>
+                {
+                    b.HasOne("Squash.DataAccess.Entities.Tournament", "Tournament")
+                        .WithMany("TournamentVenues")
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Squash.DataAccess.Entities.Venue", "Venue")
+                        .WithMany("TournamentVenues")
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tournament");
+
+                    b.Navigation("Venue");
+                });
+
+            modelBuilder.Entity("Squash.DataAccess.Entities.User", b =>
+                {
+                    b.HasOne("Squash.DataAccess.Entities.Player", "Player")
+                        .WithOne("User")
+                        .HasForeignKey("Squash.DataAccess.Entities.User", "PlayerId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Player");
+                });
+
             modelBuilder.Entity("Squash.DataAccess.Entities.Court", b =>
                 {
                     b.Navigation("Matches");
+
+                    b.Navigation("TournamentCourts");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Draw", b =>
@@ -713,6 +937,13 @@ namespace Squash.SqlServer.Migrations
                     b.Navigation("Players");
                 });
 
+            modelBuilder.Entity("Squash.DataAccess.Entities.Player", b =>
+                {
+                    b.Navigation("PlayerTournaments");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Squash.DataAccess.Entities.Round", b =>
                 {
                     b.Navigation("Matches");
@@ -720,18 +951,34 @@ namespace Squash.SqlServer.Migrations
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Tournament", b =>
                 {
-                    b.Navigation("Courts");
-
                     b.Navigation("Days");
 
                     b.Navigation("Draws");
 
                     b.Navigation("Matches");
+
+                    b.Navigation("PlayerTournaments");
+
+                    b.Navigation("TournamentCourts");
+
+                    b.Navigation("TournamentVenues");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.TournamentDay", b =>
                 {
                     b.Navigation("Matches");
+                });
+
+            modelBuilder.Entity("Squash.DataAccess.Entities.User", b =>
+                {
+                    b.Navigation("Tournaments");
+                });
+
+            modelBuilder.Entity("Squash.DataAccess.Entities.Venue", b =>
+                {
+                    b.Navigation("Courts");
+
+                    b.Navigation("TournamentVenues");
                 });
 #pragma warning restore 612, 618
         }

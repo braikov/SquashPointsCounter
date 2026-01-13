@@ -14,40 +14,122 @@
 
             <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
 
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label"></label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <svg class="icon"><use xlink:href="/images/icons.svg#cil-user"></use></svg>
-                    </span>
-                    <input asp-for="Email" class="form-control" placeholder="user@example.com" />
+            <div class="card">
+                <div class="card-header bg-primary bg-opacity-10">
+                    <strong>Account info</strong>
                 </div>
-                <span asp-validation-for="Email" class="text-danger small"></span>
+                <div class="card-body">
+                    <div class="row gx-3">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text" aria-hidden="true">
+                                    <svg class="icon"><use xlink:href="/images/icons.svg#cil-envelope-open"></use></svg>
+                                </span>
+                                <input asp-for="Email" class="form-control" placeholder="name@example.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Password" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text" aria-hidden="true">
+                                    <svg class="icon"><use xlink:href="/images/icons.svg#cil-lock-locked"></use></svg>
+                                </span>
+                                <input asp-for="Password" class="form-control" placeholder="New password" />
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ConfirmPassword" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text" aria-hidden="true">
+                                    <svg class="icon"><use xlink:href="/images/icons.svg#cil-lock-locked"></use></svg>
+                                </span>
+                                <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm password" />
+                            </div>
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Password" class="form-label"></label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <svg class="icon"><use xlink:href="/images/icons.svg#cil-lock-locked"></use></svg>
-                    </span>
-                    <input asp-for="Password" class="form-control" placeholder="New password" />
+            <div class="card mt-4">
+                <div class="card-header bg-primary bg-opacity-10">
+                    <strong>Personal info</strong>
                 </div>
-                <span asp-validation-for="Password" class="text-danger small"></span>
-            </div>
+                <div class="card-body">
+                    <div class="row gx-3">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text" aria-hidden="true">
+                                    <svg class="icon"><use xlink:href="/images/icons.svg#cil-user"></use></svg>
+                                </span>
+                                <input asp-for="Name" class="form-control" placeholder="Full name" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
 
-            <div class="mb-3">
-                <label asp-for="ConfirmPassword" class="form-label"></label>
-                <div class="input-group">
-                    <span class="input-group-text">
-                        <svg class="icon"><use xlink:href="/images/icons.svg#cil-lock-locked"></use></svg>
-                    </span>
-                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm password" />
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Phone" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text" aria-hidden="true">
+                                    <svg class="icon"><use xlink:href="/images/icons.svg#cil-phone"></use></svg>
+                                </span>
+                                <input asp-for="Phone" class="form-control" placeholder="555 123 4567" />
+                            </div>
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="BirthDate" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text" aria-hidden="true">
+                                    <svg class="icon"><use xlink:href="/images/icons.svg#cil-calendar"></use></svg>
+                                </span>
+                                <input asp-for="BirthDate" class="form-control" type="date" />
+                            </div>
+                            <span asp-validation-for="BirthDate" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Zip" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text" aria-hidden="true">
+                                    <svg class="icon"><use xlink:href="/images/icons.svg#cil-barcode"></use></svg>
+                                </span>
+                                <input asp-for="Zip" class="form-control" placeholder="Postal / ZIP code" />
+                            </div>
+                            <span asp-validation-for="Zip" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="City" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text" aria-hidden="true">
+                                    <svg class="icon"><use xlink:href="/images/icons.svg#cil-location-pin"></use></svg>
+                                </span>
+                                <input asp-for="City" class="form-control" placeholder="City" />
+                            </div>
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12 mb-3">
+                            <label asp-for="Address" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text" aria-hidden="true">
+                                    <svg class="icon"><use xlink:href="/images/icons.svg#cil-home"></use></svg>
+                                </span>
+                                <input asp-for="Address" class="form-control" placeholder="Street address, apartment, etc." />
+                            </div>
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+                    </div>
                 </div>
-                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
             </div>
-
-            <hr />
 
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Create</button>

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Squash.DataAccess;
+using Squash.Shared.Logging;
 using Squash.SqlServer;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -35,6 +36,9 @@ namespace Squash.Processors
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{environment}.{Environment.MachineName}.json", optional: true, reloadOnChange: true)
                 .Build();
+
+            var connectionString = _configuration.GetConnectionString("DataContext");
+            Log4NetTableEnsurer.Ensure(connectionString ?? string.Empty);
 
             var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly()!);
             var log4NetConfigFile = new FileInfo($"log4net.{environment}.{Environment.MachineName}.config");

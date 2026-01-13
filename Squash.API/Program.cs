@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Squash.DataAccess;
 using Squash.Identity;
 using System.Text.Json.Serialization;
+using Squash.Shared.Logging;
 using SquashDataContext = Squash.SqlServer.DataContext;
 
 namespace Squash.API
@@ -41,6 +42,7 @@ namespace Squash.API
 
                 string? connectionString = builder.Configuration.GetConnectionString("DataContext");
                 ArgumentException.ThrowIfNullOrEmpty(connectionString);
+                Log4NetTableEnsurer.Ensure(connectionString);
 
                 builder.Services
                     .AddApiVersioning(options =>

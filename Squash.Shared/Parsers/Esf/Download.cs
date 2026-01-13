@@ -11,7 +11,32 @@ namespace Squash.Shared.Parsers.Esf
 {
     public static class Download
     {
-        public static void DownloadParseAndStore(string[] urls)
+        public static TournamentParseResult DownloadAndParseTournament(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                throw new ArgumentException("URL is required.", nameof(url));
+            }
+
+            var html = Squash.Shared.Downloader.Download(url);
+            var parser = new TournamentParser();
+            var result = parser.Parse(html);
+
+            var tournamentId = ExtractTournamentId(url);
+            result.Tournament.ExternalCode = tournamentId.ToString();
+            result.Tournament.SourceUrls = url;
+            result.Tournament.TournamentSource = TournamentSource.Esf;
+
+            using var dbContext = CreateDataContext();
+            CreateOrUpdateTournament(dbContext, result.Tournament, result.ContactName, result.ContactEmail, result.ContactPhone);
+            if (result.Venues.Count > 0)
+            {
+                SaveVenuesAndLinks(dbContext, result.Tournament.Id, result.Venues);
+            }
+
+            return result;
+        }
+        public static void DownloadParseAndStoreMatches(string[] urls)
         {
             if (urls == null)
             {
@@ -62,6 +87,50 @@ namespace Squash.Shared.Parsers.Esf
             return new DataContext(optionsBuilder.Options);
         }
 
+        private static void SaveVenuesAndLinks(IDataContext dbContext, int tournamentId, IEnumerable<Venue> venues)
+        {
+            foreach (var venue in venues)
+            {
+                if (string.IsNullOrWhiteSpace(venue.Name))
+                {
+                    continue;
+                }
+
+                var existingVenue = dbContext.Venues.FirstOrDefault(v => v.Name == venue.Name);
+                if (existingVenue == null)
+                {
+                    existingVenue = new Venue
+                    {
+                        Name = venue.Name,
+                        Address = venue.Address
+                    };
+                    dbContext.Venues.Add(existingVenue);
+                    dbContext.SaveChanges();
+                }
+
+                if (!string.IsNullOrWhiteSpace(venue.Address))
+                {
+                    existingVenue.Address = venue.Address;
+                }
+                existingVenue.Latitude = venue.Latitude;
+                existingVenue.Longitude = venue.Longitude;
+                dbContext.SaveChanges();
+                venue.Id = existingVenue.Id;
+
+                var linkExists = dbContext.TournamentVenues
+                    .Any(tv => tv.TournamentId == tournamentId && tv.VenueId == existingVenue.Id);
+                if (!linkExists)
+                {
+                    dbContext.TournamentVenues.Add(new TournamentVenue
+                    {
+                        TournamentId = tournamentId,
+                        VenueId = existingVenue.Id
+                    });
+                    dbContext.SaveChanges();
+                }
+            }
+        }
+
         private static void SaveResult(IDataContext dbContext, DayMatchesParseResult result)
         {
             // Rule 1 do not set collection navigation properties. Work only with foreign keys.
@@ -74,13 +143,16 @@ namespace Squash.Shared.Parsers.Esf
             // Find nationalities in database, create if not exists. Update result.Nationalities' NationalityId.
             CreateOrUpdateNationalities(dbContext, result.Nationalities);
             // Find courts in database, create if not exists. Update result.Courts' CourtId.
-            CreateOrUpdateCourts(dbContext, result.Courts, result.Tournament.Id);
+            var venueId = ResolveTournamentVenue(dbContext, result.Tournament);
+            CreateOrUpdateCourts(dbContext, result.Courts, venueId);
+            EnsureTournamentVenue(dbContext, result.Tournament.Id, venueId);
+            EnsureTournamentCourts(dbContext, result.Tournament.Id, result.Courts);
             // Find draws in database, create if not exists. Update result.Draws' DrawId.
             CreateOrUpdateDraws(dbContext, result.Draws, result.Tournament.Id);
             // Find rounds in database, create if not exists. Update result.Rounds' RoundId.
             CreateOrUpdateRounds(dbContext, result.Rounds);
             // Find players in database, create if not exists. Update result.Players' PlayerId.
-            CreateOrUpdatePlayers(dbContext, result.Players);
+            CreateOrUpdatePlayers(dbContext, result.Players, result.Tournament.Id);
             // Find matches in database, create if not exists. Update result.Matches' MatchId.
             CreateOrUpdateMatches(dbContext, result.Matches, result.Tournament.Id, result.TournamentDay.Id);
             // Find match games in database, create if not exists. Update result.Games' MatchGameId.
@@ -88,22 +160,7 @@ namespace Squash.Shared.Parsers.Esf
 
             static void CreateOrUpdateTournament(IDataContext dbContext, Tournament tournament)
             {
-                var existingTournament = dbContext.Tournaments
-                    .FirstOrDefault(t => t.ExternalCode == tournament.ExternalCode);
-
-                if (existingTournament == null)
-                {
-                    existingTournament = new Tournament
-                    {
-                        ExternalCode = tournament.ExternalCode
-                    };
-                    dbContext.Tournaments.Add(existingTournament);
-                }
-                existingTournament.Name = tournament.Name;
-                existingTournament.OrganizationCode = tournament.OrganizationCode;
-
-                dbContext.SaveChanges();
-                tournament.Id = existingTournament.Id;
+                Download.CreateOrUpdateTournament(dbContext, tournament);
             }
 
             static void CreateOrUpdateTournamentDay(IDataContext dbContext, TournamentDay tournamentDay, int tournamentId)
@@ -156,7 +213,7 @@ namespace Squash.Shared.Parsers.Esf
                 }
             }
 
-            static void CreateOrUpdateCourts(IDataContext dbContext, IEnumerable<Court> courts, int tournamentId)
+            static void CreateOrUpdateCourts(IDataContext dbContext, IEnumerable<Court> courts, int venueId)
             {
                 foreach (var court in courts)
                 {
@@ -166,13 +223,13 @@ namespace Squash.Shared.Parsers.Esf
                     }
 
                     var existingCourt = dbContext.Courts
-                        .FirstOrDefault(c => c.TournamentId == tournamentId && c.Name == court.Name);
+                        .FirstOrDefault(c => c.VenueId == venueId && c.Name == court.Name);
 
                     if (existingCourt == null)
                     {
                         existingCourt = new Court
                         {
-                            TournamentId = tournamentId,
+                            VenueId = venueId,
                             Name = court.Name
                         };
                         dbContext.Courts.Add(existingCourt);
@@ -180,9 +237,76 @@ namespace Squash.Shared.Parsers.Esf
 
                     dbContext.SaveChanges();
                     court.Id = existingCourt.Id;
-                    court.TournamentId = existingCourt.TournamentId;
+                    court.VenueId = existingCourt.VenueId;
                 }
             }
+
+            static int ResolveTournamentVenue(IDataContext dbContext, Tournament tournament)
+            {
+                var existingVenueId = dbContext.TournamentVenues
+                    .Where(tv => tv.TournamentId == tournament.Id)
+                    .Select(tv => tv.VenueId)
+                    .FirstOrDefault();
+                if (existingVenueId != 0)
+                {
+                    return existingVenueId;
+                }
+
+                var name = $"{tournament.Name} - Default Venue";
+                var existingVenue = dbContext.Venues
+                    .FirstOrDefault(v => v.Name == name);
+
+                if (existingVenue == null)
+                {
+                    existingVenue = new Venue
+                    {
+                        Name = name
+                    };
+                    dbContext.Venues.Add(existingVenue);
+                    dbContext.SaveChanges();
+                }
+
+                return existingVenue.Id;
+            }
+
+            static void EnsureTournamentVenue(IDataContext dbContext, int tournamentId, int venueId)
+            {
+                var exists = dbContext.TournamentVenues
+                    .Any(tv => tv.TournamentId == tournamentId && tv.VenueId == venueId);
+                if (!exists)
+                {
+                    dbContext.TournamentVenues.Add(new TournamentVenue
+                    {
+                        TournamentId = tournamentId,
+                        VenueId = venueId
+                    });
+                    dbContext.SaveChanges();
+                }
+            }
+
+            static void EnsureTournamentCourts(IDataContext dbContext, int tournamentId, IEnumerable<Court> courts)
+            {
+                foreach (var court in courts)
+                {
+                    if (court.Id == 0)
+                    {
+                        continue;
+                    }
+
+                    var exists = dbContext.TournamentCourts
+                        .Any(tc => tc.TournamentId == tournamentId && tc.CourtId == court.Id);
+                    if (!exists)
+                    {
+                        dbContext.TournamentCourts.Add(new TournamentCourt
+                        {
+                            TournamentId = tournamentId,
+                            CourtId = court.Id
+                        });
+                    }
+                }
+                dbContext.SaveChanges();
+            }
+
 
             static void CreateOrUpdateDraws(IDataContext dbContext, IEnumerable<Draw> draws, int tournamentId)
             {
@@ -248,13 +372,15 @@ namespace Squash.Shared.Parsers.Esf
                 }
             }
 
-            static void CreateOrUpdatePlayers(IDataContext dbContext, IEnumerable<Player> players)
+            static void CreateOrUpdatePlayers(IDataContext dbContext, IEnumerable<Player> players, int tournamentId)
             {
                 foreach (var player in players)
                 {
-                    var existingPlayer = player.ExternalPlayerId.HasValue
-                        ? dbContext.Players.FirstOrDefault(p => p.ExternalPlayerId == player.ExternalPlayerId)
-                        : dbContext.Players.FirstOrDefault(p => p.Name == player.Name);
+                    var existingPlayer = !string.IsNullOrWhiteSpace(player.EsfMemberId)
+                        ? dbContext.Players.FirstOrDefault(p => p.EsfMemberId == player.EsfMemberId)
+                        : (player.ExternalPlayerId.HasValue
+                            ? dbContext.Players.FirstOrDefault(p => p.ExternalPlayerId == player.ExternalPlayerId)
+                            : dbContext.Players.FirstOrDefault(p => p.Name == player.Name));
 
                     if (existingPlayer == null)
                     {
@@ -267,12 +393,24 @@ namespace Squash.Shared.Parsers.Esf
                     }
 
                     existingPlayer.Name = player.Name;
-                    existingPlayer.MemberId = player.MemberId;
+                    existingPlayer.EsfMemberId = player.EsfMemberId;
                     existingPlayer.NationalityId = player.Nationality?.Id;
 
                     dbContext.SaveChanges();
                     player.Id = existingPlayer.Id;
                     player.NationalityId = existingPlayer.NationalityId;
+
+                    var linkExists = dbContext.PlayerTournaments
+                        .Any(pt => pt.PlayerId == existingPlayer.Id && pt.TournamentId == tournamentId);
+                    if (!linkExists)
+                    {
+                        dbContext.PlayerTournaments.Add(new PlayerTournament
+                        {
+                            PlayerId = existingPlayer.Id,
+                            TournamentId = tournamentId
+                        });
+                        dbContext.SaveChanges();
+                    }
                 }
             }
 
@@ -357,6 +495,146 @@ namespace Squash.Shared.Parsers.Esf
                     game.MatchId = existingGame.MatchId;
                 }
             }
+        }
+
+        private static void CreateOrUpdateTournament(
+            IDataContext dbContext,
+            Tournament tournament,
+            string? contactName = null,
+            string? contactEmail = null,
+            string? contactPhone = null)
+        {
+            var existingTournament = dbContext.Tournaments
+                .FirstOrDefault(t => t.ExternalCode == tournament.ExternalCode);
+
+            if (existingTournament == null)
+            {
+                existingTournament = new Tournament
+                {
+                    ExternalCode = tournament.ExternalCode
+                };
+                dbContext.Tournaments.Add(existingTournament);
+            }
+
+            var userId = existingTournament.UserId;
+            if (!string.IsNullOrWhiteSpace(contactEmail))
+            {
+                userId = ResolveOrCreateContactUser(dbContext, contactName, contactEmail, contactPhone);
+            }
+
+            if (userId == 0)
+            {
+                userId = dbContext.Users
+                    .Where(u => u.IdentityUserId == "SYSTEM")
+                    .Select(u => u.Id)
+                    .FirstOrDefault();
+            }
+
+            if (userId == 0)
+            {
+                throw new InvalidOperationException("Cannot import tournament without at least one User.");
+            }
+
+            existingTournament.UserId = userId;
+            if (!string.IsNullOrWhiteSpace(tournament.Name))
+            {
+                existingTournament.Name = tournament.Name;
+            }
+            if (!string.IsNullOrWhiteSpace(tournament.OrganizationCode))
+            {
+                existingTournament.OrganizationCode = tournament.OrganizationCode;
+            }
+            if (!string.IsNullOrWhiteSpace(tournament.SourceUrls))
+            {
+                existingTournament.SourceUrls = tournament.SourceUrls;
+            }
+            if (tournament.StartDate.HasValue)
+            {
+                existingTournament.StartDate = tournament.StartDate;
+            }
+            if (tournament.EndDate.HasValue)
+            {
+                existingTournament.EndDate = tournament.EndDate;
+            }
+            if (tournament.ClosingSigninDate.HasValue)
+            {
+                existingTournament.ClosingSigninDate = tournament.ClosingSigninDate;
+            }
+            if (!string.IsNullOrWhiteSpace(tournament.Regulations))
+            {
+                existingTournament.Regulations = tournament.Regulations;
+            }
+            existingTournament.TournamentSource = tournament.TournamentSource;
+
+            dbContext.SaveChanges();
+            tournament.Id = existingTournament.Id;
+        }
+
+        private static int ResolveOrCreateContactUser(
+            IDataContext dbContext,
+            string? contactName,
+            string contactEmail,
+            string? contactPhone)
+        {
+            var existingUser = dbContext.Users.FirstOrDefault(u => u.Email == contactEmail);
+            if (existingUser == null)
+            {
+                existingUser = new User
+                {
+                    IdentityUserId = $"ESF:{contactEmail.ToLowerInvariant()}",
+                    Name = string.IsNullOrWhiteSpace(contactName) ? contactEmail : contactName,
+                    Email = contactEmail,
+                    Phone = string.IsNullOrWhiteSpace(contactPhone) ? "N/A" : contactPhone,
+                    BirthDate = new DateTime(2000, 1, 1),
+                    Zip = "0000",
+                    City = "Unknown",
+                    Address = "Unknown",
+                    Verified = false,
+                    EmailNotificationsEnabled = false,
+                    DateCreated = DateTime.UtcNow,
+                    DateUpdated = DateTime.UtcNow,
+                    LastOperationUserId = 0
+                };
+                dbContext.Users.Add(existingUser);
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(contactName))
+                {
+                    existingUser.Name = contactName;
+                }
+
+                if (!string.IsNullOrWhiteSpace(contactPhone))
+                {
+                    existingUser.Phone = contactPhone;
+                }
+
+                existingUser.DateUpdated = DateTime.UtcNow;
+            }
+
+            dbContext.SaveChanges();
+            return existingUser.Id;
+        }
+
+        private static Guid ExtractTournamentId(string url)
+        {
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            {
+                throw new InvalidOperationException("Invalid tournament URL.");
+            }
+
+            var segments = uri.AbsolutePath.Trim('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
+            if (segments.Length != 2 || !string.Equals(segments[0], "tournament", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("Invalid tournament URL.");
+            }
+
+            if (!Guid.TryParse(segments[1], out var id))
+            {
+                throw new InvalidOperationException("Invalid tournament URL.");
+            }
+
+            return id;
         }
     }
 }

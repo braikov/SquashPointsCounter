@@ -29,7 +29,8 @@ namespace Squash.Shared.Parsers.Esf
             var tournament = new Tournament
             {
                 ExternalCode = tournamentCode ?? string.Empty,
-                Name = tournamentName ?? string.Empty
+                Name = tournamentName ?? string.Empty,
+                TournamentSource = TournamentSource.Esf
             };
 
             var tournamentDay = new TournamentDay
@@ -130,13 +131,11 @@ namespace Squash.Shared.Parsers.Esf
                     {
                         court = new Court
                         {
-                            Name = courtName,
-                            Tournament = result.Tournament!
+                            Name = courtName
                         };
 
                         courtsByKey[courtKey] = court;
                         result.Courts.Add(court);
-                        result.Tournament.Courts.Add(court);
                     }
 
                     match.Court = court;
@@ -181,9 +180,9 @@ namespace Squash.Shared.Parsers.Esf
 
                     if (h2hParams.TryGetValue("T1P1MemberID", out var member1))
                     {
-                        if (player1 != null && string.IsNullOrWhiteSpace(player1.MemberId))
+                        if (player1 != null && string.IsNullOrWhiteSpace(player1.EsfMemberId))
                         {
-                            player1.MemberId = member1;
+                            player1.EsfMemberId = member1;
                         }
                     }
                     else
@@ -193,9 +192,9 @@ namespace Squash.Shared.Parsers.Esf
 
                     if (h2hParams.TryGetValue("T2P1MemberID", out var member2))
                     {
-                        if (player2 != null && string.IsNullOrWhiteSpace(player2.MemberId))
+                        if (player2 != null && string.IsNullOrWhiteSpace(player2.EsfMemberId))
                         {
-                            player2.MemberId = member2;
+                            player2.EsfMemberId = member2;
                         }
                     }                   
                     else

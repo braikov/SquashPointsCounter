@@ -46,5 +46,9 @@ namespace Squash.DataAccess.Entities
 
         [MaxLength(128)]
         public string? StripeCustomerId { get; set; }
+
+        public ICollection<Tournament> Tournaments { get; set; } = new List<Tournament>();
+        public int? PlayerId { get; set; }
+        public Player? Player { get; set; }
     }
 }

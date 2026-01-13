@@ -17,7 +17,7 @@ namespace Squash.Processors
             "https://esf.tournamentsoftware.com/tournament/e29aff47-d6af-4fd6-a5ae-4d2e918b397a/matches/20250106",
             };
 
-            Download.DownloadParseAndStore(days);
+            Download.DownloadParseAndStoreMatches(days);
         }
     }
 }

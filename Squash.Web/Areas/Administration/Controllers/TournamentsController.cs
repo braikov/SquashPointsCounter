@@ -9,14 +9,9 @@ namespace Squash.Web.Areas.Administration.Controllers
 {
     [Area("Administration")]
     [Authorize]
-    public class TournamentsController : Controller
+    public class TournamentsController(IDataContext dataContext) : Controller
     {
-        private readonly IDataContext _dataContext;
-
-        public TournamentsController(IDataContext dataContext)
-        {
-            _dataContext = dataContext;
-        }
+        private readonly IDataContext _dataContext = dataContext;
 
         public IActionResult Index()
         {
@@ -29,7 +24,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                     OrganizationCode = t.OrganizationCode,
                     DaysCount = t.Days.Count,
                     DrawsCount = t.Draws.Count,
-                    CourtsCount = t.Courts.Count,
+                    CourtsCount = t.TournamentCourts.Count,
                     MatchesCount = t.Matches.Count,
                     FirstDayId = t.Days
                         .OrderBy(d => d.Date)
@@ -149,26 +144,40 @@ namespace Squash.Web.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Imports(EsfImportsViewModel model)
         {
-            var urls = (model.Urls ?? string.Empty)
-                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-            var invalidUrls = urls.Where(url => !IsValidEsfDayUrl(url)).ToList();
-            if (invalidUrls.Count > 0)
+            var tournamentUrl = model.TournamentUrl?.Trim() ?? string.Empty;
+            if (!IsValidEsfTournamentUrl(tournamentUrl, out var tournamentId))
             {
-                model.ErrorMessage = "Invalid URL(s): " + string.Join(", ", invalidUrls);
-                return View(model);
-            }
-
-            if (urls.Length == 0)
-            {
-                model.ErrorMessage = "Please enter at least one URL.";
+                model.ErrorMessage = "Invalid tournament URL.";
                 return View(model);
             }
 
             var timeout = TimeSpan.FromMinutes(5);
             try
             {
-                await Task.Run(() => Squash.Shared.Parsers.Esf.Download.DownloadParseAndStore(urls))
+                var parseResult = await Task.Run(() => Squash.Shared.Parsers.Esf.Download.DownloadAndParseTournament(tournamentUrl))
+                    .WaitAsync(timeout);
+
+                if (parseResult.Tournament.StartDate == null || parseResult.Tournament.EndDate == null)
+                {
+                    model.ErrorMessage = "Tournament dates are missing in the source.";
+                    return View(model);
+                }
+
+                var start = parseResult.Tournament.StartDate.Value.Date;
+                var end = parseResult.Tournament.EndDate.Value.Date;
+                if (end < start)
+                {
+                    model.ErrorMessage = "Tournament end date is before start date.";
+                    return View(model);
+                }
+
+                var urls = new List<string>();
+                for (var date = start; date <= end; date = date.AddDays(1))
+                {
+                    urls.Add($"https://esf.tournamentsoftware.com/tournament/{tournamentId}/matches/{date:yyyyMMdd}");
+                }
+
+                await Task.Run(() => Squash.Shared.Parsers.Esf.Download.DownloadParseAndStoreMatches(urls.ToArray()))
                     .WaitAsync(timeout);
             }
             catch (TimeoutException)
@@ -185,8 +194,9 @@ namespace Squash.Web.Areas.Administration.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private static bool IsValidEsfDayUrl(string url)
+        private static bool IsValidEsfTournamentUrl(string url, out Guid tournamentId)
         {
+            tournamentId = Guid.Empty;
             if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
             {
                 return false;
@@ -203,7 +213,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             }
 
             var segments = uri.AbsolutePath.Trim('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
-            if (segments.Length != 4)
+            if (segments.Length != 2)
             {
                 return false;
             }
@@ -213,17 +223,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 return false;
             }
 
-            if (!Guid.TryParse(segments[1], out _))
-            {
-                return false;
-            }
-
-            if (!string.Equals(segments[2], "matches", StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            return segments[3].Length == 8 && segments[3].All(char.IsDigit);
+            return Guid.TryParse(segments[1], out tournamentId);
         }
     }
 }
