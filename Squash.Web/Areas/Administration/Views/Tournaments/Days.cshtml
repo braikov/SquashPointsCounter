@@ -1,0 +1,131 @@
+@using System.Globalization
+@model Squash.Web.Areas.Administration.Models.TournamentDayScheduleViewModel
+
+@{
+    ViewData["Title"] = "Tournament Days";
+    var culture = new CultureInfo("en-GB");
+    var matchGroups = Model.Matches
+        .GroupBy(m => string.IsNullOrWhiteSpace(m.Time) ? "-" : m.Time)
+        .OrderBy(g => g.Key)
+        .ToList();
+}
+
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3 mb-1">Match schedule</h1>
+        <div class="text-medium-emphasis">
+            @(Model.SelectedDate.HasValue ? Model.SelectedDate.Value.ToString("dddd, dd MMMM yyyy", culture) : "No day selected")
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="tournament-days">
+            @if (Model.Days.Count == 0)
+            {
+                <div class="text-medium-emphasis">No days available.</div>
+            }
+            else
+            {
+                foreach (var day in Model.Days)
+                {
+                    <a class="tournament-day @(day.IsSelected ? "is-active" : "")"
+                       asp-area="Administration"
+                       asp-controller="Tournaments"
+                       asp-action="Days"
+                       asp-route-id="@Model.TournamentId"
+                       asp-route-dayId="@day.Id">
+                        <span class="tournament-day-week">@day.Date.ToString("ddd", culture)</span>
+                        <span class="tournament-day-number">@day.Date.ToString("dd", culture)</span>
+                        <span class="tournament-day-month">@day.Date.ToString("MMM", culture)</span>
+                    </a>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        @if (Model.Matches.Count == 0)
+        {
+            <div class="text-medium-emphasis">No matches for this day.</div>
+        }
+        else
+        {
+            <div class="match-list">
+                @foreach (var group in matchGroups)
+                {
+                    <div class="match-time-block">
+                        <div class="match-time">@group.Key</div>
+                        <div class="match-items">
+                            @foreach (var match in group)
+                            {
+                                <div class="match-card">
+                                    <div class="match-card-header">
+                                        <div class="match-card-title">@match.Draw</div>
+                                        <div class="match-card-sub">@match.Round</div>
+                                        <div class="match-card-meta">
+                                            @if (!string.IsNullOrWhiteSpace(match.Court))
+                                            {
+                                                <span class="match-pill">@match.Court</span>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(match.Status))
+                                            {
+                                                <span class="match-pill match-pill-muted">@match.Status</span>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(match.PinCode) && !(match.IsFinished && match.Games.Count > 0))
+                                            {
+                                                <a class="match-pill match-pill-action" href="/m?pin=@match.PinCode" target="_blank" rel="noopener">Open in kiosk</a>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="match-card-body">
+                                        <div class="match-card-players">
+                                            <div class="match-player @(match.Player1IsWinner ? "is-winner" : "")">
+                                                @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
+                                                {
+                                                    <img class="match-player-flag" src="@match.Player1FlagUrl" alt="" />
+                                                }
+                                                <span class="match-player-name">@match.Player1</span>
+                                            </div>
+                                            <span class="match-player-separator">-</span>
+                                            <div class="match-player @(match.Player2IsWinner ? "is-winner" : "")">
+                                                @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
+                                                {
+                                                    <img class="match-player-flag" src="@match.Player2FlagUrl" alt="" />
+                                                }
+                                                <span class="match-player-name">@match.Player2</span>
+                                            </div>
+                                        </div>
+                                        @if (match.IsFinished && match.Games.Count > 0)
+                                        {
+                                            <div class="match-card-results">
+                                                @foreach (var game in match.Games)
+                                                {
+                                                    <div class="match-game">
+                                                        <div class="match-game-score @(game.WinnerSide == 1 ? "is-winner" : "")">
+                                                            @(game.Side1Points?.ToString() ?? string.Empty)
+                                                        </div>
+                                                        <div class="match-game-score @(game.WinnerSide == 2 ? "is-winner" : "")">
+                                                            @(game.Side2Points?.ToString() ?? string.Empty)
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                        else if (!string.IsNullOrWhiteSpace(match.PinCode))
+                                        {
+                                            <div class="match-card-pin">@match.PinCode.ToUpperInvariant()</div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

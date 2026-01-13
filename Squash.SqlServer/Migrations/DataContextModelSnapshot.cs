@@ -234,6 +234,33 @@ namespace Squash.SqlServer.Migrations
                     b.ToTable("MatchGames");
                 });
 
+            modelBuilder.Entity("Squash.DataAccess.Entities.MatchGameEventLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<int>("Event")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsPoint")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsValid")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MatchGameId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MatchGameId");
+
+                    b.ToTable("MatchGameEventLogs");
+                });
+
             modelBuilder.Entity("Squash.DataAccess.Entities.Nationality", b =>
                 {
                     b.Property<int>("Id")
@@ -432,6 +459,83 @@ namespace Squash.SqlServer.Migrations
                     b.ToTable("TournamentDays");
                 });
 
+            modelBuilder.Entity("Squash.DataAccess.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("BadgeId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailNotificationsEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("IdentityUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("LastOperationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTime?>("VerificationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("Verified")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Zip")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("Squash.DataAccess.Entities.Court", b =>
                 {
                     b.HasOne("Squash.DataAccess.Entities.Tournament", "Tournament")
@@ -529,6 +633,17 @@ namespace Squash.SqlServer.Migrations
                     b.Navigation("Match");
                 });
 
+            modelBuilder.Entity("Squash.DataAccess.Entities.MatchGameEventLog", b =>
+                {
+                    b.HasOne("Squash.DataAccess.Entities.MatchGame", "MatchGame")
+                        .WithMany("EventLogs")
+                        .HasForeignKey("MatchGameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MatchGame");
+                });
+
             modelBuilder.Entity("Squash.DataAccess.Entities.Player", b =>
                 {
                     b.HasOne("Squash.DataAccess.Entities.Nationality", "Nationality")
@@ -586,6 +701,11 @@ namespace Squash.SqlServer.Migrations
             modelBuilder.Entity("Squash.DataAccess.Entities.Match", b =>
                 {
                     b.Navigation("Games");
+                });
+
+            modelBuilder.Entity("Squash.DataAccess.Entities.MatchGame", b =>
+                {
+                    b.Navigation("EventLogs");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Nationality", b =>

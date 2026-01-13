@@ -84,6 +84,8 @@ namespace Squash.Web
                 app.UseAuthentication();
                 app.UseAuthorization();
 
+                ApplyMigrations(app);
+
                 app.MapControllers();
 
                 app.MapControllerRoute(
@@ -130,6 +132,74 @@ namespace Squash.Web
                     x.MigrationsAssembly(typeof(DataContext).Assembly);
                     x.UseCompatibilityLevel(CompatibilityLevel2008RC2);
                 }));
+        }
+
+        private static void ApplyMigrations(WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            var services = scope.ServiceProvider;
+
+            var dataContext = services.GetRequiredService<DataContext>();
+            dataContext.Database.Migrate();
+
+            var identityContext = services.GetRequiredService<ApplicationDbContext>();
+            identityContext.Database.Migrate();
+
+            SeedAdminUser(services);
+        }
+
+        private static void SeedAdminUser(IServiceProvider services)
+        {
+            const string adminRole = "Administrator";
+            const string adminEmail = "miroslav.braikov@gmail.com";
+            const string adminPassword = "!@#qweASD1";
+
+            var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            if (!roleManager.RoleExistsAsync(adminRole).GetAwaiter().GetResult())
+            {
+                var roleResult = roleManager.CreateAsync(new IdentityRole(adminRole)).GetAwaiter().GetResult();
+                if (!roleResult.Succeeded)
+                {
+                    Log.Warn($"Failed to seed role {adminRole}: {string.Join(", ", roleResult.Errors.Select(e => e.Description))}");
+                }
+            }
+
+            var existingUser = userManager.FindByEmailAsync(adminEmail).GetAwaiter().GetResult();
+            if (existingUser != null)
+            {
+                var alreadyAdmin = userManager.IsInRoleAsync(existingUser, adminRole).GetAwaiter().GetResult();
+                if (!alreadyAdmin)
+                {
+                    var addRoleResult = userManager.AddToRoleAsync(existingUser, adminRole).GetAwaiter().GetResult();
+                    if (!addRoleResult.Succeeded)
+                    {
+                        Log.Warn($"Failed to add user {adminEmail} to {adminRole}: {string.Join(", ", addRoleResult.Errors.Select(e => e.Description))}");
+                    }
+                }
+                return;
+            }
+
+            var user = new IdentityUser
+            {
+                UserName = adminEmail,
+                Email = adminEmail,
+                EmailConfirmed = true
+            };
+
+            var result = userManager.CreateAsync(user, adminPassword).GetAwaiter().GetResult();
+            if (result.Succeeded)
+            {
+                var addRoleResult = userManager.AddToRoleAsync(user, adminRole).GetAwaiter().GetResult();
+                if (!addRoleResult.Succeeded)
+                {
+                    Log.Warn($"Failed to add user {adminEmail} to {adminRole}: {string.Join(", ", addRoleResult.Errors.Select(e => e.Description))}");
+                }
+                Log.Info($"Seeded admin user {adminEmail}");
+                return;
+            }
+
+            Log.Warn($"Failed to seed admin user {adminEmail}: {string.Join(", ", result.Errors.Select(e => e.Description))}");
         }
     }
 }

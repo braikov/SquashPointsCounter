@@ -1,0 +1,48 @@
+@model IReadOnlyList<AdminListViewModel>
+
+@{
+    ViewData["Title"] = "Admins";
+}
+
+<div class="card mb-4">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <strong>Admins</strong>
+        <a class="btn btn-sm btn-primary" asp-area="Administration" asp-controller="Admins" asp-action="Create">Add admin</a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>Locked</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-body-secondary">No admins found.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var admin in Model)
+                        {
+                            <tr>
+                                <td>@admin.UserName</td>
+                                <td>@admin.Email</td>
+                                <td>@admin.Locked</td>
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-outline-primary" asp-area="Administration" asp-controller="Admins" asp-action="Details" asp-route-id="@admin.Id">Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

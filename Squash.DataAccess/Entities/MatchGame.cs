@@ -9,5 +9,7 @@ namespace Squash.DataAccess.Entities
         public int? Side1Points { get; set; }
         public int? Side2Points { get; set; }
         public int? WinnerSide { get; set; }
+
+        public ICollection<MatchGameEventLog> EventLogs { get; set; } = new List<MatchGameEventLog>();
     }
 }

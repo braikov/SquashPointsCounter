@@ -17,7 +17,8 @@
           data-game-score-second="@Model.GameScoreSecond"
           data-current-game-score-first="@Model.CurrentGameScoreFirst"
           data-current-game-score-second="@Model.CurrentGameScoreSecond"
-          data-games-to-win="@Model.GamesToWin">
+          data-games-to-win="@Model.GamesToWin"
+          data-match-game-id="@Model.MatchGameId">
         @await Html.PartialAsync("_MatchHeader", Model)
 
         <section class="panel-stack" id="refereePanel">

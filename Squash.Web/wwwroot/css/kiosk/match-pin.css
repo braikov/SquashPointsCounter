@@ -185,6 +185,12 @@ body {
     cursor: pointer;
 }
 
+.panel.action-button {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
 @media (max-width: 420px) {
     .title {
         font-size: 22px;

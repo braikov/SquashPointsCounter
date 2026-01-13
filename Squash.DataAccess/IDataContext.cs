@@ -12,8 +12,10 @@ namespace Squash.DataAccess
         DbSet<Court> Courts { get; set; }
         DbSet<Nationality> Nationalities { get; set; }
         DbSet<Player> Players { get; set; }
+        DbSet<User> Users { get; set; }
         DbSet<Match> Matches { get; set; }
         DbSet<MatchGame> MatchGames { get; set; }
+        DbSet<MatchGameEventLog> MatchGameEventLogs { get; set; }
         DbSet<GameLog> GameLogs { get; set; }
         DbSet<ReferredMatch> ReferredMatches { get; set; }
 

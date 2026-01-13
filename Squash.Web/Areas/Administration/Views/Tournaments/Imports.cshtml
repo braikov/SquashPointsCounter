@@ -1,0 +1,30 @@
+@model EsfImportsViewModel
+
+@{
+    ViewData["Title"] = "Imports";
+}
+
+<div class="card">
+    <div class="card-header">
+        <strong>Imports</strong>
+    </div>
+    <div class="card-body">
+        <form asp-action="Imports" asp-controller="Tournaments" asp-area="Administration" method="post">
+            @Html.AntiForgeryToken()
+
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="alert alert-danger">@Model.ErrorMessage</div>
+            }
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Esf Tournament Day</label>
+                <textarea class="form-control" rows="10" name="Urls">@Model.Urls</textarea>
+            </div>
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">Import</button>
+            </div>
+        </form>
+    </div>
+</div>

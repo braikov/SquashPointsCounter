@@ -13,8 +13,10 @@ namespace Squash.SqlServer
         public DbSet<Court> Courts { get; set; }
         public DbSet<Nationality> Nationalities { get; set; }
         public DbSet<Player> Players { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Match> Matches { get; set; }
         public DbSet<MatchGame> MatchGames { get; set; }
+        public DbSet<MatchGameEventLog> MatchGameEventLogs { get; set; }
         public DbSet<GameLog> GameLogs { get; set; }
         public DbSet<ReferredMatch> ReferredMatches { get; set; }
 

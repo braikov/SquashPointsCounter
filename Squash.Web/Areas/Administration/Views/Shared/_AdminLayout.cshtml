@@ -1,0 +1,186 @@
+@using System.Linq
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    var currentArea = (ViewContext.RouteData.Values["area"] as string ?? "").ToLowerInvariant();
+    var currentController = (ViewContext.RouteData.Values["controller"] as string ?? "").ToLowerInvariant();
+    var currentAction = (ViewContext.RouteData.Values["action"] as string ?? "").ToLowerInvariant();
+    Func<string, bool> ctrlIs = c => !string.IsNullOrEmpty(c) && currentController == c.ToLowerInvariant();
+    Func<string[], bool> ctrlIn = arr => arr != null && arr.Any(x => ctrlIs(x));
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <title>@ViewData["Title"] - Admin</title>
+    <link rel="stylesheet" href="~/lib/coreui/dist/css/coreui.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/simplebar/dist/simplebar.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables.net-bs5/css/dataTables.bootstrap5.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" asp-append-version="true" />
+    @RenderSection("Styles", required: false)
+    <link rel="stylesheet" href="~/css/shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    @RenderSection("Head", required: false)
+</head>
+<body>
+    <div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
+        <div class="sidebar-header border-bottom">
+            <div class="sidebar-brand d-flex flex-row align-items-center">
+                <img src="~/images/logo-light.webp"
+                     alt="CoreUI Logo"
+                     class="sidebar-brand-full rounded-2"
+                     width="50" height="50" loading="lazy" />
+                <p class="ms-2 mb-0 fw-bold">Squash</p>
+            </div>
+            <button class="btn-close d-lg-none" type="button" data-coreui-theme="dark" aria-label="Close"
+                    onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()"></button>
+        </div>
+
+        <ul class="sidebar-nav" data-coreui="navigation" data-simplebar="">
+            <li class="nav-item">
+                <a class="nav-link" asp-area="Administration" asp-controller="Dashboard" asp-action="Index">
+                    <svg class="nav-icon"><use xlink:href="/images/icons.svg#cil-speedometer"></use></svg>
+                    Dashboard
+                </a>
+            </li>
+            <li class="nav-group @(ctrlIn(new[] { "users" }) ? "show" : "")"
+                aria-expanded="@(ctrlIn(new[] { "users" }) ? "true" : "false")">
+                <a class="nav-link nav-group-toggle" href="#">
+                    <svg class="nav-icon"><use xlink:href="/images/icons.svg#cil-user"></use></svg>
+                    User Management
+                </a>
+                <ul class="nav-group-items compact">
+                    <li class="nav-item">
+                        <a class="nav-link @(ctrlIs("users") ? "active" : "")" asp-area="Administration" asp-controller="Users" asp-action="Index">
+                            <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Users
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link @(ctrlIs("tournaments") ? "active" : "")" asp-area="Administration" asp-controller="Tournaments" asp-action="Index">
+                    <svg class="nav-icon"><use xlink:href="/images/icons.svg#cil-flag-alt"></use></svg>
+                    Tournaments
+                </a>
+            </li>
+            <li class="nav-group @(ctrlIn(new[] { "admins" }) ? "show" : "")"
+                aria-expanded="@(ctrlIn(new[] { "admins" }) ? "true" : "false")">
+                <a class="nav-link nav-group-toggle" href="#">
+                    <svg class="nav-icon"><use xlink:href="/images/icons.svg#cil-settings"></use></svg>
+                    System
+                </a>
+                <ul class="nav-group-items compact">
+                    <li class="nav-item">
+                        <a class="nav-link @(ctrlIs("admins") ? "active" : "")" asp-area="Administration" asp-controller="Admins" asp-action="Index">
+                            <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Admins
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="wrapper d-flex flex-column min-vh-100">
+        <header class="header header-sticky p-0 mb-4">
+            <div class="container-fluid border-bottom px-4">
+                <button class="header-toggler" type="button"
+                        onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()"
+                        style="margin-inline-start: -14px;">
+                    <svg class="icon icon-lg"><use xlink:href="/images/icons.svg#cil-menu"></use></svg>
+                </button>
+
+                <ul class="header-nav d-none d-lg-flex">
+                    <li class="nav-item"><a class="nav-link" asp-area="Administration" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-area="Administration" asp-controller="Users" asp-action="Index">Users</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-area="Administration" asp-controller="Tournaments" asp-action="Index">Tournaments</a></li>
+                </ul>
+
+                <ul class="header-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#"><svg class="icon icon-lg"><use xlink:href="/images/icons.svg#cil-bell"></use></svg></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><svg class="icon icon-lg"><use xlink:href="/images/icons.svg#cil-list-rich"></use></svg></a></li>
+                    <li class="nav-item"><a class="nav-link" href="#"><svg class="icon icon-lg"><use xlink:href="/images/icons.svg#cil-envelope-open"></use></svg></a></li>
+                </ul>
+
+                <ul class="header-nav">
+                    <li class="nav-item py-1">
+                        <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <button class="btn btn-link nav-link py-2 px-2 d-flex align-items-center" type="button" aria-expanded="false" data-coreui-toggle="dropdown">
+                            <svg class="icon icon-lg theme-icon-active"><use xlink:href="/images/icons.svg#cil-contrast"></use></svg>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" style="--cui-dropdown-min-width: 8rem;">
+                            <li><button class="dropdown-item d-flex align-items-center" type="button" data-coreui-theme-value="light"><svg class="icon icon-lg me-3"><use xlink:href="/images/icons.svg#cil-sun"></use></svg>Light</button></li>
+                            <li><button class="dropdown-item d-flex align-items-center" type="button" data-coreui-theme-value="dark"><svg class="icon icon-lg me-3"><use xlink:href="/images/icons.svg#cil-moon"></use></svg>Dark</button></li>
+                            <li><button class="dropdown-item d-flex align-items-center active" type="button" data-coreui-theme-value="auto"><svg class="icon icon-lg me-3"><use xlink:href="/images/icons.svg#cil-contrast"></use></svg>Auto</button></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item">
+                        <div class="vr h-100 mx-2 text-body text-opacity-75"></div>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link py-1" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                            <svg class="icon icon-lg"><use xlink:href="/images/icons.svg#cil-user"></use></svg>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-end pt-0">
+                            <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2">Account</div>
+
+                            <a class="dropdown-item" asp-area="Administration" asp-controller="Dashboard" asp-action="Index">
+                                <svg class="icon me-2"><use xlink:href="/images/icons.svg#cil-user"></use></svg>
+                                @((SignInManager.IsSignedIn(User) ? User.Identity?.Name : "Guest"))
+                            </a>
+
+                            <form method="post" asp-area="Identity" asp-controller="Account" asp-action="Logout" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="dropdown-item">
+                                    <svg class="icon me-2"><use xlink:href="/images/icons.svg#cil-account-logout"></use></svg> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+
+        <div class="body flex-grow-1">
+            <div class="container-lg px-4">
+                @RenderBody()
+            </div>
+        </div>
+
+        <footer class="footer px-4">
+            <div>&copy; @DateTime.Now.Year - Squash</div>
+            <div class="ms-auto">Powered by Squash</div>
+        </footer>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/coreui/dist/js/coreui.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/lib/simplebar/dist/simplebar.min.js" asp-append-version="true"></script>
+    <script src="~/coreui-admin/dist/js/config.js" asp-append-version="true"></script>
+    <script src="~/coreui-admin/dist/js/color-modes.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables.net/js/dataTables.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables.net-bs5/js/dataTables.bootstrap5.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables.net-responsive/js/dataTables.responsive.min.js" asp-append-version="true"></script>
+    <script src="~/lib/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js" asp-append-version="true"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+
+    <script>
+        document.addEventListener('scroll', () => {
+            const header = document.querySelector('header.header');
+            if (header) header.classList.toggle('shadow-sm', document.documentElement.scrollTop > 0);
+        });
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

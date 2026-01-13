@@ -1,0 +1,62 @@
+@model UserCreateViewModel
+
+@{
+    ViewData["Title"] = "Create user";
+}
+
+<div class="card mb-4">
+    <div class="card-header bg-primary bg-opacity-10">
+        <strong>Create User</strong>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" asp-controller="Users" asp-area="Administration" method="post" novalidate>
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <svg class="icon"><use xlink:href="/images/icons.svg#cil-user"></use></svg>
+                    </span>
+                    <input asp-for="Email" class="form-control" placeholder="user@example.com" />
+                </div>
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <svg class="icon"><use xlink:href="/images/icons.svg#cil-lock-locked"></use></svg>
+                    </span>
+                    <input asp-for="Password" class="form-control" placeholder="New password" />
+                </div>
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword" class="form-label"></label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <svg class="icon"><use xlink:href="/images/icons.svg#cil-lock-locked"></use></svg>
+                    </span>
+                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Confirm password" />
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+            </div>
+
+            <hr />
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-action="Index" asp-controller="Users" asp-area="Administration" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

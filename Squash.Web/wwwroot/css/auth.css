@@ -1,0 +1,21 @@
+﻿/* Helpful defaults for auth pages */
+.auth-card {
+    border-radius: .5rem;
+}
+
+.auth-left {
+    padding: 2rem;
+}
+
+.auth-right {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 767.98px) {
+    .auth-right {
+        padding: 1.5rem;
+    }
+}

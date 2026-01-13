@@ -25,12 +25,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="appsettings.Development.BGPCVANDREEV03.json">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <DependentUpon>appsettings.Development.json</DependentUpon>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</Content>
 		<Content Include="appsettings.Test.DESKTOP-RMST6S5.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
@@ -89,12 +83,6 @@
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 			<DependentUpon>log4net.Development.config</DependentUpon>
 		</Content>
-    <Content Include="log4net.Development.BGPCVANDREEV03.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <DependentUpon>log4net.Development.config</DependentUpon>
-    </Content>
     <Content Include="log4net.Release.config">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>

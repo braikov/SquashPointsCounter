@@ -28,7 +28,8 @@ namespace Squash.DataAccess.Entities
         ConductStrokeA = 21,
         ConductStrokeB = 22,
         EndGame = 23,
-        EndMatch = 24
+        EndMatch = 24,
+        StartMatch = 25
 
     }
 }

@@ -1,0 +1,174 @@
+@model UserDetailsViewModel
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<div class="card mb-4">
+    <div class="card-header bg-primary bg-opacity-10">
+        <strong>User Details</strong>
+    </div>
+    <div class="card-body">
+        <div class="card">
+            <div class="card-header bg-primary bg-opacity-10">
+                <strong>Account info</strong>
+            </div>
+            <div class="card-body">
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-envelope-open"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.Email" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-user"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.UserName" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Phone</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-phone"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.PhoneNumber" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Email verified</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-check"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.EmailConfirmed" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label">Verified</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-check"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.Verified" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Verification date</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-calendar"></use></svg>
+                            </span>
+                            <input class="form-control" value="@(string.IsNullOrWhiteSpace(Model.VerificationDate) ? "-" : Model.VerificationDate)" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label">Identity User ID</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-fingerprint"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.IdentityUserId" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-primary bg-opacity-10">
+                <strong>Personal info</strong>
+            </div>
+            <div class="card-body">
+                <div class="row gx-3">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Name</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-user"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.Name" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Phone</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-phone"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.Phone" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Birth date</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-calendar"></use></svg>
+                            </span>
+                            <input class="form-control" value="@(string.IsNullOrWhiteSpace(Model.BirthDate) ? "-" : Model.BirthDate)" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">ZIP</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-barcode"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.Zip" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">City</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-location-pin"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.City" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label class="form-label">Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-home"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.Address" readonly />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Badge ID</label>
+                        <div class="input-group">
+                            <span class="input-group-text" aria-hidden="true">
+                                <svg class="icon"><use xlink:href="/images/icons.svg#cil-badge"></use></svg>
+                            </span>
+                            <input class="form-control" value="@Model.BadgeId" readonly />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-3">
+            <a class="btn btn-secondary" asp-area="Administration" asp-controller="Users" asp-action="Index">Back</a>
+        </div>
+    </div>
+</div>

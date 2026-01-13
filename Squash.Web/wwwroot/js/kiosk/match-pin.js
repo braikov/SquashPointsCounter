@@ -61,7 +61,12 @@
         }
         var firstScore = match && typeof match.gameScoreFirst === "number" ? match.gameScoreFirst : 0;
         var secondScore = match && typeof match.gameScoreSecond === "number" ? match.gameScoreSecond : 0;
-        var label = (firstScore === 0 && secondScore === 0) ? "Start match" : "Resume match";
+        var currentFirst = match && typeof match.currentGameScoreFirst === "number" ? match.currentGameScoreFirst : 0;
+        var currentSecond = match && typeof match.currentGameScoreSecond === "number" ? match.currentGameScoreSecond : 0;
+        var hasActiveGame = match && typeof match.matchGameId === "number" && match.matchGameId > 0;
+        var hasEvents = match && Array.isArray(match.eventLogs) && match.eventLogs.length > 0;
+        var hasStarted = hasActiveGame || hasEvents || currentFirst > 0 || currentSecond > 0 || firstScore > 0 || secondScore > 0;
+        var label = hasStarted ? "Continue match" : "Start match";
         startMatchLink.textContent = label;
     }
 
@@ -76,6 +81,66 @@
             setActive(index);
         });
     });
+
+    function applyMatchResponse(code, data) {
+        if (!data || data.success !== true) {
+            if (pinError) {
+                pinError.style.display = "block";
+            }
+            resetPin();
+            return;
+        }
+
+        if (pinError) {
+            pinError.style.display = "none";
+        }
+
+        if (entryPanel && summaryPanel) {
+            entryPanel.classList.add("is-hidden");
+            summaryPanel.classList.remove("is-hidden");
+        }
+
+        lastPin = code;
+        sessionStorage.setItem("matchPin", code);
+        if (data.match) {
+            sessionStorage.setItem("matchData", JSON.stringify(data.match));
+        }
+        if (startMatchLink) {
+            startMatchLink.dataset.pin = code;
+            startMatchLink.setAttribute("href", "/kiosk/referee");
+        }
+
+        if (data.match) {
+            var playerOneName = document.getElementById("playerOneName");
+            var playerOneNation = document.getElementById("playerOneNation");
+            var playerOneFlag = document.getElementById("playerOneFlag");
+            var playerTwoName = document.getElementById("playerTwoName");
+            var playerTwoNation = document.getElementById("playerTwoNation");
+            var playerTwoFlag = document.getElementById("playerTwoFlag");
+            var matchDraw = document.getElementById("matchDraw");
+            var matchCourt = document.getElementById("matchCourt");
+
+            if (playerOneName) playerOneName.textContent = data.match.firstPlayer?.name || "";
+            if (playerOneNation) playerOneNation.textContent = data.match.firstPlayer?.nationality || "";
+            if (playerTwoName) playerTwoName.textContent = data.match.secondPlayer?.name || "";
+            if (playerTwoNation) playerTwoNation.textContent = data.match.secondPlayer?.nationality || "";
+            if (playerOneFlag) {
+                var flagOne = data.match.firstPlayer?.nationalityFlagUrl || "";
+                playerOneFlag.src = flagOne;
+                playerOneFlag.alt = data.match.firstPlayer?.nationality || "";
+                playerOneFlag.style.display = flagOne ? "block" : "none";
+            }
+            if (playerTwoFlag) {
+                var flagTwo = data.match.secondPlayer?.nationalityFlagUrl || "";
+                playerTwoFlag.src = flagTwo;
+                playerTwoFlag.alt = data.match.secondPlayer?.nationality || "";
+                playerTwoFlag.style.display = flagTwo ? "block" : "none";
+            }
+            if (matchDraw) matchDraw.textContent = data.match.draw || "";
+            if (matchCourt) matchCourt.textContent = data.match.court || "";
+            updateStartMatchLabel(data.match);
+        }
+    }
 
     keypad.addEventListener("click", function (event) {
         var target = event.target;
@@ -98,60 +163,7 @@
             fetch("/api/refferee/match?pin=" + encodeURIComponent(code))
                 .then(function (response) { return response.json(); })
                 .then(function (data) {
-                    if (!data || data.success !== true) {
-                        if (pinError) {
-                            pinError.style.display = "block";
-                        }
-                        resetPin();
-                        return;
-                    }
-
-                    if (pinError) {
-                        pinError.style.display = "none";
-                    }
-
-                    if (entryPanel && summaryPanel) {
-                        entryPanel.classList.add("is-hidden");
-                        summaryPanel.classList.remove("is-hidden");
-                    }
-
-                    lastPin = code;
-                    sessionStorage.setItem("matchPin", code);
-                    if (startMatchLink) {
-                        startMatchLink.dataset.pin = code;
-                        startMatchLink.setAttribute("href", "/kiosk/referee");
-                    }
-
-                    if (data.match) {
-                        var playerOneName = document.getElementById("playerOneName");
-                        var playerOneNation = document.getElementById("playerOneNation");
-                        var playerOneFlag = document.getElementById("playerOneFlag");
-                        var playerTwoName = document.getElementById("playerTwoName");
-                        var playerTwoNation = document.getElementById("playerTwoNation");
-                        var playerTwoFlag = document.getElementById("playerTwoFlag");
-                        var matchDraw = document.getElementById("matchDraw");
-                        var matchCourt = document.getElementById("matchCourt");
-
-                        if (playerOneName) playerOneName.textContent = data.match.firstPlayer?.name || "";
-                        if (playerOneNation) playerOneNation.textContent = data.match.firstPlayer?.nationality || "";
-                        if (playerTwoName) playerTwoName.textContent = data.match.secondPlayer?.name || "";
-                        if (playerTwoNation) playerTwoNation.textContent = data.match.secondPlayer?.nationality || "";
-                        if (playerOneFlag) {
-                            var flagOne = data.match.firstPlayer?.nationalityFlagUrl || "";
-                            playerOneFlag.src = flagOne;
-                            playerOneFlag.alt = data.match.firstPlayer?.nationality || "";
-                            playerOneFlag.style.display = flagOne ? "block" : "none";
-                        }
-                        if (playerTwoFlag) {
-                            var flagTwo = data.match.secondPlayer?.nationalityFlagUrl || "";
-                            playerTwoFlag.src = flagTwo;
-                            playerTwoFlag.alt = data.match.secondPlayer?.nationality || "";
-                            playerTwoFlag.style.display = flagTwo ? "block" : "none";
-                        }
-                        if (matchDraw) matchDraw.textContent = data.match.draw || "";
-                        if (matchCourt) matchCourt.textContent = data.match.court || "";
-                        updateStartMatchLabel(data.match);
-                    }
+                    applyMatchResponse(code, data);
                 })
                 .catch(function () {
                     if (pinError) {
@@ -175,6 +187,7 @@
                 entryPanel.classList.remove("is-hidden");
             }
             sessionStorage.removeItem("matchPin");
+            sessionStorage.removeItem("matchData");
             lastPin = null;
         });
     }
@@ -192,4 +205,19 @@
     }
 
     updateStartMatchLabel(null);
+
+    var queryPin = new URLSearchParams(window.location.search).get("pin");
+    if (queryPin && queryPin.trim().length === 6) {
+        fetch("/api/refferee/match?pin=" + encodeURIComponent(queryPin.trim()))
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                applyMatchResponse(queryPin.trim(), data);
+            })
+            .catch(function () {
+                if (pinError) {
+                    pinError.style.display = "block";
+                }
+                resetPin();
+            });
+    }
 })();

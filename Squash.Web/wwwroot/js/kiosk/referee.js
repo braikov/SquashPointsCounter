@@ -30,6 +30,7 @@
         currentGameScoreFirst: parseByte(root.dataset.currentGameScoreFirst),
         currentGameScoreSecond: parseByte(root.dataset.currentGameScoreSecond),
         gamesToWin: parseByte(root.dataset.gamesToWin),
+        matchGameId: parseIntValue(root.dataset.matchGameId),
         lastPointWinner: null,
         currentServer: null,
         serveSide: "right",
@@ -38,10 +39,16 @@
     };
 
     var eventHistory = [];
+    var isReplaying = false;
     var storageKey = "refereeState:" + (sessionStorage.getItem("matchPin") || "default");
     var activePanel = "referee";
 
     function parseByte(value) {
+        var parsed = parseInt(value, 10);
+        return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
+    function parseIntValue(value) {
         var parsed = parseInt(value, 10);
         return Number.isNaN(parsed) ? 0 : parsed;
     }
@@ -425,12 +432,183 @@
         return true;
     }
 
-    function sendEvent(eventName) {
-        fetch("/api/refferee/game-log", {
+    function getStoredMatchData() {
+        var raw = sessionStorage.getItem("matchData");
+        if (!raw) {
+            return null;
+        }
+        try {
+            return JSON.parse(raw);
+        } catch (error) {
+            return null;
+        }
+    }
+
+    function applyServeEventFromLog(eventName) {
+        var isLeft = eventName.indexOf("OnLeft") !== -1;
+        var side = eventName.indexOf("AServersFirst") === 0 ? "A" : "B";
+        var playerName = serveNames[side] || side;
+        var label = playerName + " serves first on " + (isLeft ? "left" : "right");
+
+        setServeSide(isLeft);
+        matchState.lastPointWinner = side;
+        matchState.currentServer = side;
+        matchState.initialServeChosen = true;
+
+        appendLog(label);
+        clearScoreLog();
+        appendScoreLogEntry(side, 0, isLeft ? "L" : "R", true);
+
+        showServeQuestion(false);
+        showActionPanels(true);
+        showServeStatus(true);
+        showServeSideToggle(false);
+        updateServeStatus();
+    }
+
+    function handleEventLocal(eventName, labelOverride) {
+        var result = applyEvent(eventName);
+        if (result && result.cancelled) {
+            return;
+        }
+        appendLog(formatLog(eventName, labelOverride, result ? result.scoreSnapshot : null));
+        if (result && result.scoreLogSnapshot) {
+            appendScoreLogEntry(
+                result.scoreLogSnapshot.side,
+                result.scoreLogSnapshot.score,
+                result.scoreLogSnapshot.sideLetter,
+                result.scoreLogSnapshot.allowSideUpdate
+            );
+        }
+    }
+
+    function initializeFromMatchData(match) {
+        if (!match) {
+            return false;
+        }
+
+        matchState.gameScoreFirst = parseByte(match.gameScoreFirst);
+        matchState.gameScoreSecond = parseByte(match.gameScoreSecond);
+        matchState.currentGameScoreFirst = parseByte(match.currentGameScoreFirst);
+        matchState.currentGameScoreSecond = parseByte(match.currentGameScoreSecond);
+        matchState.gamesToWin = parseByte(match.gamesToWin) || matchState.gamesToWin;
+        matchState.matchGameId = parseIntValue(match.matchGameId);
+        matchState.lastPointWinner = null;
+        matchState.currentServer = null;
+        matchState.serveSide = "right";
+        matchState.initialServeChosen = false;
+        matchState.awaitingSideChoice = false;
+        if (serveOnLeft) {
+            serveOnLeft.checked = false;
+        }
+
+        clearLog();
+        clearScoreLog();
+
+        var logs = Array.isArray(match.eventLogs) ? match.eventLogs : [];
+        if (logs.length > 0) {
+            matchState.currentGameScoreFirst = 0;
+            matchState.currentGameScoreSecond = 0;
+            isReplaying = true;
+            logs.forEach(function (log) {
+                if (!log || !log.event) {
+                    return;
+                }
+                if (log.event === "AServersFirst" || log.event === "BServersFirst"
+                    || log.event === "AServersFirstOnLeft" || log.event === "BServersFirstOnLeft") {
+                    applyServeEventFromLog(log.event);
+                    return;
+                }
+                handleEventLocal(log.event);
+            });
+            isReplaying = false;
+        }
+
+        showPanel("referee");
+        if (scoresAreZero() && logs.length === 0) {
+            showServeQuestion(true);
+            showServeButtons(true);
+            setActionsDisabled(true);
+            setServeButtonsDisabled(false);
+            showServeStatus(false);
+            showActionPanels(false);
+            showServeSideToggle(true);
+            hideNextGameButton();
+            if (serveStatusText) {
+                serveStatusText.textContent = "";
+            }
+        } else {
+            showServeQuestion(false);
+            showServeStatus(true);
+            showActionPanels(true);
+            if (matchState.awaitingSideChoice) {
+                showServeSideToggle(true);
+            } else {
+                showServeSideToggle(false);
+            }
+            hideNextGameButton();
+        }
+
+        updateScoreDisplay();
+        updateServeStatus();
+        saveState();
+        return true;
+    }
+
+    function fetchMatchData(pin) {
+        return fetch("/api/refferee/match?pin=" + encodeURIComponent(pin))
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                if (!data || !data.success || !data.match) {
+                    return null;
+                }
+                sessionStorage.setItem("matchData", JSON.stringify(data.match));
+                return data.match;
+            })
+            .catch(function () { return null; });
+    }
+
+    function sendEvent(eventName, extra) {
+        var currentGameId = matchState.matchGameId;
+        return ensureMatchGame().then(function (ready) {
+            if (!ready || !matchState.matchGameId) {
+                return;
+            }
+            return fetch("/api/refferee/game-log", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    matchGameId: currentGameId || matchState.matchGameId,
+                    eventName: eventName,
+                    winnerSide: extra && typeof extra.winnerSide === "number" ? extra.winnerSide : null
+                })
+            });
+        });
+    }
+
+    function ensureMatchGame() {
+        if (matchState.matchGameId) {
+            return Promise.resolve(true);
+        }
+        return startGameOnServer();
+    }
+
+    function startGameOnServer() {
+        var pin = sessionStorage.getItem("matchPin") || "";
+        return fetch("/api/refferee/game-started", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(eventName)
-        });
+            body: JSON.stringify({ pin: pin })
+        })
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                if (data && data.success && data.matchGameId) {
+                    matchState.matchGameId = data.matchGameId;
+                    return true;
+                }
+                return false;
+            })
+            .catch(function () { return false; });
     }
 
     function formatLog(eventName, labelOverride, scoreSnapshot) {
@@ -545,13 +723,16 @@
             updateServeStatus();
             updateScoreDisplay();
 
-            if (isGameOver()) {
+            if (!isReplaying && isGameOver()) {
                 var winner = matchState.currentGameScoreFirst > matchState.currentGameScoreSecond ? "A" : "B";
                 applyEndOfGame(winner);
             }
         }
 
         if (eventName === "ARetires") {
+            if (isReplaying) {
+                return { scoreSnapshot: scoreSnapshot, scoreLogSnapshot: scoreLogSnapshot };
+            }
             if (!confirm("A retires. B wins the match. Continue?")) {
                 return { cancelled: true };
             }
@@ -560,6 +741,9 @@
         }
 
         if (eventName === "BRetires") {
+            if (isReplaying) {
+                return { scoreSnapshot: scoreSnapshot, scoreLogSnapshot: scoreLogSnapshot };
+            }
             if (!confirm("B retires. A wins the match. Continue?")) {
                 return { cancelled: true };
             }
@@ -604,24 +788,25 @@
         updateServeStatus();
         updateScoreDisplay();
 
-        logDerivedEvent("EndGame", "Game to " + (serveNames[winner] || winner));
+        logDerivedEvent("EndGame", "Game to " + (serveNames[winner] || winner), winner === "A" ? 1 : 2);
         appendScoreLogFull("---------");
         appendScoreLogFull(matchState.gameScoreFirst + " : " + matchState.gameScoreSecond);
 
         var gamesToWin = matchState.gamesToWin || 3;
         if (matchState.gameScoreFirst >= gamesToWin || matchState.gameScoreSecond >= gamesToWin) {
-            logDerivedEvent("EndMatch", "Match won by " + (serveNames[winner] || winner));
+            logDerivedEvent("EndMatch", "Match won by " + (serveNames[winner] || winner), winner === "A" ? 1 : 2);
             showFinishButton(winner);
         } else {
             showNextGameButton();
         }
         saveState();
+        matchState.matchGameId = 0;
     }
 
-    function logDerivedEvent(eventName, labelOverride) {
+    function logDerivedEvent(eventName, labelOverride, winnerSide) {
         eventHistory.push(eventName);
         appendLog(formatLog(eventName, labelOverride));
-        sendEvent(eventName);
+        sendEvent(eventName, { winnerSide: winnerSide });
     }
 
     function updateScoreDisplay() {
@@ -665,6 +850,22 @@
 
     var restored = restoreState();
     if (!restored) {
+        var storedMatch = getStoredMatchData();
+        if (!storedMatch || !initializeFromMatchData(storedMatch)) {
+            var pin = sessionStorage.getItem("matchPin");
+            if (pin) {
+                fetchMatchData(pin).then(function (matchData) {
+                    if (!matchData || !initializeFromMatchData(matchData)) {
+                        applyDefaultInit();
+                    }
+                });
+            } else {
+                applyDefaultInit();
+            }
+        }
+    }
+
+    function applyDefaultInit() {
         showPanel("referee");
         if (scoresAreZero()) {
             showServeQuestion(true);
@@ -738,8 +939,13 @@
                 window.location.href = "/m";
                 return;
             }
-            hideNextGameButton();
-            startNextGame();
+            startGameOnServer().then(function (ready) {
+                if (!ready) {
+                    return;
+                }
+                hideNextGameButton();
+                startNextGame();
+            });
         });
     }
 
@@ -767,18 +973,23 @@
                     matchState.lastPointWinner = target.dataset.serve;
                     matchState.currentServer = target.dataset.serve;
                     matchState.initialServeChosen = true;
-                    handleEvent(serveEvent, label);
-                    clearScoreLog();
-                    appendScoreLogEntry(
-                        target.dataset.serve,
-                        0,
-                        isLeft ? "L" : "R",
-                        true
-                    );
+                    ensureMatchGame().then(function (ready) {
+                        if (!ready) {
+                            return;
+                        }
+                        handleEvent(serveEvent, label);
+                        clearScoreLog();
+                        appendScoreLogEntry(
+                            target.dataset.serve,
+                            0,
+                            isLeft ? "L" : "R",
+                            true
+                        );
+                        enableAfterServeChoice();
+                        updateServeStatus();
+                        saveState();
+                    });
                 }
-                enableAfterServeChoice();
-                updateServeStatus();
-                saveState();
             }
         });
     }
