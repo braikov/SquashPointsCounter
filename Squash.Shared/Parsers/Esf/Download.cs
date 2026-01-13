@@ -27,14 +27,27 @@ namespace Squash.Shared.Parsers.Esf
             result.Tournament.SourceUrls = url;
             result.Tournament.TournamentSource = TournamentSource.Esf;
 
+            return result;
+        }
+
+        public static void StoreTournament(TournamentParseResult result, int userId)
+        {
+            if (result == null)
+            {
+                throw new ArgumentNullException(nameof(result));
+            }
+
+            if (userId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(userId));
+            }
+
             using var dbContext = CreateDataContext();
-            CreateOrUpdateTournament(dbContext, result.Tournament, result.ContactName, result.ContactEmail, result.ContactPhone);
+            CreateOrUpdateTournament(dbContext, result.Tournament, userId);
             if (result.Venues.Count > 0)
             {
                 SaveVenuesAndLinks(dbContext, result.Tournament.Id, result.Venues);
             }
-
-            return result;
         }
         public static void DownloadParseAndStoreMatches(string[] urls)
         {
@@ -497,12 +510,7 @@ namespace Squash.Shared.Parsers.Esf
             }
         }
 
-        private static void CreateOrUpdateTournament(
-            IDataContext dbContext,
-            Tournament tournament,
-            string? contactName = null,
-            string? contactEmail = null,
-            string? contactPhone = null)
+        private static void CreateOrUpdateTournament(IDataContext dbContext, Tournament tournament, int? userIdOverride = null)
         {
             var existingTournament = dbContext.Tournaments
                 .FirstOrDefault(t => t.ExternalCode == tournament.ExternalCode);
@@ -516,26 +524,10 @@ namespace Squash.Shared.Parsers.Esf
                 dbContext.Tournaments.Add(existingTournament);
             }
 
-            var userId = existingTournament.UserId;
-            if (!string.IsNullOrWhiteSpace(contactEmail))
+            if (userIdOverride.HasValue)
             {
-                userId = ResolveOrCreateContactUser(dbContext, contactName, contactEmail, contactPhone);
+                existingTournament.UserId = userIdOverride.Value;
             }
-
-            if (userId == 0)
-            {
-                userId = dbContext.Users
-                    .Where(u => u.IdentityUserId == "SYSTEM")
-                    .Select(u => u.Id)
-                    .FirstOrDefault();
-            }
-
-            if (userId == 0)
-            {
-                throw new InvalidOperationException("Cannot import tournament without at least one User.");
-            }
-
-            existingTournament.UserId = userId;
             if (!string.IsNullOrWhiteSpace(tournament.Name))
             {
                 existingTournament.Name = tournament.Name;
@@ -568,52 +560,6 @@ namespace Squash.Shared.Parsers.Esf
 
             dbContext.SaveChanges();
             tournament.Id = existingTournament.Id;
-        }
-
-        private static int ResolveOrCreateContactUser(
-            IDataContext dbContext,
-            string? contactName,
-            string contactEmail,
-            string? contactPhone)
-        {
-            var existingUser = dbContext.Users.FirstOrDefault(u => u.Email == contactEmail);
-            if (existingUser == null)
-            {
-                existingUser = new User
-                {
-                    IdentityUserId = $"ESF:{contactEmail.ToLowerInvariant()}",
-                    Name = string.IsNullOrWhiteSpace(contactName) ? contactEmail : contactName,
-                    Email = contactEmail,
-                    Phone = string.IsNullOrWhiteSpace(contactPhone) ? "N/A" : contactPhone,
-                    BirthDate = new DateTime(2000, 1, 1),
-                    Zip = "0000",
-                    City = "Unknown",
-                    Address = "Unknown",
-                    Verified = false,
-                    EmailNotificationsEnabled = false,
-                    DateCreated = DateTime.UtcNow,
-                    DateUpdated = DateTime.UtcNow,
-                    LastOperationUserId = 0
-                };
-                dbContext.Users.Add(existingUser);
-            }
-            else
-            {
-                if (!string.IsNullOrWhiteSpace(contactName))
-                {
-                    existingUser.Name = contactName;
-                }
-
-                if (!string.IsNullOrWhiteSpace(contactPhone))
-                {
-                    existingUser.Phone = contactPhone;
-                }
-
-                existingUser.DateUpdated = DateTime.UtcNow;
-            }
-
-            dbContext.SaveChanges();
-            return existingUser.Id;
         }
 
         private static Guid ExtractTournamentId(string url)

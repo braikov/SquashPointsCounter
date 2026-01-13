@@ -1,5 +1,6 @@
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Squash.DataAccess;
@@ -9,9 +10,10 @@ namespace Squash.Web.Areas.Administration.Controllers
 {
     [Area("Administration")]
     [Authorize]
-    public class TournamentsController(IDataContext dataContext) : Controller
+    public class TournamentsController(IDataContext dataContext, UserManager<IdentityUser> userManager) : Controller
     {
         private readonly IDataContext _dataContext = dataContext;
+        private readonly UserManager<IdentityUser> _userManager = userManager;
 
         public IActionResult Index()
         {
@@ -19,9 +21,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 .Select(t => new TournamentListItemViewModel
                 {
                     Id = t.Id,
-                    ExternalCode = t.ExternalCode,
                     Name = t.Name,
-                    OrganizationCode = t.OrganizationCode,
                     DaysCount = t.Days.Count,
                     DrawsCount = t.Draws.Count,
                     CourtsCount = t.TournamentCourts.Count,
@@ -35,6 +35,138 @@ namespace Squash.Web.Areas.Administration.Controllers
                 .ToList();
 
             return View(tournaments);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View(new TournamentEditViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(TournamentEditViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var identityUserId = _userManager.GetUserId(User);
+            if (string.IsNullOrWhiteSpace(identityUserId))
+            {
+                ModelState.AddModelError(string.Empty, "Cannot determine current user.");
+                return View(model);
+            }
+
+            var userId = _dataContext.Users
+                .Where(u => u.IdentityUserId == identityUserId)
+                .Select(u => u.Id)
+                .FirstOrDefault();
+
+            if (userId == 0)
+            {
+                var identityUser = _userManager.Users.FirstOrDefault(u => u.Id == identityUserId);
+                if (identityUser == null)
+                {
+                    ModelState.AddModelError(string.Empty, "Cannot load current user.");
+                    return View(model);
+                }
+
+                var newUser = new Squash.DataAccess.Entities.User
+                {
+                    IdentityUserId = identityUserId,
+                    Name = identityUser.UserName ?? identityUser.Email ?? "User",
+                    Email = identityUser.Email ?? string.Empty,
+                    Phone = identityUser.PhoneNumber ?? "N/A",
+                    BirthDate = new DateTime(2000, 1, 1),
+                    Zip = "0000",
+                    City = "Unknown",
+                    Address = "Unknown",
+                    Verified = identityUser.EmailConfirmed,
+                    EmailNotificationsEnabled = false,
+                    DateCreated = DateTime.UtcNow,
+                    DateUpdated = DateTime.UtcNow,
+                    LastOperationUserId = 0
+                };
+                _dataContext.Users.Add(newUser);
+                _dataContext.SaveChanges();
+                userId = newUser.Id;
+            }
+            if (userId == 0)
+            {
+                ModelState.AddModelError(string.Empty, "Cannot determine current user.");
+                return View(model);
+            }
+
+            var tournament = new Squash.DataAccess.Entities.Tournament
+            {
+                Name = model.Name?.Trim() ?? string.Empty,
+                StartDate = model.StartDate,
+                EndDate = model.EndDate,
+                ClosingSigninDate = model.ClosingSigninDate,
+                Regulations = model.Regulations,
+                UserId = userId,
+                TournamentSource = Squash.DataAccess.Entities.TournamentSource.Native
+            };
+
+            _dataContext.Tournaments.Add(tournament);
+            _dataContext.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public IActionResult Details(int id)
+        {
+            var tournament = _dataContext.Tournaments
+                .AsNoTracking()
+                .FirstOrDefault(t => t.Id == id);
+
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            var model = new TournamentEditViewModel
+            {
+                Id = tournament.Id,
+                Name = tournament.Name,
+                StartDate = tournament.StartDate,
+                EndDate = tournament.EndDate,
+                ClosingSigninDate = tournament.ClosingSigninDate,
+                Regulations = tournament.Regulations
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Details(TournamentEditViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var tournament = _dataContext.Tournaments
+                .FirstOrDefault(t => t.Id == model.Id);
+
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            tournament.Name = model.Name?.Trim() ?? string.Empty;
+            tournament.StartDate = model.StartDate;
+            tournament.EndDate = model.EndDate;
+            tournament.ClosingSigninDate = model.ClosingSigninDate;
+            tournament.Regulations = model.Regulations;
+
+            _dataContext.SaveChanges();
+
+            return RedirectToAction(nameof(Details), new { id = model.Id });
         }
 
         [HttpGet]
@@ -162,6 +294,55 @@ namespace Squash.Web.Areas.Administration.Controllers
                     model.ErrorMessage = "Tournament dates are missing in the source.";
                     return View(model);
                 }
+
+                if (string.IsNullOrWhiteSpace(parseResult.ContactEmail))
+                {
+                    model.ErrorMessage = "Tournament contact email is missing in the source.";
+                    return View(model);
+                }
+
+                var identityUser = await _userManager.FindByEmailAsync(parseResult.ContactEmail);
+                if (identityUser == null)
+                {
+                    identityUser = new IdentityUser
+                    {
+                        UserName = parseResult.ContactEmail,
+                        Email = parseResult.ContactEmail,
+                        EmailConfirmed = false
+                    };
+
+                    var identityResult = await _userManager.CreateAsync(identityUser);
+                    if (!identityResult.Succeeded)
+                    {
+                        model.ErrorMessage = string.Join(", ", identityResult.Errors.Select(e => e.Description));
+                        return View(model);
+                    }
+                }
+
+                var appUser = _dataContext.Users.FirstOrDefault(u => u.IdentityUserId == identityUser.Id);
+                if (appUser == null)
+                {
+                    appUser = new Squash.DataAccess.Entities.User
+                    {
+                        IdentityUserId = identityUser.Id,
+                        Name = string.IsNullOrWhiteSpace(parseResult.ContactName) ? parseResult.ContactEmail : parseResult.ContactName,
+                        Email = parseResult.ContactEmail,
+                        Phone = string.IsNullOrWhiteSpace(parseResult.ContactPhone) ? "N/A" : parseResult.ContactPhone,
+                        BirthDate = new DateTime(2000, 1, 1),
+                        Zip = "0000",
+                        City = "Unknown",
+                        Address = "Unknown",
+                        Verified = identityUser.EmailConfirmed,
+                        EmailNotificationsEnabled = false,
+                        DateCreated = DateTime.UtcNow,
+                        DateUpdated = DateTime.UtcNow,
+                        LastOperationUserId = 0
+                    };
+                    _dataContext.Users.Add(appUser);
+                    _dataContext.SaveChanges();
+                }
+
+                Squash.Shared.Parsers.Esf.Download.StoreTournament(parseResult, appUser.Id);
 
                 var start = parseResult.Tournament.StartDate.Value.Date;
                 var end = parseResult.Tournament.EndDate.Value.Date;

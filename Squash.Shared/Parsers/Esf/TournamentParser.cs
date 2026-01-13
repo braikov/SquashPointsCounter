@@ -54,7 +54,13 @@ namespace Squash.Shared.Parsers.Esf
         private static string? ExtractRegulations(HtmlDocument doc)
         {
             var node = doc.DocumentNode.SelectSingleNode("//div[contains(@class,'alert__body-inner')]");
-            return NormalizeText(node?.InnerText);
+            if (node == null)
+            {
+                return null;
+            }
+
+            var html = node.InnerHtml.Replace("\r", string.Empty).Trim();
+            return string.IsNullOrWhiteSpace(html) ? null : html;
         }
 
         private static DateTime? ExtractTimelineDate(HtmlDocument doc, string label)
@@ -92,29 +98,68 @@ namespace Squash.Shared.Parsers.Esf
 
         private static (string? name, string? email, string? phone) ExtractContact(HtmlDocument doc)
         {
-            var contactTitle = doc.DocumentNode.SelectSingleNode("//h3//span[contains(@class,'module__title-main') and normalize-space()='Contact']");
-            if (contactTitle == null)
+            var modules = doc.DocumentNode.SelectNodes("//div[contains(@class,'module')]");
+            if (modules == null)
             {
                 return (null, null, null);
             }
 
-            var module = contactTitle.Ancestors("div").FirstOrDefault(n => n.GetAttributeValue("class", string.Empty).Contains("module"));
-            if (module == null)
+            HtmlNode? selectedModule = null;
+            foreach (var module in modules)
+            {
+                var title = NormalizeText(module.SelectSingleNode(".//span[contains(@class,'module__title-main')]")?.InnerText);
+                if (string.Equals(title, "Contact", StringComparison.OrdinalIgnoreCase))
+                {
+                    selectedModule = module;
+                    break;
+                }
+            }
+
+            if (selectedModule == null)
+            {
+                selectedModule = modules.FirstOrDefault(m =>
+                    m.SelectSingleNode(".//a[starts-with(@href,'mailto:') or starts-with(@href,'tel:')]") != null);
+            }
+
+            if (selectedModule == null)
             {
                 return (null, null, null);
             }
 
-            var nameNode = module.SelectSingleNode(".//span[contains(@class,'media__title')]");
-            var emailNode = module.SelectSingleNode(".//a[starts-with(@href,'mailto:')]");
+            var emailNode = selectedModule.SelectSingleNode(".//a[starts-with(@href,'mailto:')]");
             var email = emailNode?.GetAttributeValue("href", string.Empty).Replace("mailto:", string.Empty);
-            var phoneNode = module.SelectSingleNode(".//a[starts-with(@href,'tel:')]");
+
+            var phoneNode = selectedModule.SelectSingleNode(".//a[starts-with(@href,'tel:')]");
             var phone = phoneNode?.GetAttributeValue("href", string.Empty).Replace("tel:", string.Empty);
             if (string.IsNullOrWhiteSpace(phone))
             {
                 phone = NormalizeText(phoneNode?.InnerText);
             }
 
-            return (NormalizeText(nameNode?.InnerText), NormalizeText(email), NormalizeText(phone));
+            var name = NormalizeText(selectedModule.SelectSingleNode(".//span[contains(@class,'media__title')]")?.InnerText);
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                var listItems = selectedModule.SelectNodes(".//ul[contains(@class,'list--naked')]//li");
+                if (listItems != null)
+                {
+                    foreach (var item in listItems)
+                    {
+                        if (item.SelectSingleNode(".//a[starts-with(@href,'mailto:') or starts-with(@href,'tel:')]") != null)
+                        {
+                            continue;
+                        }
+
+                        var text = NormalizeText(item.InnerText);
+                        if (!string.IsNullOrWhiteSpace(text))
+                        {
+                            name = text;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return (name, NormalizeText(email), NormalizeText(phone));
         }
 
         private static List<Venue> ExtractVenues(HtmlDocument doc)
