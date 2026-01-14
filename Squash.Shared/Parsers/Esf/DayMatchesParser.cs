@@ -445,6 +445,7 @@ namespace Squash.Shared.Parsers.Esf
                         return (null, null, null);
                 }
                 playerName = System.Text.RegularExpressions.Regex.Replace(playerName, "\\s*\\[[^\\]]*\\]\\s*$", string.Empty).Trim();
+                playerName = HtmlEntity.DeEntitize(playerName);
 
                 var playerIdText = playerLink?.GetAttributeValue("data-player-id", null);
                 int? playerId = null;
