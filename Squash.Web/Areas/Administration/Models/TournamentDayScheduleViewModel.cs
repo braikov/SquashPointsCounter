@@ -11,6 +11,28 @@ namespace Squash.Web.Areas.Administration.Models
         public DateTime? SelectedDate { get; set; }
         public List<TournamentDayTabViewModel> Days { get; set; } = new();
         public List<TournamentMatchRowViewModel> Matches { get; set; } = new();
+
+        // Filters
+        public string? FilterCountry { get; set; }
+        public string? FilterDraw { get; set; }
+        public string? FilterRound { get; set; }
+        public string? FilterCourt { get; set; }
+
+        // Available filter options
+        public List<FilterOption> AvailableCountries { get; set; } = new();
+        public List<FilterOption> AvailableDraws { get; set; } = new();
+        public List<FilterOption> AvailableRounds { get; set; } = new();
+        public List<FilterOption> AvailableCourts { get; set; } = new();
+
+        // Total count before filtering
+        public int TotalMatchesCount { get; set; }
+        public int FilteredMatchesCount { get; set; }
+    }
+
+    public class FilterOption
+    {
+        public string Value { get; set; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
     }
 
     public class TournamentDayTabViewModel
@@ -30,6 +52,8 @@ namespace Squash.Web.Areas.Administration.Models
         public string Player2 { get; set; } = string.Empty;
         public string Player1FlagUrl { get; set; } = string.Empty;
         public string Player2FlagUrl { get; set; } = string.Empty;
+        public string Player1CountryCode { get; set; } = string.Empty;
+        public string Player2CountryCode { get; set; } = string.Empty;
         public bool Player1IsWinner { get; set; }
         public bool Player2IsWinner { get; set; }
         public string Status { get; set; } = string.Empty;

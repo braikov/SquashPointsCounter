@@ -202,7 +202,7 @@ namespace Squash.Web.Areas.Administration.Controllers
         }
 
         [HttpGet]
-        public IActionResult DayMatches(int id, int? dayId)
+        public IActionResult DayMatches(int id, int? dayId, string? country, string? draw, string? round, string? court)
         {
             var tournament = _dataContext.Tournaments
                 .AsNoTracking()
@@ -222,6 +222,12 @@ namespace Squash.Web.Areas.Administration.Controllers
             var selectedDay = dayId.HasValue ? days.FirstOrDefault(d => d.Id == dayId.Value) : days.FirstOrDefault();
 
             var matches = new List<TournamentMatchRowViewModel>();
+            var availableCountries = new List<FilterOption>();
+            var availableDraws = new List<FilterOption>();
+            var availableRounds = new List<FilterOption>();
+            var availableCourts = new List<FilterOption>();
+            int totalMatchesCount = 0;
+
             if (selectedDay != null)
             {
                 var matchEntities = _dataContext.Matches
@@ -237,7 +243,69 @@ namespace Squash.Web.Areas.Administration.Controllers
                     .ThenBy(m => m.StartTimeText)
                     .ToList();
 
-                matches = matchEntities
+                totalMatchesCount = matchEntities.Count;
+
+                // Apply filters
+                var filteredMatches = matchEntities.AsEnumerable();
+
+                if (!string.IsNullOrEmpty(country))
+                {
+                    filteredMatches = filteredMatches.Where(m =>
+                        (m.Player1?.Nationality?.Code != null && m.Player1.Nationality.Code.Equals(country, StringComparison.OrdinalIgnoreCase)) ||
+                        (m.Player2?.Nationality?.Code != null && m.Player2.Nationality.Code.Equals(country, StringComparison.OrdinalIgnoreCase)));
+                }
+
+                if (!string.IsNullOrEmpty(draw))
+                {
+                    filteredMatches = filteredMatches.Where(m => m.Draw != null && m.Draw.Name.Equals(draw, StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (!string.IsNullOrEmpty(round))
+                {
+                    filteredMatches = filteredMatches.Where(m => m.Round != null && m.Round.Name.Equals(round, StringComparison.OrdinalIgnoreCase));
+                }
+
+                if (!string.IsNullOrEmpty(court))
+                {
+                    filteredMatches = filteredMatches.Where(m => m.Court != null && m.Court.Name.Equals(court, StringComparison.OrdinalIgnoreCase));
+                }
+
+                var filteredMatchesList = filteredMatches.ToList();
+
+                // Build available filter options from filtered matches
+                availableCountries = filteredMatchesList
+                    .SelectMany(m => new[] { m.Player1?.Nationality?.Code, m.Player2?.Nationality?.Code })
+                    .Where(c => !string.IsNullOrWhiteSpace(c))
+                    .Distinct()
+                    .OrderBy(c => c)
+                    .Select(c => new FilterOption { Value = c!, Text = c!.ToUpperInvariant() })
+                    .ToList();
+
+                availableDraws = filteredMatchesList
+                    .Where(m => m.Draw != null)
+                    .Select(m => m.Draw!.Name)
+                    .Distinct()
+                    .OrderBy(d => d)
+                    .Select(d => new FilterOption { Value = d, Text = d })
+                    .ToList();
+
+                availableRounds = filteredMatchesList
+                    .Where(m => m.Round != null)
+                    .Select(m => m.Round!.Name)
+                    .Distinct()
+                    .OrderBy(r => r)
+                    .Select(r => new FilterOption { Value = r, Text = r })
+                    .ToList();
+
+                availableCourts = filteredMatchesList
+                    .Where(m => m.Court != null)
+                    .Select(m => m.Court!.Name)
+                    .Distinct()
+                    .OrderBy(c => c)
+                    .Select(c => new FilterOption { Value = c, Text = c })
+                    .ToList();
+
+                matches = filteredMatchesList
                     .Select(m => new TournamentMatchRowViewModel
                     {
                         Time = m.StartTime.HasValue
@@ -250,6 +318,8 @@ namespace Squash.Web.Areas.Administration.Controllers
                         Player2 = m.Player2 == null ? string.Empty : m.Player2.Name,
                         Player1FlagUrl = BuildFlagUrl(m.Player1?.Nationality?.Code),
                         Player2FlagUrl = BuildFlagUrl(m.Player2?.Nationality?.Code),
+                        Player1CountryCode = m.Player1?.Nationality?.Code ?? string.Empty,
+                        Player2CountryCode = m.Player2?.Nationality?.Code ?? string.Empty,
                         Player1IsWinner = m.WinnerPlayerId.HasValue && m.Player1Id.HasValue && m.WinnerPlayerId == m.Player1Id,
                         Player2IsWinner = m.WinnerPlayerId.HasValue && m.Player2Id.HasValue && m.WinnerPlayerId == m.Player2Id,
                         Status = m.Status ?? string.Empty,
@@ -282,7 +352,17 @@ namespace Squash.Web.Areas.Administration.Controllers
                     Date = d.Date,
                     IsSelected = selectedDay != null && d.Id == selectedDay.Id
                 }).ToList(),
-                Matches = matches
+                Matches = matches,
+                FilterCountry = country,
+                FilterDraw = draw,
+                FilterRound = round,
+                FilterCourt = court,
+                AvailableCountries = availableCountries,
+                AvailableDraws = availableDraws,
+                AvailableRounds = availableRounds,
+                AvailableCourts = availableCourts,
+                TotalMatchesCount = totalMatchesCount,
+                FilteredMatchesCount = matches.Count
             };
 
             return View(model);

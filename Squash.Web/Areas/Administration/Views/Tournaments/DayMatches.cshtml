@@ -8,6 +8,7 @@
         .GroupBy(m => string.IsNullOrWhiteSpace(m.Time) ? "-" : m.Time)
         .OrderBy(g => g.Key)
         .ToList();
+    var hasFilters = !string.IsNullOrEmpty(Model.FilterCountry) || !string.IsNullOrEmpty(Model.FilterDraw) || !string.IsNullOrEmpty(Model.FilterRound) || !string.IsNullOrEmpty(Model.FilterCourt);
 }
 
 <div class="row mb-4">
@@ -41,6 +42,65 @@
                         <span class="tournament-day-month">@day.Date.ToString("MMM", culture)</span>
                     </a>
                 }
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Filters</strong>
+        <div class="d-flex gap-2">
+            <select id="countryFilter" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All Countries</option>
+                @foreach (var opt in Model.AvailableCountries)
+                {
+                    <option value="@opt.Value" selected="@(Model.FilterCountry == opt.Value)">@opt.Text</option>
+                }
+            </select>
+            <select id="drawFilter" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All Draws</option>
+                @foreach (var opt in Model.AvailableDraws)
+                {
+                    <option value="@opt.Value" selected="@(Model.FilterDraw == opt.Value)">@opt.Text</option>
+                }
+            </select>
+            <select id="roundFilter" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All Rounds</option>
+                @foreach (var opt in Model.AvailableRounds)
+                {
+                    <option value="@opt.Value" selected="@(Model.FilterRound == opt.Value)">@opt.Text</option>
+                }
+            </select>
+            <select id="courtFilter" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All Courts</option>
+                @foreach (var opt in Model.AvailableCourts)
+                {
+                    <option value="@opt.Value" selected="@(Model.FilterCourt == opt.Value)">@opt.Text</option>
+                }
+            </select>
+            @if (hasFilters)
+            {
+                <a class="btn btn-sm btn-outline-secondary"
+                   asp-area="Administration"
+                   asp-controller="Tournaments"
+                   asp-action="DayMatches"
+                   asp-route-id="@Model.TournamentId"
+                   asp-route-dayId="@Model.SelectedDayId">
+                    Clear
+                </a>
+            }
+        </div>
+    </div>
+    <div class="card-body py-2">
+        <div class="text-muted">
+            @if (hasFilters)
+            {
+                <span>Showing @Model.FilteredMatchesCount of @Model.TotalMatchesCount matches</span>
+            }
+            else
+            {
+                <span>Showing @Model.TotalMatchesCount matches</span>
             }
         </div>
     </div>
@@ -129,3 +189,55 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var countryFilter = document.getElementById('countryFilter');
+            var drawFilter = document.getElementById('drawFilter');
+            var roundFilter = document.getElementById('roundFilter');
+            var courtFilter = document.getElementById('courtFilter');
+
+            // Set current filter values
+            countryFilter.value = '@Model.FilterCountry';
+            drawFilter.value = '@Model.FilterDraw';
+            roundFilter.value = '@Model.FilterRound';
+            courtFilter.value = '@Model.FilterCourt';
+
+            function applyFilters() {
+                var url = new URL(window.location.href);
+                
+                if (countryFilter.value) {
+                    url.searchParams.set('country', countryFilter.value);
+                } else {
+                    url.searchParams.delete('country');
+                }
+
+                if (drawFilter.value) {
+                    url.searchParams.set('draw', drawFilter.value);
+                } else {
+                    url.searchParams.delete('draw');
+                }
+
+                if (roundFilter.value) {
+                    url.searchParams.set('round', roundFilter.value);
+                } else {
+                    url.searchParams.delete('round');
+                }
+
+                if (courtFilter.value) {
+                    url.searchParams.set('court', courtFilter.value);
+                } else {
+                    url.searchParams.delete('court');
+                }
+
+                window.location.href = url.toString();
+            }
+
+            countryFilter.addEventListener('change', applyFilters);
+            drawFilter.addEventListener('change', applyFilters);
+            roundFilter.addEventListener('change', applyFilters);
+            courtFilter.addEventListener('change', applyFilters);
+        });
+    </script>
+}
