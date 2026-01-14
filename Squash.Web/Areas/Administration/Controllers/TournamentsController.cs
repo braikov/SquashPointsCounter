@@ -15,13 +15,34 @@ namespace Squash.Web.Areas.Administration.Controllers
         private readonly IDataContext _dataContext = dataContext;
         private readonly UserManager<IdentityUser> _userManager = userManager;
 
-        public IActionResult Index()
+        public IActionResult Index(string? status, int page = 1)
         {
-            var tournaments = _dataContext.Tournaments
+            const int pageSize = 20;
+            var today = DateTime.Today;
+
+            var query = _dataContext.Tournaments.AsQueryable();
+
+            // Apply status filter
+            if (!string.IsNullOrEmpty(status))
+            {
+                query = status.ToLower() switch
+                {
+                    "upcoming" => query.Where(t => t.StartDate > today),
+                    "active" => query.Where(t => t.StartDate <= today && t.EndDate >= today),
+                    "past" => query.Where(t => t.EndDate < today),
+                    _ => query
+                };
+            }
+
+            var totalCount = query.Count();
+
+            var tournaments = query
                 .Select(t => new TournamentListItemViewModel
                 {
                     Id = t.Id,
                     Name = t.Name,
+                    StartDate = t.StartDate,
+                    EndDate = t.EndDate,
                     DaysCount = t.Days.Count,
                     DrawsCount = t.Draws.Count,
                     CourtsCount = t.TournamentCourts.Count,
@@ -31,10 +52,21 @@ namespace Squash.Web.Areas.Administration.Controllers
                         .Select(d => (int?)d.Id)
                         .FirstOrDefault()
                 })
-                .OrderBy(t => t.Name)
+                .OrderByDescending(t => t.StartDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToList();
 
-            return View(tournaments);
+            var model = new TournamentsIndexViewModel
+            {
+                Tournaments = tournaments,
+                FilterStatus = status,
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = totalCount
+            };
+
+            return View(model);
         }
 
         [HttpGet]

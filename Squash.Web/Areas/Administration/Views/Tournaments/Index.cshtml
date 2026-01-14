@@ -1,4 +1,4 @@
-@model IReadOnlyList<TournamentListItemViewModel>
+@model TournamentsIndexViewModel
 
 @{
     ViewData["Title"] = "Tournaments";
@@ -8,16 +8,34 @@
     <div class="card-header d-flex align-items-center justify-content-between">
         <strong>Tournaments</strong>
         <div class="d-flex gap-2">
+            <select id="statusFilter" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All</option>
+                <option value="upcoming" selected="@(Model.FilterStatus == "upcoming")">Upcoming</option>
+                <option value="active" selected="@(Model.FilterStatus == "active")">Active</option>
+                <option value="past" selected="@(Model.FilterStatus == "past")">Past</option>
+            </select>
             <a class="btn btn-sm btn-primary" asp-area="Administration" asp-controller="Tournaments" asp-action="Create">Add Tournament</a>
             <a class="btn btn-sm btn-primary" asp-area="Administration" asp-controller="Tournaments" asp-action="Imports">Imports</a>
         </div>
     </div>
     <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="text-muted">
+                Showing @((Model.Page - 1) * Model.PageSize + 1)-@Math.Min(Model.Page * Model.PageSize, Model.TotalCount) of @Model.TotalCount tournaments
+                @if (!string.IsNullOrEmpty(Model.FilterStatus))
+                {
+                    <span class="badge bg-secondary ms-2">@Model.FilterStatus</span>
+                }
+            </div>
+        </div>
+
         <div class="table-responsive">
             <table class="table table-striped align-middle">
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
                         <th class="text-end">Days</th>
                         <th class="text-end">Draws</th>
                         <th class="text-end">Courts</th>
@@ -26,18 +44,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Model.Count == 0)
+                    @if (Model.Tournaments.Count == 0)
                     {
                         <tr>
-                            <td colspan="6" class="text-center text-body-secondary">No tournaments found.</td>
+                            <td colspan="8" class="text-center text-body-secondary">No tournaments found.</td>
                         </tr>
                     }
                     else
                     {
-                        foreach (var tournament in Model)
+                        foreach (var tournament in Model.Tournaments)
                         {
                             <tr>
                                 <td>@tournament.Name</td>
+                                <td>@(tournament.StartDate?.ToString("dd MMM yyyy") ?? "-")</td>
+                                <td>@(tournament.EndDate?.ToString("dd MMM yyyy") ?? "-")</td>
                                 <td class="text-end">@tournament.DaysCount</td>
                                 <td class="text-end">@tournament.DrawsCount</td>
                                 <td class="text-end">@tournament.CourtsCount</td>
@@ -72,5 +92,71 @@
                 </tbody>
             </table>
         </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Tournament pagination">
+                <ul class="pagination justify-content-center mb-0">
+                    <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                        <a class="page-link"
+                           asp-area="Administration"
+                           asp-controller="Tournaments"
+                           asp-action="Index"
+                           asp-route-status="@Model.FilterStatus"
+                           asp-route-page="@(Model.Page - 1)">
+                            Previous
+                        </a>
+                    </li>
+                    @for (var i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.Page ? "active" : "")">
+                            <a class="page-link"
+                               asp-area="Administration"
+                               asp-controller="Tournaments"
+                               asp-action="Index"
+                               asp-route-status="@Model.FilterStatus"
+                               asp-route-page="@i">
+                                @i
+                            </a>
+                        </li>
+                    }
+                    <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                        <a class="page-link"
+                           asp-area="Administration"
+                           asp-controller="Tournaments"
+                           asp-action="Index"
+                           asp-route-status="@Model.FilterStatus"
+                           asp-route-page="@(Model.Page + 1)">
+                            Next
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var statusFilter = document.getElementById('statusFilter');
+            var currentStatus = '@Model.FilterStatus';
+            
+            // Set the current filter value
+            if (currentStatus) {
+                statusFilter.value = currentStatus;
+            }
+
+            statusFilter.addEventListener('change', function () {
+                var url = new URL(window.location.href);
+                if (this.value) {
+                    url.searchParams.set('status', this.value);
+                } else {
+                    url.searchParams.delete('status');
+                }
+                url.searchParams.delete('page'); // Reset to first page on filter change
+                window.location.href = url.toString();
+            });
+        });
+    </script>
+}
