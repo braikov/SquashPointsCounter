@@ -66,7 +66,7 @@
                                     <button type="button" class="btn btn-outline-secondary" data-cmd="removeFormat">Clear</button>
                                 </div>
                             </div>
-                            <div id="RegulationsEditor" class="form-control" contenteditable="true" style="min-height: 200px;">@Html.Raw(Model.Regulations)</div>
+                            <div id="RegulationsEditor" class="form-control" contenteditable="true" style="min-height: 200px;"></div>
                             <textarea asp-for="Regulations" class="form-control d-none" rows="8"></textarea>
                             <span asp-validation-for="Regulations" class="text-danger small"></span>
                         </div>
@@ -93,6 +93,8 @@
             if (!form || !editor || !input) {
                 return;
             }
+
+            editor.innerHTML = input.value || '';
 
             if (toolbar) {
                 toolbar.addEventListener('click', function (event) {

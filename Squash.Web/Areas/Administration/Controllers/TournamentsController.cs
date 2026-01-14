@@ -170,7 +170,7 @@ namespace Squash.Web.Areas.Administration.Controllers
         }
 
         [HttpGet]
-        public IActionResult Days(int id, int? dayId)
+        public IActionResult DayMatches(int id, int? dayId)
         {
             var tournament = _dataContext.Tournaments
                 .AsNoTracking()

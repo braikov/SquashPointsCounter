@@ -22,13 +22,16 @@ namespace Squash.Web.Areas.Administration.Controllers
             var now = DateTime.UtcNow;
             var thirtyDaysAgo = now.Date.AddDays(-30);
 
+            var usersQuery = _dataContext.Users.AsNoTracking()
+                .Where(u => u.IdentityUserId != "SYSTEM");
+
             var model = new DashboardViewModel
             {
-                TotalUsers = await _dataContext.Users.AsNoTracking().LongCountAsync(),
+                TotalUsers = await usersQuery.LongCountAsync(),
                 TotalTournaments = await _dataContext.Tournaments.AsNoTracking().LongCountAsync()
             };
 
-            model.NewUsersLast30Days = await _dataContext.Users.AsNoTracking()
+            model.NewUsersLast30Days = await usersQuery
                 .Where(u => u.DateCreated >= thirtyDaysAgo)
                 .LongCountAsync();
 
@@ -36,7 +39,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 .Where(t => t.DateCreated >= thirtyDaysAgo)
                 .LongCountAsync();
 
-            var usersGrouped = await _dataContext.Users.AsNoTracking()
+            var usersGrouped = await usersQuery
                 .Where(u => u.DateCreated >= thirtyDaysAgo)
                 .GroupBy(u => u.DateCreated.Date)
                 .Select(g => new { Date = g.Key, Count = g.LongCount() })

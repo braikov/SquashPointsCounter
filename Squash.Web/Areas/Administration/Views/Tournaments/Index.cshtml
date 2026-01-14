@@ -37,26 +37,26 @@
                         foreach (var tournament in Model)
                         {
                             <tr>
-                                <td>
+                                <td>@tournament.Name</td>
+                                <td class="text-end">@tournament.DaysCount</td>
+                                <td class="text-end">@tournament.DrawsCount</td>
+                                <td class="text-end">@tournament.CourtsCount</td>
+                                <td class="text-end">
                                     @if (tournament.FirstDayId.HasValue)
                                     {
                                         <a asp-area="Administration"
                                            asp-controller="Tournaments"
-                                           asp-action="Days"
+                                           asp-action="DayMatches"
                                            asp-route-id="@tournament.Id"
                                            asp-route-dayId="@tournament.FirstDayId">
-                                            @tournament.Name
+                                            @tournament.MatchesCount
                                         </a>
                                     }
                                     else
                                     {
-                                        @tournament.Name
+                                        @tournament.MatchesCount
                                     }
                                 </td>
-                                <td class="text-end">@tournament.DaysCount</td>
-                                <td class="text-end">@tournament.DrawsCount</td>
-                                <td class="text-end">@tournament.CourtsCount</td>
-                                <td class="text-end">@tournament.MatchesCount</td>
                                 <td class="text-end">
                                     <a class="btn btn-sm btn-outline-primary"
                                        asp-area="Administration"

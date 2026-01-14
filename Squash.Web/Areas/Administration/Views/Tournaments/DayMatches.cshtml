@@ -33,7 +33,7 @@
                     <a class="tournament-day @(day.IsSelected ? "is-active" : "")"
                        asp-area="Administration"
                        asp-controller="Tournaments"
-                       asp-action="Days"
+                       asp-action="DayMatches"
                        asp-route-id="@Model.TournamentId"
                        asp-route-dayId="@day.Id">
                         <span class="tournament-day-week">@day.Date.ToString("ddd", culture)</span>
