@@ -1,13 +1,12 @@
 @model TournamentEditViewModel
 
 @{
-    ViewData["Title"] = "Edit tournament";
+    ViewData["Title"] = Model.Name;
 }
 
+<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.Id, Name = Model.Name, ActiveTab = "Details" }' />
+
 <div class="card mb-4">
-    <div class="card-header bg-primary bg-opacity-10">
-        <strong>Edit tournament</strong>
-    </div>
     <div class="card-body">
         <form asp-action="Details" asp-controller="Tournaments" asp-area="Administration" method="post" novalidate>
             @Html.AntiForgeryToken()
@@ -16,9 +15,6 @@
             <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
 
             <div class="card">
-                <div class="card-header bg-primary bg-opacity-10">
-                    <strong>Details</strong>
-                </div>
                 <div class="card-body">
                     <div class="row gx-3">
                         <div class="col-12 mb-3">

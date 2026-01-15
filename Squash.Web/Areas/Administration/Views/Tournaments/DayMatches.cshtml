@@ -2,7 +2,7 @@
 @model Squash.Web.Areas.Administration.Models.TournamentDayScheduleViewModel
 
 @{
-    ViewData["Title"] = "Tournament Days";
+    ViewData["Title"] = Model.TournamentName;
     var culture = new CultureInfo("en-GB");
     var matchGroups = Model.Matches
         .GroupBy(m => string.IsNullOrWhiteSpace(m.Time) ? "-" : m.Time)
@@ -10,6 +10,8 @@
         .ToList();
     var hasFilters = !string.IsNullOrEmpty(Model.FilterCountry) || !string.IsNullOrEmpty(Model.FilterDraw) || !string.IsNullOrEmpty(Model.FilterRound) || !string.IsNullOrEmpty(Model.FilterCourt);
 }
+
+<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.TournamentName, ActiveTab = "DayMatches" }' />
 
 <div class="row mb-4">
     <div class="col">

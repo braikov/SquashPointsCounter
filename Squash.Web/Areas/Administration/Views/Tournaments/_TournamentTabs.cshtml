@@ -1,0 +1,20 @@
+@model Squash.Web.Areas.Administration.Models.TournamentHeaderViewModel
+
+<h2 class="mb-4">@Model.Name</h2>
+
+<ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+        <a class="nav-link @(Model.ActiveTab == "Details" ? "active" : "")" 
+           asp-area="Administration" 
+           asp-controller="Tournaments" 
+           asp-action="Details" 
+           asp-route-id="@Model.Id">Details</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(Model.ActiveTab == "DayMatches" ? "active" : "")" 
+           asp-area="Administration" 
+           asp-controller="Tournaments" 
+           asp-action="DayMatches" 
+           asp-route-id="@Model.Id">Day Matches</a>
+    </li>
+</ul>
