@@ -174,7 +174,6 @@ namespace Squash.Web.Areas.Administration.Controllers
                 StartDate = tournament.StartDate,
                 EndDate = tournament.EndDate,
                 ClosingSigninDate = tournament.ClosingSigninDate,
-                ClosingSigninDate = tournament.ClosingSigninDate,
                 Regulations = tournament.Regulations,
                 NationalityId = tournament.NationalityId
             };
@@ -187,8 +186,6 @@ namespace Squash.Web.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Details(TournamentEditViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
             if (!ModelState.IsValid)
             {
                 PrepareViewModel(model);
