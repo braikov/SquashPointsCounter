@@ -53,7 +53,8 @@ namespace Squash.Shared.Parsers.Esf
             var matchNodes = doc.DocumentNode.SelectNodes("//div[contains(concat(' ', normalize-space(@class), ' '), ' match--list ')]");
             if (matchNodes == null)
             {
-                throw new InvalidOperationException("No match entries found in the matches page.");
+                // No matches found - this is normal for future dates
+                return result;
             }
 
             foreach (var matchNode in matchNodes)
