@@ -1,0 +1,67 @@
+@model PlayerEditViewModel
+
+@{
+    ViewData["Title"] = "Edit player";
+}
+
+<div class="card mb-4">
+    <div class="card-header bg-primary bg-opacity-10">
+        <strong>Edit player</strong>
+    </div>
+    <div class="card-body">
+        <form asp-action="Details" asp-controller="Players" asp-area="Administration" method="post" novalidate>
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
+
+            <div class="card">
+                <div class="card-header bg-primary bg-opacity-10">
+                    <strong>Details</strong>
+                </div>
+                <div class="card-body">
+                    <div class="row gx-3">
+                        <div class="col-12 mb-3">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row gx-3">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="NationalityId" class="form-label"></label>
+                            <select asp-for="NationalityId" class="form-select" asp-items="Model.AvailableNationalities">
+                                <option value="">Select nationality</option>
+                            </select>
+                            <span asp-validation-for="NationalityId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EsfMemberId" class="form-label"></label>
+                            <input asp-for="EsfMemberId" class="form-control" />
+                            <span asp-validation-for="EsfMemberId" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row gx-3">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ExternalPlayerId" class="form-label"></label>
+                            <input asp-for="ExternalPlayerId" class="form-control" />
+                            <span asp-validation-for="ExternalPlayerId" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Index" asp-controller="Players" asp-area="Administration" class="btn btn-secondary">Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

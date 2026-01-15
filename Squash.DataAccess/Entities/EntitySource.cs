@@ -1,6 +1,6 @@
 namespace Squash.DataAccess.Entities
 {
-    public enum TournamentSource
+    public enum EntitySource
     {
         Native = 0,
         Esf = 1,

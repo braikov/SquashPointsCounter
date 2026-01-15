@@ -304,6 +304,9 @@ namespace Squash.SqlServer.Migrations
                     b.Property<DateTime>("DateUpdated")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("EntitySourceId")
+                        .HasColumnType("int");
+
                     b.Property<string>("EsfMemberId")
                         .HasColumnType("nvarchar(max)");
 
@@ -436,7 +439,7 @@ namespace Squash.SqlServer.Migrations
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TournamentSource")
+                    b.Property<int>("EntitySourceId")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")

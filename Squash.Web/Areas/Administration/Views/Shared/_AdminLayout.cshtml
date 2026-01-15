@@ -48,8 +48,8 @@
                     Dashboard
                 </a>
             </li>
-            <li class="nav-group @(ctrlIn(new[] { "users" }) ? "show" : "")"
-                aria-expanded="@(ctrlIn(new[] { "users" }) ? "true" : "false")">
+            <li class="nav-group @(ctrlIn(new[] { "users", "players" }) ? "show" : "")"
+                aria-expanded="@(ctrlIn(new[] { "users", "players" }) ? "true" : "false")">
                 <a class="nav-link nav-group-toggle" href="#">
                     <svg class="nav-icon"><use xlink:href="/images/icons.svg#cil-user"></use></svg>
                     User Management
@@ -58,6 +58,11 @@
                     <li class="nav-item">
                         <a class="nav-link @(ctrlIs("users") ? "active" : "")" asp-area="Administration" asp-controller="Users" asp-action="Index">
                             <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ctrlIs("players") ? "active" : "")" asp-area="Administration" asp-controller="Players" asp-action="Index">
+                            <span class="nav-icon"><span class="nav-icon-bullet"></span></span> Players
                         </a>
                     </li>
                 </ul>
@@ -97,6 +102,7 @@
                 <ul class="header-nav d-none d-lg-flex">
                     <li class="nav-item"><a class="nav-link" asp-area="Administration" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" asp-area="Administration" asp-controller="Users" asp-action="Index">Users</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-area="Administration" asp-controller="Players" asp-action="Index">Players</a></li>
                     <li class="nav-item"><a class="nav-link" asp-area="Administration" asp-controller="Tournaments" asp-action="Index">Tournaments</a></li>
                 </ul>
 

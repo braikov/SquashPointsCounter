@@ -30,7 +30,7 @@ namespace Squash.Shared.Parsers.Esf
             {
                 ExternalCode = tournamentCode ?? string.Empty,
                 Name = tournamentName ?? string.Empty,
-                TournamentSource = TournamentSource.Esf
+                EntitySourceId = EntitySource.Esf
             };
 
             var tournamentDay = new TournamentDay
@@ -500,7 +500,8 @@ namespace Squash.Shared.Parsers.Esf
                         {
                             ExternalPlayerId = playerId,
                             Name = playerName ?? string.Empty,
-                            Nationality = nationality
+                            Nationality = nationality,
+                            EntitySourceId = EntitySource.Esf
                         };
 
                         playersByKey[playerKey] = player;

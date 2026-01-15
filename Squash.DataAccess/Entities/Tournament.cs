@@ -12,7 +12,7 @@ namespace Squash.DataAccess.Entities
         public DateTime? EndDate { get; set; }
         public DateTime? ClosingSigninDate { get; set; }
         public string? Regulations { get; set; }
-        public TournamentSource TournamentSource { get; set; } = TournamentSource.Native;
+        public EntitySource EntitySourceId { get; set; } = EntitySource.Native;
         public string? SourceUrls { get; set; }
 
         public ICollection<TournamentDay> Days { get; set; } = new List<TournamentDay>();

@@ -139,7 +139,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 ClosingSigninDate = model.ClosingSigninDate,
                 Regulations = model.Regulations,
                 UserId = userId,
-                TournamentSource = Squash.DataAccess.Entities.TournamentSource.Native
+                EntitySourceId = Squash.DataAccess.Entities.EntitySource.Native
             };
 
             _dataContext.Tournaments.Add(tournament);

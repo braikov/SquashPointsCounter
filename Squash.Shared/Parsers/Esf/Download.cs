@@ -25,7 +25,7 @@ namespace Squash.Shared.Parsers.Esf
             var tournamentId = ExtractTournamentId(url);
             result.Tournament.ExternalCode = tournamentId.ToString();
             result.Tournament.SourceUrls = url;
-            result.Tournament.TournamentSource = TournamentSource.Esf;
+            result.Tournament.EntitySourceId = EntitySource.Esf;
 
             return result;
         }
@@ -556,7 +556,7 @@ namespace Squash.Shared.Parsers.Esf
             {
                 existingTournament.Regulations = tournament.Regulations;
             }
-            existingTournament.TournamentSource = tournament.TournamentSource;
+            existingTournament.EntitySourceId = tournament.EntitySourceId;
 
             dbContext.SaveChanges();
             tournament.Id = existingTournament.Id;
