@@ -11,6 +11,7 @@
     <div class="card-body">
         <form asp-action="Create" asp-controller="Venues" asp-area="Administration" method="post" novalidate>
             @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ReturnUrl" />
 
             <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
 
@@ -117,7 +118,14 @@
 
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Save</button>
-                <a asp-action="Index" asp-controller="Venues" asp-area="Administration" class="btn btn-secondary">Cancel</a>
+                @if (!string.IsNullOrEmpty(Model.ReturnUrl) && Url.IsLocalUrl(Model.ReturnUrl))
+                {
+                    <a href="@Model.ReturnUrl" class="btn btn-secondary">Cancel</a>
+                }
+                else
+                {
+                    <a asp-action="Index" asp-controller="Venues" asp-area="Administration" class="btn btn-secondary">Cancel</a>
+                }
             </div>
         </form>
     </div>

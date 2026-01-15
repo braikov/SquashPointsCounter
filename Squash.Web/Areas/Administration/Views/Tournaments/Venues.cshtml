@@ -1,0 +1,105 @@
+@model Squash.Web.Areas.Administration.Models.TournamentVenuesViewModel
+
+@{
+    ViewData["Title"] = "Venues & Courts - " + Model.TournamentName;
+}
+
+<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.TournamentName, ActiveTab = "Venues" }' />
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Assigned Venues</h5>
+    </div>
+    <div class="card-body">
+        @if (!Model.AssignedVenues.Any())
+        {
+            <div class="alert alert-info">No venues assigned to this tournament yet.</div>
+        }
+        else
+        {
+            @foreach (var venue in Model.AssignedVenues)
+            {
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>@venue.Name</strong> @(!string.IsNullOrEmpty(venue.City) ? $"({venue.City})" : "")
+                        </div>
+                        <form asp-action="RemoveVenue" asp-controller="Tournaments" asp-area="Administration" method="post" 
+                              onsubmit="return confirm('Are you sure you want to remove this venue?');">
+                            <input type="hidden" name="id" value="@Model.TournamentId" />
+                            <input type="hidden" name="venueId" value="@venue.VenueId" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Remove Venue</button>
+                        </form>
+                    </div>
+                    <div class="card-body">
+                        <h6>Courts</h6>
+                        @if (!venue.Courts.Any())
+                        {
+                            <p class="text-muted small">No courts found in this venue.</p>
+                        }
+                        else
+                        {
+                            <div class="list-group">
+                                @foreach (var court in venue.Courts)
+                                {
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>@court.Name</span>
+                                        <form asp-action="ToggleCourt" asp-controller="Tournaments" asp-area="Administration" method="post" >
+                                            <input type="hidden" name="id" value="@Model.TournamentId" />
+                                            <input type="hidden" name="courtId" value="@court.CourtId" />
+                                            @if (court.IsAssignedToTournament)
+                                            {
+                                                <input type="hidden" name="assign" value="false" />
+                                                <button type="submit" class="btn btn-sm btn-success">Added</button>
+                                            }
+                                            else
+                                            {
+                                                <input type="hidden" name="assign" value="true" />
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary">Add</button>
+                                            }
+                                        </form>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Add Venue</h5>
+    </div>
+    <div class="card-body">
+        <form asp-action="AddVenue" asp-controller="Tournaments" asp-area="Administration" method="post" class="row gx-3 align-items-end">
+            <input type="hidden" asp-for="TournamentId" />
+            
+            <div class="col-md-6 mb-3">
+                <label asp-for="SelectedVenueId" class="form-label">Select Venue</label>
+                <select asp-for="SelectedVenueId" asp-items="Model.AvailableVenues" class="form-select">
+                    <option value="">-- Select Venue --</option>
+                </select>
+            </div>
+            <div class="col-md-3 mb-3">
+                <button type="submit" class="btn btn-primary" @(!Model.AvailableVenues.Any() ? "disabled" : "")>Add Existing</button>
+            </div>
+             <div class="col-md-3 mb-3 text-end">
+                 <!-- Return URL will be the Venues tab of this tournament -->
+                 @{
+                     // Construct return URL for default routing
+                     var returnUrl = Url.Action("Venues", "Tournaments", new { area = "Administration", id = Model.TournamentId });
+                 }
+                <a asp-controller="Venues" asp-action="Create" asp-area="Administration" 
+                   asp-route-returnUrl="@returnUrl" 
+                   class="btn btn-secondary">Create New Venue</a>
+            </div>
+        </form>
+        @if (!Model.AvailableVenues.Any())
+        {
+            <div class="text-muted small mt-2">No venues available to add in this country. Create a new one.</div>
+        }
+    </div>
+</div>

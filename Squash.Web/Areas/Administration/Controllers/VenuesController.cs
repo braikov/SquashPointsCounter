@@ -59,11 +59,12 @@ namespace Squash.Web.Areas.Administration.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public IActionResult Create(string? returnUrl = null)
         {
             var model = new VenueEditViewModel
             {
-                AvailableCountries = GetCountryOptions(null)
+                AvailableCountries = GetCountryOptions(null),
+                ReturnUrl = returnUrl
             };
             return View(model);
         }
@@ -95,6 +96,11 @@ namespace Squash.Web.Areas.Administration.Controllers
 
             _dataContext.Venues.Add(venue);
             _dataContext.SaveChanges();
+
+            if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+            {
+                return Redirect(model.ReturnUrl);
+            }
 
             return RedirectToAction(nameof(Index));
         }

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Squash.DataAccess;
 using Squash.Web.Areas.Administration.Models;
+using Squash.DataAccess.Entities;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Squash.Web.Areas.Administration.Controllers
 {
@@ -542,6 +544,162 @@ namespace Squash.Web.Areas.Administration.Controllers
             }
 
             return Guid.TryParse(segments[1], out tournamentId);
+        }
+        [HttpGet]
+        public IActionResult Venues(int id)
+        {
+            var tournament = _dataContext.Tournaments
+                .AsNoTracking()
+                .Include(t => t.TournamentVenues).ThenInclude(tv => tv.Venue).ThenInclude(v => v.Courts)
+                .Include(t => t.TournamentCourts)
+                .Include(t => t.Nationality)
+                .FirstOrDefault(t => t.Id == id);
+
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            var assignedVenueIds = tournament.TournamentVenues.Select(tv => tv.VenueId).ToList();
+            var countryId = tournament.NationalityId;
+
+            // Available venues: same country (if set), not already assigned
+            // Note: If tournament has no nationality? User said "only those that are not already added to tournament in this country"
+            // Assuming tournament.NationalityId determines the country.
+            
+            var availableVenuesQuery = _dataContext.Venues
+                .AsNoTracking()
+                .Where(v => !assignedVenueIds.Contains(v.Id));
+
+            if (countryId != 0)
+            {
+                availableVenuesQuery = availableVenuesQuery.Where(v => v.CountryId == countryId);
+            }
+
+            var availableVenues = availableVenuesQuery
+                .OrderBy(v => v.Name)
+                .Select(v => new SelectListItem
+                {
+                    Value = v.Id.ToString(),
+                    Text = v.Name + (!string.IsNullOrEmpty(v.City) ? $" ({v.City})" : "")
+                })
+                .ToList();
+
+            var model = new TournamentVenuesViewModel
+            {
+                TournamentId = tournament.Id,
+                TournamentName = tournament.Name,
+                NationalityId = tournament.NationalityId,
+                AvailableVenues = availableVenues,
+                AssignedVenues = tournament.TournamentVenues
+                    .Select(tv => new TournamentVenueItemViewModel
+                    {
+                        VenueId = tv.VenueId,
+                        Name = tv.Venue.Name,
+                        City = tv.Venue.City,
+                        Courts = tv.Venue.Courts.Select(c => new TournamentCourtItemViewModel
+                        {
+                            CourtId = c.Id,
+                            Name = c.Name,
+                            IsAssignedToTournament = tournament.TournamentCourts.Any(tc => tc.CourtId == c.Id)
+                        }).OrderBy(c => c.Name).ToList()
+                    })
+                    .OrderBy(v => v.Name)
+                    .ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddVenue(TournamentVenuesViewModel model)
+        {
+            if (model.SelectedVenueId.HasValue)
+            {
+                var exists = _dataContext.TournamentVenues
+                    .Any(tv => tv.TournamentId == model.TournamentId && tv.VenueId == model.SelectedVenueId.Value);
+
+                if (!exists)
+                {
+                    _dataContext.TournamentVenues.Add(new TournamentVenue
+                    {
+                        TournamentId = model.TournamentId,
+                        VenueId = model.SelectedVenueId.Value
+                    });
+                     // Also assign all courts of this venue by default? 
+                     // User didn't specify, but usually "Add Venue" enables its courts.
+                     // However, the mock shows "Add button next to drop down", and then we see courts.
+                     // The user said "Add new vanue will navigate to vanue... Save ... navigate back".
+                     // Let's just add the venue linkage.
+                     
+                    _dataContext.SaveChanges();
+                }
+            }
+            return RedirectToAction(nameof(Venues), new { id = model.TournamentId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RemoveVenue(int id, int venueId)
+        {
+            var tv = _dataContext.TournamentVenues
+                .FirstOrDefault(x => x.TournamentId == id && x.VenueId == venueId);
+
+            if (tv != null)
+            {
+                _dataContext.TournamentVenues.Remove(tv);
+                
+                // Also remove associated courts from this tournament?
+                var venueCourts = _dataContext.Courts.Where(c => c.VenueId == venueId).Select(c => c.Id).ToList();
+                var tcs = _dataContext.TournamentCourts
+                    .Where(tc => tc.TournamentId == id && venueCourts.Contains(tc.CourtId))
+                    .ToList();
+                
+                _dataContext.TournamentCourts.RemoveRange(tcs);
+                
+                _dataContext.SaveChanges();
+            }
+            return RedirectToAction(nameof(Venues), new { id = id });
+        }
+
+        [HttpPost]
+        public IActionResult ToggleCourt(int id, int courtId, bool assign)
+        {
+            var current = _dataContext.TournamentCourts
+                .FirstOrDefault(tc => tc.TournamentId == id && tc.CourtId == courtId);
+
+            if (assign)
+            {
+                if (current == null)
+                {
+                    _dataContext.TournamentCourts.Add(new TournamentCourt
+                    {
+                        TournamentId = id,
+                        CourtId = courtId
+                    });
+                }
+            }
+            else
+            {
+                if (current != null)
+                {
+                    _dataContext.TournamentCourts.Remove(current);
+                }
+            }
+            _dataContext.SaveChanges();
+
+            // Return OK or similar since this might be an AJAX call? 
+            // "all operations... synchronically" usually means full page reload in MVC terms if not specified AJAX.
+            // But "Toggle" often implies AJAX or checkbox form submission.
+            // User said "synchronically (i.e delete, add vanue, add court delete court, etc)". 
+            // This phrasing "synchronically" likely means "Synchronously" in the sense of HTTP request/response page reload, 
+            // OR it means "don't queue it, do it now".
+            // "Save in this case should navigate back..." refers to Venue creation.
+            // "all operations on tournamet vanue page should happen synchronically"
+            // I will implement this as a redirect back to Venues.
+            
+            return RedirectToAction(nameof(Venues), new { id = id });
         }
     }
 }

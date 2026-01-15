@@ -11,6 +11,13 @@
            asp-route-id="@Model.Id">Details</a>
     </li>
     <li class="nav-item">
+        <a class="nav-link @(Model.ActiveTab == "Venues" ? "active" : "")" 
+           asp-area="Administration" 
+           asp-controller="Tournaments" 
+           asp-action="Venues" 
+           asp-route-id="@Model.Id">Venue(s) & Courts</a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link @(Model.ActiveTab == "DayMatches" ? "active" : "")" 
            asp-area="Administration" 
            asp-controller="Tournaments" 

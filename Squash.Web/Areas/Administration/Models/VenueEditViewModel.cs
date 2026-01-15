@@ -6,6 +6,7 @@ namespace Squash.Web.Areas.Administration.Models
     public class VenueEditViewModel
     {
         public int Id { get; set; }
+        public string? ReturnUrl { get; set; }
 
         [Required]
         [Display(Name = "Name")]
