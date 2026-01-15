@@ -41,6 +41,8 @@ namespace Squash.Web.Areas.Administration.Models
         [Display(Name = "Website")]
         public string? Website { get; set; }
 
+        public List<CourtEditViewModel> Courts { get; set; } = new List<CourtEditViewModel>();
+
         public List<SelectListItem> AvailableCountries { get; set; } = new();
     }
 }

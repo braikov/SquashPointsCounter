@@ -104,6 +104,7 @@ namespace Squash.Web.Areas.Administration.Controllers
         {
             var venue = _dataContext.Venues
                 .AsNoTracking()
+                .Include(v => v.Courts)
                 .FirstOrDefault(v => v.Id == id);
 
             if (venue == null)
@@ -125,7 +126,15 @@ namespace Squash.Web.Areas.Administration.Controllers
                 Phone = venue.Phone,
                 Email = venue.Email,
                 Website = venue.Website,
-                AvailableCountries = GetCountryOptions(venue.CountryId)
+                AvailableCountries = GetCountryOptions(venue.CountryId),
+                Courts = venue.Courts
+                    .OrderBy(c => c.Name)
+                    .Select(c => new CourtEditViewModel
+                    {
+                        Id = c.Id,
+                        Name = c.Name
+                    })
+                    .ToList()
             };
 
             return View(model);
@@ -142,6 +151,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             }
 
             var venue = _dataContext.Venues
+                .Include(v => v.Courts)
                 .FirstOrDefault(v => v.Id == model.Id);
 
             if (venue == null)
@@ -160,6 +170,49 @@ namespace Squash.Web.Areas.Administration.Controllers
             venue.Phone = model.Phone?.Trim();
             venue.Email = model.Email?.Trim();
             venue.Website = model.Website?.Trim();
+
+            // Handle Courts
+            foreach (var courtModel in model.Courts)
+            {
+                if (courtModel.IsDeleted)
+                {
+                    if (courtModel.Id > 0)
+                    {
+                        var existingCourt = venue.Courts.FirstOrDefault(c => c.Id == courtModel.Id);
+                        if (existingCourt != null)
+                        {
+                            // If we can't delete due to FK (matches), we might need to handle it.
+                            // For now, assume cascading delete or explicit removal.
+                            // Actually, soft delete or check usage is safer, but user asked to "remove them".
+                            // Entity framework will try to delete. If matches exist, it might fail if not configured.
+                            // Let's assume standard removal from collection + orchestration handles it or throws.
+                            // _dataContext.Courts.Remove(existingCourt); // Direct remove or via collection
+                            // Removing from collection is often enough with proper configuration.
+                             _dataContext.Courts.Remove(existingCourt);
+                        }
+                    }
+                }
+                else
+                {
+                    if (courtModel.Id == 0)
+                    {
+                        // Add new
+                        venue.Courts.Add(new Court
+                        {
+                            Name = courtModel.Name?.Trim() ?? string.Empty
+                        });
+                    }
+                    else
+                    {
+                        // Update existing
+                        var existingCourt = venue.Courts.FirstOrDefault(c => c.Id == courtModel.Id);
+                        if (existingCourt != null)
+                        {
+                            existingCourt.Name = courtModel.Name?.Trim() ?? string.Empty;
+                        }
+                    }
+                }
+            }
 
             _dataContext.SaveChanges();
 

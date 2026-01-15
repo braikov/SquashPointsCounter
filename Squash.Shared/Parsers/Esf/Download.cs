@@ -173,6 +173,7 @@ namespace Squash.Shared.Parsers.Esf
                     {
                         Name = venueData.Name
                     };
+                    existingVenue.Courts.Add(new Court { Name = "Court 1" });
                     dbContext.Venues.Add(existingVenue);
                     dbContext.SaveChanges();
                 }
@@ -346,6 +347,7 @@ namespace Squash.Shared.Parsers.Esf
                     {
                         Name = name
                     };
+                    existingVenue.Courts.Add(new Court { Name = "Court 1" });
                     dbContext.Venues.Add(existingVenue);
                     dbContext.SaveChanges();
                 }

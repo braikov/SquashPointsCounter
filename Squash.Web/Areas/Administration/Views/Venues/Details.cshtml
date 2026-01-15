@@ -127,6 +127,40 @@
                 </div>
             </div>
 
+            <div class="card mb-3">
+                <div class="card-header bg-primary bg-opacity-10 d-flex justify-content-between align-items-center">
+                    <strong>Courts</strong>
+                    <button type="button" id="btnAddCourt" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-lg"></i> Add Court
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div id="courtsContainer">
+                        @for (int i = 0; i < Model.Courts.Count; i++)
+                        {
+                            <div class="row gx-3 mb-2 align-items-center court-row" id="court-row-@i">
+                                <input type="hidden" name="Courts.Index" value="@i" />
+                                <input type="hidden" asp-for="Courts[i].Id" />
+                                <input type="hidden" asp-for="Courts[i].IsDeleted" class="is-deleted-input" />
+                                
+                                <div class="col-md-10">
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-aspect-ratio"></i></span>
+                                        <input asp-for="Courts[i].Name" class="form-control" placeholder="Court Name" />
+                                    </div>
+                                    <span asp-validation-for="Courts[i].Name" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button type="button" class="btn btn-outline-danger btn-sm btn-remove-court" data-target="#court-row-@i">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Save</button>
                 <a asp-action="Index" asp-controller="Venues" asp-area="Administration" class="btn btn-secondary">Back</a>
@@ -137,4 +171,48 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('courtsContainer');
+            const btnAdd = document.getElementById('btnAddCourt');
+
+            btnAdd.addEventListener('click', function () {
+                const index = new Date().getTime(); // Unique index
+                const html = `
+                    <div class="row gx-3 mb-2 align-items-center court-row" id="court-row-${index}">
+                        <input type="hidden" name="Courts.Index" value="${index}" />
+                        <input type="hidden" name="Courts[${index}].Id" value="0" />
+                        <input type="hidden" name="Courts[${index}].IsDeleted" value="false" class="is-deleted-input" />
+                        
+                        <div class="col-md-10">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-aspect-ratio"></i></span>
+                                <input name="Courts[${index}].Name" class="form-control" placeholder="Court Name" />
+                            </div>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <button type="button" class="btn btn-outline-danger btn-sm btn-remove-court" data-target="#court-row-${index}">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+
+            container.addEventListener('click', function (e) {
+                if (e.target.classList.contains('btn-remove-court')) {
+                    const rowId = e.target.getAttribute('data-target');
+                    const row = document.querySelector(rowId);
+                    if (row) {
+                        const isDeletedInput = row.querySelector('.is-deleted-input');
+                        if (isDeletedInput) {
+                            isDeletedInput.value = 'true';
+                        }
+                        row.classList.add('d-none');
+                    }
+                }
+            });
+        });
+    </script>
 }
