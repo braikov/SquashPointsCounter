@@ -12,7 +12,7 @@ using Squash.SqlServer;
 namespace Squash.SqlServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260115161832_InitialMigration")]
+    [Migration("20260115205534_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -439,6 +439,9 @@ namespace Squash.SqlServer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NationalityId")
+                        .HasColumnType("int");
+
                     b.Property<string>("OrganizationCode")
                         .HasColumnType("nvarchar(max)");
 
@@ -455,6 +458,8 @@ namespace Squash.SqlServer.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NationalityId");
 
                     b.HasIndex("UserId");
 
@@ -882,11 +887,19 @@ namespace Squash.SqlServer.Migrations
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Tournament", b =>
                 {
+                    b.HasOne("Squash.DataAccess.Entities.Nationality", "Nationality")
+                        .WithMany()
+                        .HasForeignKey("NationalityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Squash.DataAccess.Entities.User", "User")
                         .WithMany("Tournaments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Nationality");
 
                     b.Navigation("User");
                 });

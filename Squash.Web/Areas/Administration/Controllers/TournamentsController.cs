@@ -72,7 +72,9 @@ namespace Squash.Web.Areas.Administration.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View(new TournamentEditViewModel());
+            var model = new TournamentEditViewModel();
+            PrepareViewModel(model);
+            return View(model);
         }
 
         [HttpPost]
@@ -81,6 +83,7 @@ namespace Squash.Web.Areas.Administration.Controllers
         {
             if (!ModelState.IsValid)
             {
+                PrepareViewModel(model);
                 return View(model);
             }
 
@@ -88,6 +91,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             if (string.IsNullOrWhiteSpace(identityUserId))
             {
                 ModelState.AddModelError(string.Empty, "Cannot determine current user.");
+                PrepareViewModel(model);
                 return View(model);
             }
 
@@ -102,6 +106,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 if (identityUser == null)
                 {
                     ModelState.AddModelError(string.Empty, "Cannot load current user.");
+                    PrepareViewModel(model);
                     return View(model);
                 }
 
@@ -128,6 +133,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             if (userId == 0)
             {
                 ModelState.AddModelError(string.Empty, "Cannot determine current user.");
+                PrepareViewModel(model);
                 return View(model);
             }
 
@@ -138,6 +144,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 EndDate = model.EndDate,
                 ClosingSigninDate = model.ClosingSigninDate,
                 Regulations = model.Regulations,
+                NationalityId = model.NationalityId,
                 UserId = userId,
                 EntitySourceId = Squash.DataAccess.Entities.EntitySource.Native
             };
@@ -167,8 +174,11 @@ namespace Squash.Web.Areas.Administration.Controllers
                 StartDate = tournament.StartDate,
                 EndDate = tournament.EndDate,
                 ClosingSigninDate = tournament.ClosingSigninDate,
-                Regulations = tournament.Regulations
+                ClosingSigninDate = tournament.ClosingSigninDate,
+                Regulations = tournament.Regulations,
+                NationalityId = tournament.NationalityId
             };
+            PrepareViewModel(model);
 
             return View(model);
         }
@@ -179,6 +189,9 @@ namespace Squash.Web.Areas.Administration.Controllers
         {
             if (!ModelState.IsValid)
             {
+            if (!ModelState.IsValid)
+            {
+                PrepareViewModel(model);
                 return View(model);
             }
 
@@ -194,7 +207,9 @@ namespace Squash.Web.Areas.Administration.Controllers
             tournament.StartDate = model.StartDate;
             tournament.EndDate = model.EndDate;
             tournament.ClosingSigninDate = model.ClosingSigninDate;
+            tournament.ClosingSigninDate = model.ClosingSigninDate;
             tournament.Regulations = model.Regulations;
+            tournament.NationalityId = model.NationalityId;
 
             _dataContext.SaveChanges();
 
@@ -485,6 +500,19 @@ namespace Squash.Web.Areas.Administration.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        private void PrepareViewModel(TournamentEditViewModel model)
+        {
+            model.Nationalities = _dataContext.Nationalities
+                .AsNoTracking()
+                .OrderBy(n => n.CountryName)
+                .Select(n => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
+                {
+                    Value = n.Id.ToString(),
+                    Text = n.CountryName
+                })
+                .ToList();
         }
 
         private static bool IsValidEsfTournamentUrl(string url, out Guid tournamentId)

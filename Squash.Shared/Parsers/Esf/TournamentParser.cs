@@ -23,6 +23,7 @@ namespace Squash.Shared.Parsers.Esf
             var closingDate = ExtractTimelineDate(doc, "Closing deadline");
             var startDate = ExtractTimelineDate(doc, "Start tournament");
             var endDate = ExtractTimelineDate(doc, "End of tournament");
+            var hostNation = ExtractHostNation(doc);
             var contact = ExtractContact(doc);
             var venues = ExtractVenues(doc);
 
@@ -41,8 +42,33 @@ namespace Squash.Shared.Parsers.Esf
                 ContactName = contact.name,
                 ContactEmail = contact.email,
                 ContactPhone = contact.phone,
+                HostNation = hostNation,
                 Venues = venues
             };
+        }
+
+        private static string? ExtractHostNation(HtmlDocument doc)
+        {
+            var nodes = doc.DocumentNode.SelectNodes("//li[contains(@class,'list__item')]");
+            if (nodes == null)
+            {
+                return null;
+            }
+
+            foreach (var node in nodes)
+            {
+                var labelNode = node.SelectSingleNode(".//div[contains(@class,'list__label')]");
+                var labelText = NormalizeText(labelNode?.InnerText);
+                if (!string.Equals(labelText, "Host nation", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                var valueNode = node.SelectSingleNode(".//div[contains(@class,'list__value')]");
+                return NormalizeText(valueNode?.InnerText);
+            }
+
+            return null;
         }
 
         private static string? ExtractTournamentName(HtmlDocument doc)
@@ -386,6 +412,7 @@ namespace Squash.Shared.Parsers.Esf
         public string? ContactName { get; set; }
         public string? ContactEmail { get; set; }
         public string? ContactPhone { get; set; }
+        public string? HostNation { get; set; }
         public List<VenueParseResult> Venues { get; set; } = new List<VenueParseResult>();
     }
 

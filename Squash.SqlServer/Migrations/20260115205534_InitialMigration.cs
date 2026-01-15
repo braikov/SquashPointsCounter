@@ -151,6 +151,7 @@ namespace Squash.SqlServer.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
+                    NationalityId = table.Column<int>(type: "int", nullable: false),
                     ExternalCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrganizationCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -167,6 +168,12 @@ namespace Squash.SqlServer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tournaments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tournaments_Nationalities_NationalityId",
+                        column: x => x.NationalityId,
+                        principalTable: "Nationalities",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Tournaments_Users_UserId",
                         column: x => x.UserId,
@@ -577,6 +584,11 @@ namespace Squash.SqlServer.Migrations
                 name: "IX_TournamentDays_TournamentId",
                 table: "TournamentDays",
                 column: "TournamentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tournaments_NationalityId",
+                table: "Tournaments",
+                column: "NationalityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tournaments_UserId",
