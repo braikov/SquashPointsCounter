@@ -17,8 +17,9 @@ namespace Squash.SqlServer.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CountryName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastOperationUserId = table.Column<int>(type: "int", nullable: false)
@@ -26,25 +27,6 @@ namespace Squash.SqlServer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Nationalities", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Venues",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Longitude = table.Column<double>(type: "float", nullable: true),
-                    Latitude = table.Column<double>(type: "float", nullable: true),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastOperationUserId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Venues", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,6 +39,7 @@ namespace Squash.SqlServer.Migrations
                     ExternalPlayerId = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EsfMemberId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EntitySourceId = table.Column<int>(type: "int", nullable: false),
                     NationalityId = table.Column<int>(type: "int", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -73,26 +56,34 @@ namespace Squash.SqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Courts",
+                name: "Venues",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    VenueId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    Street = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: true),
+                    City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Zip = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    Region = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    CountryId = table.Column<int>(type: "int", nullable: true),
+                    Longitude = table.Column<double>(type: "float", nullable: true),
+                    Latitude = table.Column<double>(type: "float", nullable: true),
+                    Phone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Website = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastOperationUserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Courts", x => x.Id);
+                    table.PrimaryKey("PK_Venues", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Courts_Venues_VenueId",
-                        column: x => x.VenueId,
-                        principalTable: "Venues",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Venues_Nationalities_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Nationalities",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -131,6 +122,29 @@ namespace Squash.SqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Courts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VenueId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastOperationUserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Courts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Courts_Venues_VenueId",
+                        column: x => x.VenueId,
+                        principalTable: "Venues",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tournaments",
                 columns: table => new
                 {
@@ -144,7 +158,7 @@ namespace Squash.SqlServer.Migrations
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ClosingSigninDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Regulations = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TournamentSource = table.Column<int>(type: "int", nullable: false),
+                    EntitySourceId = table.Column<int>(type: "int", nullable: false),
                     SourceUrls = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -597,6 +611,11 @@ namespace Squash.SqlServer.Migrations
                 column: "PlayerId",
                 unique: true,
                 filter: "[PlayerId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Venues_CountryId",
+                table: "Venues",
+                column: "CountryId");
         }
 
         /// <inheritdoc />

@@ -23,3 +23,5 @@
 /Squash.Web/obj
 /.vs/Squash/config
 /example
+/.vs/ProjectEvaluation
+/Squash.Web/wwwroot/coreui

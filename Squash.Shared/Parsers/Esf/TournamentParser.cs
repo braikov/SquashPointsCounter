@@ -162,9 +162,13 @@ namespace Squash.Shared.Parsers.Esf
             return (name, NormalizeText(email), NormalizeText(phone));
         }
 
-        private static List<Venue> ExtractVenues(HtmlDocument doc)
+        private static List<VenueParseResult> ExtractVenues(HtmlDocument doc)
         {
-            var venues = new List<Venue>();
+            var venues = new List<VenueParseResult>();
+            
+            // First, extract contact information as fallback for venue phone/email
+            var contactInfo = ExtractContactInfo(doc);
+            
             var modules = doc.DocumentNode
                 .SelectNodes("//div[contains(@class,'module')]")
                 ?.Where(m => m.SelectSingleNode(".//*[contains(@class,'p-adr') or contains(@class,'p-street-address') or contains(@class,'p-country-name')]") != null)
@@ -182,86 +186,132 @@ namespace Squash.Shared.Parsers.Esf
                 IEnumerable<HtmlNode> mediaItems = mediaNodes == null ? new[] { module } : mediaNodes;
                 foreach (var media in mediaItems)
                 {
-                    var (name, address) = ExtractVenueInfo(media);
-                    if (string.IsNullOrWhiteSpace(name))
+                    var venueInfo = ExtractVenueInfo(media);
+                    if (string.IsNullOrWhiteSpace(venueInfo.Name))
                     {
                         continue;
                     }
 
-                    var key = $"{name}|{address}".Trim();
+                    var key = $"{venueInfo.Name}|{venueInfo.Street}|{venueInfo.City}".Trim();
                     if (!seen.Add(key))
                     {
                         continue;
                     }
 
                     var (lat, lon) = ExtractCoordinates(module);
-                    venues.Add(new Venue
+                    venueInfo.Latitude = lat;
+                    venueInfo.Longitude = lon;
+                    
+                    // Fallback to contact info if venue doesn't have phone/email
+                    if (string.IsNullOrWhiteSpace(venueInfo.Phone) && !string.IsNullOrWhiteSpace(contactInfo.Phone))
                     {
-                        Name = name,
-                        Address = address ?? string.Empty,
-                        Latitude = lat,
-                        Longitude = lon
-                    });
+                        venueInfo.Phone = contactInfo.Phone;
+                    }
+                    if (string.IsNullOrWhiteSpace(venueInfo.Email) && !string.IsNullOrWhiteSpace(contactInfo.Email))
+                    {
+                        venueInfo.Email = contactInfo.Email;
+                    }
+                    
+                    venues.Add(venueInfo);
                 }
             }
 
             return venues;
         }
-
-        private static (string? name, string? address) ExtractVenueInfo(HtmlNode module)
+        
+        private static (string? Phone, string? Email) ExtractContactInfo(HtmlDocument doc)
         {
-            var nameNode = module.SelectSingleNode(".//h5[contains(@class,'media__title')]//span[contains(@class,'nav-link__value')]");
-            var name = NormalizeText(nameNode?.InnerText);
-
-            var lines = new List<string>();
-            var addressNode = module.SelectSingleNode(".//*[contains(@class,'p-adr')]");
-            if (addressNode != null)
-            {
-                lines.AddRange(SplitLines(addressNode.InnerText));
-            }
-
-            var streetNode = module.SelectSingleNode(".//div[contains(@class,'p-street-address')]");
-            if (streetNode != null)
-            {
-                lines.AddRange(SplitLines(streetNode.InnerText));
-            }
-
-            var postal = NormalizeText(module.SelectSingleNode(".//span[contains(@class,'p-postal-code')]")?.InnerText);
-            var locality = NormalizeText(module.SelectSingleNode(".//span[contains(@class,'p-locality')]")?.InnerText);
-            if (!string.IsNullOrWhiteSpace(postal) || !string.IsNullOrWhiteSpace(locality))
-            {
-                var cityLine = $"{postal} {locality}".Trim();
-                if (!string.IsNullOrWhiteSpace(cityLine))
+            // Find the Contact module (sidebar card with "Contact" title)
+            var contactModule = doc.DocumentNode
+                .SelectNodes("//div[contains(@class,'module--card')]")
+                ?.FirstOrDefault(m => 
                 {
-                    lines.Add(cityLine);
+                    var title = m.SelectSingleNode(".//h3[contains(@class,'module__title')]//span[contains(@class,'module__title-main')]");
+                    return title != null && NormalizeText(title.InnerText)?.Trim().Equals("Contact", StringComparison.OrdinalIgnoreCase) == true;
+                });
+
+            if (contactModule == null)
+            {
+                return (null, null);
+            }
+
+            string? phone = null;
+            string? email = null;
+
+            // Extract phone from tel: link
+            var phoneNode = contactModule.SelectSingleNode(".//a[starts-with(@href,'tel:')]");
+            if (phoneNode != null)
+            {
+                phone = NormalizeText(phoneNode.GetAttributeValue("href", string.Empty).Replace("tel:", string.Empty));
+                if (string.IsNullOrWhiteSpace(phone))
+                {
+                    phone = NormalizeText(phoneNode.InnerText);
                 }
             }
 
-            var country = NormalizeText(module.SelectSingleNode(".//div[contains(@class,'p-country-name')]")?.InnerText);
-            if (!string.IsNullOrWhiteSpace(country))
+            // Extract email from mailto: link
+            var emailNode = contactModule.SelectSingleNode(".//a[starts-with(@href,'mailto:')]");
+            if (emailNode != null)
             {
-                lines.Add(country);
+                email = NormalizeText(emailNode.GetAttributeValue("href", string.Empty).Replace("mailto:", string.Empty));
             }
 
-            if (lines.Count == 0)
+            return (phone, email);
+        }
+
+        private static VenueParseResult ExtractVenueInfo(HtmlNode module)
+        {
+            var result = new VenueParseResult();
+
+            var nameNode = module.SelectSingleNode(".//h5[contains(@class,'media__title')]//span[contains(@class,'nav-link__value')]");
+            result.Name = NormalizeText(nameNode?.InnerText);
+
+            // Street address (may be multiline)
+            var streetNode = module.SelectSingleNode(".//*[contains(@class,'p-street-address')]");
+            if (streetNode != null)
             {
-                return (name, null);
+                var lines = SplitLines(streetNode.InnerText).ToList();
+                result.Street = lines.Count > 0 ? string.Join(", ", lines) : null;
             }
 
-            if (string.IsNullOrWhiteSpace(name))
+            // Postal code
+            result.Zip = NormalizeText(module.SelectSingleNode(".//*[contains(@class,'p-postal-code')]")?.InnerText);
+
+            // City/Locality
+            result.City = NormalizeText(module.SelectSingleNode(".//*[contains(@class,'p-locality')]")?.InnerText);
+
+            // Region
+            result.Region = NormalizeText(module.SelectSingleNode(".//*[contains(@class,'p-region')]")?.InnerText);
+
+            // Country
+            result.CountryName = NormalizeText(module.SelectSingleNode(".//*[contains(@class,'p-country-name')]")?.InnerText);
+
+            // Phone
+            var phoneNode = module.SelectSingleNode(".//*[contains(@class,'p-phone')]//a[starts-with(@href,'tel:')]");
+            if (phoneNode != null)
             {
-                name = lines.FirstOrDefault();
-                lines = lines.Skip(1).ToList();
+                result.Phone = NormalizeText(phoneNode.GetAttributeValue("href", string.Empty).Replace("tel:", string.Empty));
+                if (string.IsNullOrWhiteSpace(result.Phone))
+                {
+                    result.Phone = NormalizeText(phoneNode.InnerText);
+                }
             }
 
-            if (!string.IsNullOrWhiteSpace(name) && lines.Count > 0
-                && string.Equals(lines[0], name, StringComparison.OrdinalIgnoreCase))
+            // Email
+            var emailNode = module.SelectSingleNode(".//*[contains(@class,'p-email')]//a[starts-with(@href,'mailto:')]");
+            if (emailNode != null)
             {
-                lines.RemoveAt(0);
+                result.Email = NormalizeText(emailNode.GetAttributeValue("href", string.Empty).Replace("mailto:", string.Empty));
             }
 
-            var address = lines.Count > 0 ? string.Join(Environment.NewLine, lines) : null;
-            return (name, address);
+            // Website
+            var websiteNode = module.SelectSingleNode(".//*[contains(@class,'p-website')]//a[@href]");
+            if (websiteNode != null)
+            {
+                result.Website = NormalizeText(websiteNode.GetAttributeValue("href", string.Empty));
+            }
+
+            return result;
         }
 
         private static (double? lat, double? lon) ExtractCoordinates(HtmlNode module)
@@ -336,6 +386,21 @@ namespace Squash.Shared.Parsers.Esf
         public string? ContactName { get; set; }
         public string? ContactEmail { get; set; }
         public string? ContactPhone { get; set; }
-        public List<Venue> Venues { get; set; } = new List<Venue>();
+        public List<VenueParseResult> Venues { get; set; } = new List<VenueParseResult>();
+    }
+
+    public class VenueParseResult
+    {
+        public string? Name { get; set; }
+        public string? Street { get; set; }
+        public string? City { get; set; }
+        public string? Zip { get; set; }
+        public string? Region { get; set; }
+        public string? CountryName { get; set; }
+        public double? Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public string? Phone { get; set; }
+        public string? Email { get; set; }
+        public string? Website { get; set; }
     }
 }

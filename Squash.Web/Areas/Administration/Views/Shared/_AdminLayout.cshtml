@@ -73,6 +73,12 @@
                     Tournaments
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link @(ctrlIs("venues") ? "active" : "")" asp-area="Administration" asp-controller="Venues" asp-action="Index">
+                    <svg class="nav-icon"><use xlink:href="/images/icons.svg#cil-location-pin"></use></svg>
+                    Venues
+                </a>
+            </li>
             <li class="nav-group @(ctrlIn(new[] { "admins" }) ? "show" : "")"
                 aria-expanded="@(ctrlIn(new[] { "admins" }) ? "true" : "false")">
                 <a class="nav-link nav-group-toggle" href="#">
@@ -104,6 +110,7 @@
                     <li class="nav-item"><a class="nav-link" asp-area="Administration" asp-controller="Users" asp-action="Index">Users</a></li>
                     <li class="nav-item"><a class="nav-link" asp-area="Administration" asp-controller="Players" asp-action="Index">Players</a></li>
                     <li class="nav-item"><a class="nav-link" asp-area="Administration" asp-controller="Tournaments" asp-action="Index">Tournaments</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-area="Administration" asp-controller="Venues" asp-action="Index">Venues</a></li>
                 </ul>
 
                 <ul class="header-nav ms-auto">

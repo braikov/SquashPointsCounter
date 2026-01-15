@@ -1,0 +1,94 @@
+@model VenuesIndexViewModel
+
+@{
+    ViewData["Title"] = "Venues";
+}
+
+<div class="card">
+    <div class="card-header d-flex align-items-center justify-content-between">
+        <strong>Venues</strong>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-secondary">@Model.TotalCount total</span>
+            <a class="btn btn-sm btn-primary" asp-area="Administration" asp-controller="Venues" asp-action="Create">Add Venue</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Contact</th>
+                        <th>Coordinates</th>
+                        <th class="text-center">Courts</th>
+                        <th class="text-center">Tournaments</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Venues.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-body-secondary">No venues found.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var venue in Model.Venues)
+                        {
+                            <tr>
+                                <td>@venue.Name</td>
+                                <td>
+                                    <small>@venue.FormattedAddress</small>
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column gap-1">
+                                        @if (!string.IsNullOrWhiteSpace(venue.Phone))
+                                        {
+                                            <small><a href="tel:@venue.Phone">@venue.Phone</a></small>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(venue.Email))
+                                        {
+                                            <small><a href="mailto:@venue.Email">@venue.Email</a></small>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(venue.Website))
+                                        {
+                                            <small><a href="@venue.Website" target="_blank">Website</a></small>
+                                        }
+                                        @if (string.IsNullOrWhiteSpace(venue.Phone) && string.IsNullOrWhiteSpace(venue.Email) && string.IsNullOrWhiteSpace(venue.Website))
+                                        {
+                                            <span class="text-muted">-</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    @if (venue.Latitude.HasValue && venue.Longitude.HasValue)
+                                    {
+                                        <a href="https://www.google.com/maps?q=@venue.Latitude,@venue.Longitude" target="_blank" class="text-decoration-none">
+                                            <i class="bi bi-geo-alt"></i>
+                                            <small>@venue.Latitude.Value.ToString("F4"), @venue.Longitude.Value.ToString("F4")</small>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-info">@venue.CourtsCount</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary">@venue.TournamentsCount</span>
+                                </td>
+                                <td class="text-end">
+                                    <a class="btn btn-sm btn-outline-primary" asp-area="Administration" asp-controller="Venues" asp-action="Details" asp-route-id="@venue.Id">Edit</a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

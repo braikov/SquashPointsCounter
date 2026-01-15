@@ -271,7 +271,12 @@ namespace Squash.SqlServer.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("CountryName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
@@ -283,7 +288,8 @@ namespace Squash.SqlServer.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -416,6 +422,9 @@ namespace Squash.SqlServer.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("EntitySourceId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ExternalCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -438,9 +447,6 @@ namespace Squash.SqlServer.Migrations
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("EntitySourceId")
-                        .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -666,15 +672,22 @@ namespace Squash.SqlServer.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("City")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("CountryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DateUpdated")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<int>("LastOperationUserId")
                         .HasColumnType("int");
@@ -687,9 +700,32 @@ namespace Squash.SqlServer.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Region")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Street")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("Website")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Zip")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
 
                     b.ToTable("Venues");
                 });
@@ -911,6 +947,15 @@ namespace Squash.SqlServer.Migrations
                     b.Navigation("Player");
                 });
 
+            modelBuilder.Entity("Squash.DataAccess.Entities.Venue", b =>
+                {
+                    b.HasOne("Squash.DataAccess.Entities.Nationality", "Country")
+                        .WithMany("Venues")
+                        .HasForeignKey("CountryId");
+
+                    b.Navigation("Country");
+                });
+
             modelBuilder.Entity("Squash.DataAccess.Entities.Court", b =>
                 {
                     b.Navigation("Matches");
@@ -938,6 +983,8 @@ namespace Squash.SqlServer.Migrations
             modelBuilder.Entity("Squash.DataAccess.Entities.Nationality", b =>
                 {
                     b.Navigation("Players");
+
+                    b.Navigation("Venues");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Player", b =>

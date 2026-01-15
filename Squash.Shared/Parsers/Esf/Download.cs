@@ -100,35 +100,74 @@ namespace Squash.Shared.Parsers.Esf
             return new DataContext(optionsBuilder.Options);
         }
 
-        private static void SaveVenuesAndLinks(IDataContext dbContext, int tournamentId, IEnumerable<Venue> venues)
+        private static void SaveVenuesAndLinks(IDataContext dbContext, int tournamentId, IEnumerable<VenueParseResult> venues)
         {
-            foreach (var venue in venues)
+            foreach (var venueData in venues)
             {
-                if (string.IsNullOrWhiteSpace(venue.Name))
+                if (string.IsNullOrWhiteSpace(venueData.Name))
                 {
                     continue;
                 }
 
-                var existingVenue = dbContext.Venues.FirstOrDefault(v => v.Name == venue.Name);
+                // Find or create country
+                int? countryId = null;
+                if (!string.IsNullOrWhiteSpace(venueData.CountryName))
+                {
+                    var country = dbContext.Nationalities
+                        .FirstOrDefault(n =>
+                            n.CountryName == venueData.CountryName ||
+                            n.Name == venueData.CountryName);
+
+                    if (country == null)
+                    {
+                        country = new Nationality
+                        {
+                            Code = venueData.CountryName.Length > 3
+                                ? venueData.CountryName.Substring(0, 3).ToUpperInvariant()
+                                : venueData.CountryName.ToUpperInvariant(),
+                            Name = venueData.CountryName,
+                            CountryName = venueData.CountryName
+                        };
+                        dbContext.Nationalities.Add(country);
+                        dbContext.SaveChanges();
+                    }
+                    countryId = country.Id;
+                }
+
+                var existingVenue = dbContext.Venues.FirstOrDefault(v => v.Name == venueData.Name);
                 if (existingVenue == null)
                 {
                     existingVenue = new Venue
                     {
-                        Name = venue.Name,
-                        Address = venue.Address
+                        Name = venueData.Name
                     };
                     dbContext.Venues.Add(existingVenue);
                     dbContext.SaveChanges();
                 }
 
-                if (!string.IsNullOrWhiteSpace(venue.Address))
-                {
-                    existingVenue.Address = venue.Address;
-                }
-                existingVenue.Latitude = venue.Latitude;
-                existingVenue.Longitude = venue.Longitude;
+                // Update venue fields
+                if (!string.IsNullOrWhiteSpace(venueData.Street))
+                    existingVenue.Street = venueData.Street;
+                if (!string.IsNullOrWhiteSpace(venueData.City))
+                    existingVenue.City = venueData.City;
+                if (!string.IsNullOrWhiteSpace(venueData.Zip))
+                    existingVenue.Zip = venueData.Zip;
+                if (!string.IsNullOrWhiteSpace(venueData.Region))
+                    existingVenue.Region = venueData.Region;
+                if (countryId.HasValue)
+                    existingVenue.CountryId = countryId;
+                if (venueData.Latitude.HasValue)
+                    existingVenue.Latitude = venueData.Latitude;
+                if (venueData.Longitude.HasValue)
+                    existingVenue.Longitude = venueData.Longitude;
+                if (!string.IsNullOrWhiteSpace(venueData.Phone))
+                    existingVenue.Phone = venueData.Phone;
+                if (!string.IsNullOrWhiteSpace(venueData.Email))
+                    existingVenue.Email = venueData.Email;
+                if (!string.IsNullOrWhiteSpace(venueData.Website))
+                    existingVenue.Website = venueData.Website;
+
                 dbContext.SaveChanges();
-                venue.Id = existingVenue.Id;
 
                 var linkExists = dbContext.TournamentVenues
                     .Any(tv => tv.TournamentId == tournamentId && tv.VenueId == existingVenue.Id);

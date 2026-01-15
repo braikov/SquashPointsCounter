@@ -9,7 +9,7 @@
         <strong>Imports</strong>
     </div>
     <div class="card-body">
-        <form asp-action="Imports" asp-controller="Tournaments" asp-area="Administration" method="post">
+        <form asp-action="Imports" asp-controller="Tournaments" asp-area="Administration" method="post" id="importForm" onsubmit="return handleImportSubmit()">
             @Html.AntiForgeryToken()
 
             @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
@@ -23,8 +23,25 @@
             </div>
 
             <div class="text-end">
-                <button type="submit" class="btn btn-primary">Import</button>
+                <button type="submit" class="btn btn-primary" id="importBtn">
+                    <span class="spinner-border spinner-border-sm d-none" id="importSpinner" role="status" aria-hidden="true"></span>
+                    <span id="importBtnText">Import</span>
+                </button>
             </div>
         </form>
     </div>
 </div>
+
+<script>
+    function handleImportSubmit() {
+        var btn = document.getElementById('importBtn');
+        var spinner = document.getElementById('importSpinner');
+        var btnText = document.getElementById('importBtnText');
+        
+        btn.disabled = true;
+        spinner.classList.remove('d-none');
+        btnText.textContent = 'Importing...';
+        
+        return true; // allow form to submit
+    }
+</script>
