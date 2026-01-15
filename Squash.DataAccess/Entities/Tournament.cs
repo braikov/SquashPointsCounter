@@ -5,6 +5,9 @@ namespace Squash.DataAccess.Entities
         public int UserId { get; set; }
         public User User { get; set; } = null!;
 
+        public int NationalityId { get; set; }
+        public Nationality Nationality { get; set; } = null!;
+
         public string ExternalCode { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string? OrganizationCode { get; set; }

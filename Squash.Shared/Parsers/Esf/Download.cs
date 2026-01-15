@@ -43,6 +43,38 @@ namespace Squash.Shared.Parsers.Esf
             }
 
             using var dbContext = CreateDataContext();
+
+            var countryName = result.HostNation;
+            if (string.IsNullOrWhiteSpace(countryName) && result.Venues.Count > 0)
+            {
+                countryName = result.Venues
+                    .FirstOrDefault(v => !string.IsNullOrWhiteSpace(v.CountryName))
+                    ?.CountryName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(countryName))
+            {
+                var country = dbContext.Nationalities
+                    .FirstOrDefault(n =>
+                        n.CountryName == countryName ||
+                        n.Name == countryName);
+
+                if (country == null)
+                {
+                    country = new Nationality
+                    {
+                        Code = countryName.Length > 3
+                            ? countryName.Substring(0, 3).ToUpperInvariant()
+                            : countryName.ToUpperInvariant(),
+                        Name = countryName,
+                        CountryName = countryName
+                    };
+                    dbContext.Nationalities.Add(country);
+                    dbContext.SaveChanges();
+                }
+                result.Tournament.NationalityId = country.Id;
+            }
+
             CreateOrUpdateTournament(dbContext, result.Tournament, userId);
             if (result.Venues.Count > 0)
             {
@@ -594,6 +626,10 @@ namespace Squash.Shared.Parsers.Esf
             if (!string.IsNullOrWhiteSpace(tournament.Regulations))
             {
                 existingTournament.Regulations = tournament.Regulations;
+            }
+            if (tournament.NationalityId > 0)
+            {
+                existingTournament.NationalityId = tournament.NationalityId;
             }
             existingTournament.EntitySourceId = tournament.EntitySourceId;
 

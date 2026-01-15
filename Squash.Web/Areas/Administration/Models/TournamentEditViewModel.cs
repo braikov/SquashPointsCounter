@@ -25,5 +25,10 @@ namespace Squash.Web.Areas.Administration.Models
 
         [Display(Name = "Regulations")]
         public string? Regulations { get; set; }
+
+        [Display(Name = "Country")]
+        public int NationalityId { get; set; }
+
+        public IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> Nationalities { get; set; } = new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
     }
 }
