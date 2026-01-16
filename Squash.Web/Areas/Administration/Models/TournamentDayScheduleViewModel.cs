@@ -60,6 +60,8 @@ namespace Squash.Web.Areas.Administration.Models
         public string Player2CountryCode { get; set; } = string.Empty;
         public bool Player1IsWinner { get; set; }
         public bool Player2IsWinner { get; set; }
+        public bool Player1Walkover { get; set; }
+        public bool Player2Walkover { get; set; }
         public string Status { get; set; } = string.Empty;
         public string PinCode { get; set; } = string.Empty;
         public bool IsFinished { get; set; }

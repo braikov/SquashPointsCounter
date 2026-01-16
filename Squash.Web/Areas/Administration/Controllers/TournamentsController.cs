@@ -370,6 +370,8 @@ namespace Squash.Web.Areas.Administration.Controllers
                         Player2CountryCode = m.Player2?.Nationality?.Code ?? string.Empty,
                         Player1IsWinner = m.WinnerPlayerId.HasValue && m.Player1Id.HasValue && m.WinnerPlayerId == m.Player1Id,
                         Player2IsWinner = m.WinnerPlayerId.HasValue && m.Player2Id.HasValue && m.WinnerPlayerId == m.Player2Id,
+                        Player1Walkover = m.Player1Walkover,
+                        Player2Walkover = m.Player2Walkover,
                         Status = m.Status ?? string.Empty,
                         PinCode = m.PinCode ?? string.Empty,
                         IsFinished = m.WinnerPlayerId.HasValue

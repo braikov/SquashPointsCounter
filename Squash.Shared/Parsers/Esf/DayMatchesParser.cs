@@ -146,8 +146,18 @@ namespace Squash.Shared.Parsers.Esf
 
                 var (player1, player2, winnerPlayer, player1Walkover, player2Walkover) = ExtractPlayers(matchNode, nationalitiesByCode, playersByKey, result);
 
-                //if (player1 == null || player2 == null)
-                //    continue;
+                // Fallback: if we have a winner but no games, mark the opposite side as walkover
+                if (winnerPlayer != null && !match.Games.Any())
+                {
+                    if (winnerPlayer == player1)
+                    {
+                        player2Walkover = true;
+                    }
+                    else if (winnerPlayer == player2)
+                    {
+                        player1Walkover = true;
+                    }
+                }
 
                 result.Tournament.Matches.Add(match);
                 result.TournamentDay.Matches.Add(match);
@@ -430,11 +440,12 @@ namespace Squash.Shared.Parsers.Esf
             {
                 var row = rows[i];
                 var side = i + 1;
-                var isWinner = row.GetAttributeValue("class", string.Empty).Contains("has-won", StringComparison.OrdinalIgnoreCase);
-                
-                // Check for walkover tag
-                var walkoverTag = row.SelectSingleNode(".//span[contains(@class,'match__message') and normalize-space(text())='Walkover']");
-                var isWalkover = walkoverTag != null;
+                var rowClass = row.GetAttributeValue("class", string.Empty);
+                var isWinner = rowClass.Contains("has-won", StringComparison.OrdinalIgnoreCase)
+                               || row.SelectSingleNode(".//span[contains(@class,'match__status') and normalize-space(text())='W']") != null;
+
+                // Check for walkover indicators (ESF varies: spans, divs, or inline text like "W/O")
+                var isWalkover = IsWalkover(row);
 
                 var playerLink = row.SelectSingleNode(".//a[@data-player-id]")
                                 ?? row.SelectSingleNode(".//a[contains(@href,'player.aspx')]");
@@ -609,6 +620,31 @@ namespace Squash.Shared.Parsers.Esf
             return int.TryParse(text.Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var value)
                 ? value
                 : null;
+        }
+
+        private static bool IsWalkover(HtmlNode row)
+        {
+            // Common markup: dedicated message span
+            var tag = row.SelectSingleNode(".//span[contains(@class,'match__message') and contains(translate(normalize-space(text()), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'walkover')]")
+                      ?? row.SelectSingleNode(".//span[contains(@class,'tag--warning') and contains(translate(normalize-space(text()), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'walkover')]");
+            if (tag != null)
+            {
+                return true;
+            }
+
+            // Alternate markup: text node with W/O or Walkover near the player block
+            var text = row.InnerText ?? string.Empty;
+            if (text.IndexOf("walkover", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return true;
+            }
+
+            if (text.IndexOf("w/o", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private static Dictionary<string, string> ParseQueryParams(string href)

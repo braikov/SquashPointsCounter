@@ -129,110 +129,155 @@
                     <div class="match-time-block">
                         <div class="match-time">@group.Key</div>
                         <div class="match-items">
-                            @foreach (var match in group)
-                            {
+                               @foreach (var match in group)
+                               {
+                                   var player1Walk = match.Player1Walkover || (match.Player2IsWinner && match.Games.Count == 0);
+                                     var player2Walk = match.Player2Walkover || (match.Player1IsWinner && match.Games.Count == 0);
+                                     var player1Wins = match.Player1IsWinner || player2Walk;
+                                     var player2Wins = match.Player2IsWinner || player1Walk; 
+
                                 <div class="match-card">
-                                    <div class="match-card-header">
-                                        <div class="match-card-title">@match.Draw</div>
-                                        <div class="match-card-sub">@match.Round</div>
-                                        <div class="match-card-meta">
+                                    <div class="match-card-info">
+                                        <div class="match-card-header">
+                                            <div class="match-card-title">@match.Draw</div>
+                                            <div class="match-card-sub">@match.Round</div>
                                             @if (!string.IsNullOrWhiteSpace(match.Court))
                                             {
-                                                <span class="match-pill">@match.Court</span>
+                                                <span class="match-pill match-pill-court">@match.Court</span>
                                             }
-                                            @if (!string.IsNullOrWhiteSpace(match.Status))
+                                        </div>
+                                        <div class="match-card-body">
+                                            <div class="match-card-players">
+                                                <div class="match-player-row">
+                                                    <div class="match-player @(player1Wins ? "is-winner" : "")">
+                                                        @if (player1Wins && !match.Player1Walkover)
+                                                        {
+                                                            <span class="winner-dot winner-dot-left"></span>
+                                                        }
+                                                        @if (match.Player1TournamentPlayerId.HasValue)
+                                                        {
+                                                            <a asp-controller="Tournaments" asp-action="TournamentPlayer" asp-route-id="@match.Player1TournamentPlayerId" class="player-row player-row-link" style="flex: 1; min-width: 0;">
+                                                                @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
+                                                                {
+                                                                    <img class="player-flag" src="@match.Player1FlagUrl" alt="" />
+                                                                }
+                                                                <span class="player-name">@match.Player1</span>
+                                                                
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="player-row" style="flex: 1; min-width: 0;">
+                                                                @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
+                                                                {
+                                                                    <img class="player-flag" src="@match.Player1FlagUrl" alt="" />
+                                                                }
+                                                                <span class="player-name">@match.Player1</span>
+                                                                
+                                                            </div>
+                                                        }
+                                                        @if (match.Player1Walkover)
+                                                        {
+                                                            <span class="walkover-text">Walkover</span>
+                                                        }
+                                                    </div>
+                                                    <div class="match-player-results">
+                                                        @if (match.Player1Walkover)
+                                                        {
+                                                            <span class="walkover-text">Walkover</span>
+                                                        }
+                                                        else if (match.Games.Count > 0 && match.Games.Any(g => g.Side1Points.HasValue))
+                                                        {
+                                                            @foreach (var game in match.Games.Where(g => g.Side1Points.HasValue))
+                                                            {
+                                                                <div class="match-game-score @(game.WinnerSide == 1 ? "is-winner" : "")">
+                                                                    @game.Side1Points
+                                                                </div>
+                                                            }
+                                                        }
+                                                        @if (player1Wins && !match.Player1Walkover)
+                                                        {
+                                                            <span class="winner-dot winner-dot-results"></span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                <span class="match-player-separator">-</span>
+                                                <div class="match-player-row">
+                                                    <div class="match-player @(player2Wins ? "is-winner" : "")">
+                                                        @if (player2Wins && !match.Player2Walkover)
+                                                        {
+                                                            <span class="winner-dot winner-dot-left"></span>
+                                                        }
+                                                        @if (match.Player2TournamentPlayerId.HasValue)
+                                                        {
+                                                            <a asp-controller="Tournaments" asp-action="TournamentPlayer" asp-route-id="@match.Player2TournamentPlayerId" class="player-row player-row-link" style="flex: 1; min-width: 0;">
+                                                                @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
+                                                                {
+                                                                    <img class="player-flag" src="@match.Player2FlagUrl" alt="" />
+                                                                }
+                                                                <span class="player-name">@match.Player2</span>
+                                                                
+                                                            </a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="player-row" style="flex: 1; min-width: 0;">
+                                                                @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
+                                                                {
+                                                                    <img class="player-flag" src="@match.Player2FlagUrl" alt="" />
+                                                                }
+                                                                <span class="player-name">@match.Player2</span>
+                                                                
+                                                            </div>
+                                                        }
+                                                        @if (match.Player2Walkover)
+                                                        {
+                                                            <span class="walkover-text">Walkover</span>
+                                                        }
+                                                        @if (player2Wins && !match.Player2Walkover)
+                                                        {
+                                                            <span class="winner-dot winner-dot-right"></span>
+                                                        }
+                                                    </div>
+                                                    <div class="match-player-results">
+                                                        @if (match.Player2Walkover)
+                                                        {
+                                                            <span class="walkover-text">Walkover</span>
+                                                        }
+                                                        else if (match.Games.Count > 0 && match.Games.Any(g => g.Side2Points.HasValue))
+                                                        {
+                                                            @foreach (var game in match.Games.Where(g => g.Side2Points.HasValue))
+                                                            {
+                                                                <div class="match-game-score @(game.WinnerSide == 2 ? "is-winner" : "")">
+                                                                    @game.Side2Points
+                                                                </div>
+                                                            }
+                                                        }
+                                                        @if (player2Wins && !match.Player2Walkover)
+                                                        {
+                                                            <span class="winner-dot winner-dot-results"></span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @if (!match.IsFinished && !string.IsNullOrWhiteSpace(match.PinCode))
                                             {
-                                                <span class="match-pill match-pill-muted">@match.Status</span>
-                                            }
-                                            @if (!string.IsNullOrWhiteSpace(match.PinCode) && !(match.IsFinished && match.Games.Count > 0))
-                                            {
-                                                <a class="match-pill match-pill-action" href="/m?pin=@match.PinCode" target="_blank" rel="noopener">Open in kiosk</a>
+                                                <div class="match-card-pin">@match.PinCode.ToUpperInvariant()</div>
                                             }
                                         </div>
                                     </div>
-                                    <div class="match-card-body">
-                                        <div class="match-card-players">
-                                            <div class="match-player @(match.Player1IsWinner ? "is-winner" : "")">
-                                                @if (match.Player1TournamentPlayerId.HasValue)
-                                                {
-                                                    <a asp-controller="Tournaments" asp-action="TournamentPlayer" asp-route-id="@match.Player1TournamentPlayerId" class="player-row player-row-link" style="flex: 1; min-width: 0;">
-                                                        @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
-                                                        {
-                                                            <img class="player-flag" src="@match.Player1FlagUrl" alt="" />
-                                                        }
-                                                        <span class="player-name">@match.Player1</span>
-                                                        @if (!string.IsNullOrWhiteSpace(match.Player1CountryCode))
-                                                        {
-                                                            <span class="player-country">@match.Player1CountryCode.ToUpperInvariant()</span>
-                                                        }
-                                                    </a>
-                                                }
-                                                else
-                                                {
-                                                    <div class="player-row" style="flex: 1; min-width: 0;">
-                                                        @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
-                                                        {
-                                                            <img class="player-flag" src="@match.Player1FlagUrl" alt="" />
-                                                        }
-                                                        <span class="player-name">@match.Player1</span>
-                                                        @if (!string.IsNullOrWhiteSpace(match.Player1CountryCode))
-                                                        {
-                                                            <span class="player-country">@match.Player1CountryCode.ToUpperInvariant()</span>
-                                                        }
-                                                    </div>
-                                                }
-                                            </div>
-                                            <span class="match-player-separator">-</span>
-                                            <div class="match-player @(match.Player2IsWinner ? "is-winner" : "")">
-                                                @if (match.Player2TournamentPlayerId.HasValue)
-                                                {
-                                                    <a asp-controller="Tournaments" asp-action="TournamentPlayer" asp-route-id="@match.Player2TournamentPlayerId" class="player-row player-row-link" style="flex: 1; min-width: 0;">
-                                                        @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
-                                                        {
-                                                            <img class="player-flag" src="@match.Player2FlagUrl" alt="" />
-                                                        }
-                                                        <span class="player-name">@match.Player2</span>
-                                                        @if (!string.IsNullOrWhiteSpace(match.Player2CountryCode))
-                                                        {
-                                                            <span class="player-country">@match.Player2CountryCode.ToUpperInvariant()</span>
-                                                        }
-                                                    </a>
-                                                }
-                                                else
-                                                {
-                                                    <div class="player-row" style="flex: 1; min-width: 0;">
-                                                        @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
-                                                        {
-                                                            <img class="player-flag" src="@match.Player2FlagUrl" alt="" />
-                                                        }
-                                                        <span class="player-name">@match.Player2</span>
-                                                        @if (!string.IsNullOrWhiteSpace(match.Player2CountryCode))
-                                                        {
-                                                            <span class="player-country">@match.Player2CountryCode.ToUpperInvariant()</span>
-                                                        }
-                                                    </div>
-                                                }
-                                            </div>
-                                        </div>
-                                        @if (match.IsFinished && match.Games.Count > 0)
+                                    <div class="match-card-meta">
+                                        @if (!string.IsNullOrWhiteSpace(match.Court))
                                         {
-                                            <div class="match-card-results">
-                                                @foreach (var game in match.Games)
-                                                {
-                                                    <div class="match-game">
-                                                        <div class="match-game-score @(game.WinnerSide == 1 ? "is-winner" : "")">
-                                                            @(game.Side1Points?.ToString() ?? string.Empty)
-                                                        </div>
-                                                        <div class="match-game-score @(game.WinnerSide == 2 ? "is-winner" : "")">
-                                                            @(game.Side2Points?.ToString() ?? string.Empty)
-                                                        </div>
-                                                    </div>
-                                                }
-                                            </div>
+                                            <span class="match-pill match-pill-court-desktop">@match.Court</span>
                                         }
-                                        else if (!string.IsNullOrWhiteSpace(match.PinCode))
+                                        @if (!string.IsNullOrWhiteSpace(match.Status))
                                         {
-                                            <div class="match-card-pin">@match.PinCode.ToUpperInvariant()</div>
+                                            <span class="match-pill match-pill-muted">@match.Status</span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(match.PinCode) && !(match.IsFinished && match.Games.Count > 0))
+                                        {
+                                            <a class="match-pill match-pill-action match-pill-kiosk" href="/m?pin=@match.PinCode" target="_blank" rel="noopener">Open in kiosk</a>
                                         }
                                     </div>
                                 </div>

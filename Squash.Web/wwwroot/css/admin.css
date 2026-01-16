@@ -141,6 +141,16 @@
     background: var(--cui-body-bg);
     border: 1px solid var(--cui-border-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow: hidden;
+}
+
+.match-card-info {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .match-card-header {
@@ -162,10 +172,10 @@
 }
 
 .match-card-meta {
-    margin-left: auto;
     display: flex;
     gap: 0.4rem;
     flex-wrap: wrap;
+    align-items: flex-start;
 }
 
 .match-pill {
@@ -195,9 +205,17 @@
 }
 
 .match-card-players {
-    display: grid;
-    gap: 0.35rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
     font-size: 0.95rem;
+}
+
+.match-player-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
 }
 
 .match-player {
@@ -205,15 +223,6 @@
     align-items: center;
     gap: 0.4rem;
     min-width: 0;
-}
-
-.match-player::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #6c757d;
-    opacity: 0.8;
 }
 
 .match-player-flag {
@@ -240,16 +249,78 @@
     font-weight: 700;
 }
 
-.match-player.is-winner::before {
+.winner-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
     background: #2eb85c;
-    opacity: 1;
+    flex-shrink: 0;
+    display: none;
+}
+
+.winner-dot-left {
+    margin-right: 0.4rem;
+}
+
+.winner-dot-right {
+    margin-left: 0.4rem;
+}
+
+.winner-dot-results {
+    margin-left: 0.5rem;
+    display: inline-block;
+}
+
+.match-player-results {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.match-player-results .walkover-text {
+    display: block;
+    padding: 0.1rem 0.4rem;
+    background: rgba(255, 193, 7, 0.1);
+    border-radius: 4px;
+}
+
+.match-player-results .match-game-score {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.match-player-results .match-game-score.is-winner {
+    color: #2eb85c;
+    font-weight: 700;
+}
+
+.walkover-text {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--cui-warning);
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 0 0.3rem;
+    display: none;
+}
+
+.match-pill-court {
+    display: inline-block;
+}
+
+.match-pill-court-desktop {
+    display: none;
+}
+
+.match-pill-kiosk,
+.match-card-pin {
+    display: none;
 }
 
 .match-card-body {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .match-card-results {
@@ -294,13 +365,47 @@
     }
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1500px) {
     .match-time-block {
         grid-template-columns: 96px 1fr;
     }
 
     .match-card {
         padding: 1rem 1.25rem;
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .winner-dot {
+        display: block;
+    }
+
+    .winner-dot-results {
+        display: none;
+    }
+
+    .match-pill-court {
+        display: none;
+    }
+
+    .match-pill-court-desktop {
+        display: inline-block;
+    }
+
+    .match-pill-kiosk {
+        display: inline-block;
+    }
+
+    .match-card-header {
+        margin-bottom: 0.25rem;
+    }
+
+    .match-card-info {
+        display: grid;
+        grid-template-columns: 180px 1fr;
+        gap: 1rem;
+        align-items: center;
     }
 
     .match-card-body {
@@ -313,19 +418,44 @@
     .match-card-players {
         font-size: 1rem;
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
-        gap: 0.25rem;
-        text-align: center;
+        gap: 0.5rem;
+        overflow: hidden;
+        flex-direction: row;
+    }
+
+    .match-player-row {
+        flex: 0 0 auto;
+        justify-content: flex-start;
+    }
+
+    .match-player-results {
+        display: none;
+    }
+
+    .walkover-text {
+        display: inline-block;
     }
 
     .match-player {
-        justify-content: center;
-        max-width: 42%;
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        overflow: hidden;
     }
 
     .match-player-separator {
         display: inline-block;
+        flex: 0 0 auto;
+    }
+
+    .match-card-meta {
+        flex-direction: column;
+        align-items: flex-end;
+        min-width: 140px;
     }
 
     .match-card-results {
@@ -408,27 +538,15 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.4rem 0.6rem;
-    border-radius: 10px;
-    border: 1px solid var(--cui-border-color);
-    background: var(--cui-body-bg);
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
 }
 
 .player-row-link {
     text-decoration: none;
     color: inherit;
-    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
 }
 
 .player-row-link:hover {
-    border-color: var(--cui-primary);
-    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.12);
-    transform: translateY(-1px);
-}
-
-.player-row-link:active {
-    transform: translateY(0);
+    text-decoration: underline;
 }
 
 .player-flag {
