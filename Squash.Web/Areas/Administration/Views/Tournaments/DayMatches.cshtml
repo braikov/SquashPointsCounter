@@ -150,6 +150,10 @@
                                             <div class="match-card-players">
                                                 <div class="match-player-row">
                                                     <div class="match-player @(player1Wins ? "is-winner" : "")">
+                                                        @if (match.Player1Walkover)
+                                                        {
+                                                            <span class="walkover-text">Walkover</span>
+                                                        }
                                                         @if (player1Wins && !match.Player1Walkover)
                                                         {
                                                             <span class="winner-dot winner-dot-left"></span>
@@ -176,28 +180,27 @@
                                                                 
                                                             </div>
                                                         }
-                                                        @if (match.Player1Walkover)
-                                                        {
-                                                            <span class="walkover-text">Walkover</span>
-                                                        }
                                                     </div>
                                                     <div class="match-player-results">
                                                         @if (match.Player1Walkover)
                                                         {
                                                             <span class="walkover-text">Walkover</span>
                                                         }
-                                                        else if (match.Games.Count > 0 && match.Games.Any(g => g.Side1Points.HasValue))
+                                                        else
                                                         {
-                                                            @foreach (var game in match.Games.Where(g => g.Side1Points.HasValue))
+                                                            @if (player1Wins)
                                                             {
-                                                                <div class="match-game-score @(game.WinnerSide == 1 ? "is-winner" : "")">
-                                                                    @game.Side1Points
-                                                                </div>
+                                                                <span class="winner-dot winner-dot-results"></span>
                                                             }
-                                                        }
-                                                        @if (player1Wins && !match.Player1Walkover)
-                                                        {
-                                                            <span class="winner-dot winner-dot-results"></span>
+                                                            @if (match.Games.Count > 0 && match.Games.Any(g => g.Side1Points.HasValue))
+                                                            {
+                                                                @foreach (var game in match.Games.Where(g => g.Side1Points.HasValue))
+                                                                {
+                                                                    <div class="match-game-score @(game.WinnerSide == 1 ? "is-winner" : "")">
+                                                                        @game.Side1Points
+                                                                    </div>
+                                                                }
+                                                            }
                                                         }
                                                     </div>
                                                 </div>
@@ -244,18 +247,21 @@
                                                         {
                                                             <span class="walkover-text">Walkover</span>
                                                         }
-                                                        else if (match.Games.Count > 0 && match.Games.Any(g => g.Side2Points.HasValue))
+                                                        else
                                                         {
-                                                            @foreach (var game in match.Games.Where(g => g.Side2Points.HasValue))
+                                                            @if (player2Wins)
                                                             {
-                                                                <div class="match-game-score @(game.WinnerSide == 2 ? "is-winner" : "")">
-                                                                    @game.Side2Points
-                                                                </div>
+                                                                <span class="winner-dot winner-dot-results"></span>
                                                             }
-                                                        }
-                                                        @if (player2Wins && !match.Player2Walkover)
-                                                        {
-                                                            <span class="winner-dot winner-dot-results"></span>
+                                                            @if (match.Games.Count > 0 && match.Games.Any(g => g.Side2Points.HasValue))
+                                                            {
+                                                                @foreach (var game in match.Games.Where(g => g.Side2Points.HasValue))
+                                                                {
+                                                                    <div class="match-game-score @(game.WinnerSide == 2 ? "is-winner" : "")">
+                                                                        @game.Side2Points
+                                                                    </div>
+                                                                }
+                                                            }
                                                         }
                                                     </div>
                                                 </div>
