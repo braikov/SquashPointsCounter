@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Squash.SqlServer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class UpdateSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -36,8 +36,8 @@ namespace Squash.SqlServer.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: true),
-                    ExternalPlayerId = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EsfMemberId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EntitySourceId = table.Column<int>(type: "int", nullable: false),
                     NationalityId = table.Column<int>(type: "int", nullable: true),
@@ -185,31 +185,6 @@ namespace Squash.SqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Draws",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TournamentId = table.Column<int>(type: "int", nullable: false),
-                    ExternalDrawId = table.Column<int>(type: "int", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastOperationUserId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Draws", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Draws_Tournaments_TournamentId",
-                        column: x => x.TournamentId,
-                        principalTable: "Tournaments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Events",
                 columns: table => new
                 {
@@ -230,35 +205,6 @@ namespace Squash.SqlServer.Migrations
                     table.PrimaryKey("PK_Events", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Events_Tournaments_TournamentId",
-                        column: x => x.TournamentId,
-                        principalTable: "Tournaments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PlayerTournaments",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PlayerId = table.Column<int>(type: "int", nullable: false),
-                    TournamentId = table.Column<int>(type: "int", nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastOperationUserId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PlayerTournaments", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PlayerTournaments_Players_PlayerId",
-                        column: x => x.PlayerId,
-                        principalTable: "Players",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PlayerTournaments_Tournaments_TournamentId",
                         column: x => x.TournamentId,
                         principalTable: "Tournaments",
                         principalColumn: "Id",
@@ -319,6 +265,36 @@ namespace Squash.SqlServer.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TournamentPlayers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PlayerId = table.Column<int>(type: "int", nullable: false),
+                    TournamentId = table.Column<int>(type: "int", nullable: false),
+                    TournamentPlayerId = table.Column<int>(type: "int", nullable: true),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastOperationUserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TournamentPlayers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TournamentPlayers_Players_PlayerId",
+                        column: x => x.PlayerId,
+                        principalTable: "Players",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TournamentPlayers_Tournaments_TournamentId",
+                        column: x => x.TournamentId,
+                        principalTable: "Tournaments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TournamentVenues",
                 columns: table => new
                 {
@@ -343,6 +319,37 @@ namespace Squash.SqlServer.Migrations
                         name: "FK_TournamentVenues_Venues_VenueId",
                         column: x => x.VenueId,
                         principalTable: "Venues",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Draws",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TournamentId = table.Column<int>(type: "int", nullable: false),
+                    EventId = table.Column<int>(type: "int", nullable: true),
+                    ExternalDrawId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastOperationUserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Draws", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Draws_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Draws_Tournaments_TournamentId",
+                        column: x => x.TournamentId,
+                        principalTable: "Tournaments",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -521,6 +528,11 @@ namespace Squash.SqlServer.Migrations
                 column: "VenueId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Draws_EventId",
+                table: "Draws",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Draws_TournamentId",
                 table: "Draws",
                 column: "TournamentId");
@@ -591,16 +603,6 @@ namespace Squash.SqlServer.Migrations
                 column: "NationalityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PlayerTournaments_PlayerId",
-                table: "PlayerTournaments",
-                column: "PlayerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PlayerTournaments_TournamentId",
-                table: "PlayerTournaments",
-                column: "TournamentId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Rounds_DrawId",
                 table: "Rounds",
                 column: "DrawId");
@@ -618,6 +620,16 @@ namespace Squash.SqlServer.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_TournamentDays_TournamentId",
                 table: "TournamentDays",
+                column: "TournamentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TournamentPlayers_PlayerId",
+                table: "TournamentPlayers",
+                column: "PlayerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TournamentPlayers_TournamentId",
+                table: "TournamentPlayers",
                 column: "TournamentId");
 
             migrationBuilder.CreateIndex(
@@ -669,19 +681,16 @@ namespace Squash.SqlServer.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Events");
-
-            migrationBuilder.DropTable(
                 name: "GameLogs");
 
             migrationBuilder.DropTable(
                 name: "MatchGameEventLogs");
 
             migrationBuilder.DropTable(
-                name: "PlayerTournaments");
+                name: "TournamentCourts");
 
             migrationBuilder.DropTable(
-                name: "TournamentCourts");
+                name: "TournamentPlayers");
 
             migrationBuilder.DropTable(
                 name: "TournamentVenues");
@@ -706,6 +715,9 @@ namespace Squash.SqlServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "Draws");
+
+            migrationBuilder.DropTable(
+                name: "Events");
 
             migrationBuilder.DropTable(
                 name: "Tournaments");

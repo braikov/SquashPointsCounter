@@ -9,11 +9,13 @@ namespace Squash.Web.Areas.Administration.Models
 
         public List<TournamentPlayerGroupViewModel> PlayerGroups { get; set; } = new();
 
+        public string? FilterEvent { get; set; }
         public string? FilterCountry { get; set; }
         public string? FilterDraw { get; set; }
         public string? FilterRound { get; set; }
         public string? FilterCourt { get; set; }
 
+        public List<FilterOption> AvailableEvents { get; set; } = new();
         public List<FilterOption> AvailableCountries { get; set; } = new();
         public List<FilterOption> AvailableDraws { get; set; } = new();
         public List<FilterOption> AvailableRounds { get; set; } = new();

@@ -18,9 +18,6 @@ namespace Squash.Web.Areas.Administration.Models
         [Display(Name = "ESF member id")]
         public string? EsfMemberId { get; set; }
 
-        [Display(Name = "External player id")]
-        public int? ExternalPlayerId { get; set; }
-
         public List<SelectListItem> AvailableNationalities { get; set; } = new();
     }
 }

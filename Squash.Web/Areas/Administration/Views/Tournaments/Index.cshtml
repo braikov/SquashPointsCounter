@@ -40,14 +40,15 @@
                         <th class="text-end">Draws</th>
                         <th class="text-end">Courts</th>
                         <th class="text-end">Matches</th>
-                        <th class="text-end">Actions</th>
+                        <th class="text-end">Players</th>
+                        <th class="text-end"></th>
                     </tr>
                 </thead>
                 <tbody>
                     @if (Model.Tournaments.Count == 0)
                     {
                         <tr>
-                            <td colspan="8" class="text-center text-body-secondary">No tournaments found.</td>
+                            <td colspan="9" class="text-center text-body-secondary">No tournaments found.</td>
                         </tr>
                     }
                     else
@@ -59,8 +60,22 @@
                                 <td>@(tournament.StartDate?.ToString("dd MMM yyyy") ?? "-")</td>
                                 <td>@(tournament.EndDate?.ToString("dd MMM yyyy") ?? "-")</td>
                                 <td class="text-end">@tournament.DaysCount</td>
-                                <td class="text-end">@tournament.DrawsCount</td>
-                                <td class="text-end">@tournament.CourtsCount</td>
+                                <td class="text-end">
+                                    <a asp-area="Administration"
+                                       asp-controller="Tournaments"
+                                       asp-action="Draws"
+                                       asp-route-id="@tournament.Id">
+                                        @tournament.DrawsCount
+                                    </a>
+                                </td>
+                                <td class="text-end">
+                                    <a asp-area="Administration"
+                                       asp-controller="Tournaments"
+                                       asp-action="Venues"
+                                       asp-route-id="@tournament.Id">
+                                        @tournament.CourtsCount
+                                    </a>
+                                </td>
                                 <td class="text-end">
                                     @if (tournament.FirstDayId.HasValue)
                                     {
@@ -76,6 +91,14 @@
                                     {
                                         @tournament.MatchesCount
                                     }
+                                </td>
+                                <td class="text-end">
+                                    <a asp-area="Administration"
+                                       asp-controller="Tournaments"
+                                       asp-action="Players"
+                                       asp-route-id="@tournament.Id">
+                                        @tournament.PlayersCount
+                                    </a>
                                 </td>
                                 <td class="text-end">
                                     <a class="btn btn-sm btn-outline-primary"

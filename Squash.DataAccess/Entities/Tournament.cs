@@ -26,6 +26,6 @@ namespace Squash.DataAccess.Entities
         public ICollection<Match> Matches { get; set; } = new List<Match>();
         public ICollection<TournamentVenue> TournamentVenues { get; set; } = new List<TournamentVenue>();
         public ICollection<TournamentCourt> TournamentCourts { get; set; } = new List<TournamentCourt>();
-        public ICollection<PlayerTournament> PlayerTournaments { get; set; } = new List<PlayerTournament>();
+        public ICollection<TournamentPlayer> TournamentPlayers { get; set; } = new List<TournamentPlayer>();
     }
 }

@@ -51,8 +51,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                     CountryCode = p.Nationality != null ? p.Nationality.Code : string.Empty,
                     CountryName = p.Nationality != null ? (p.Nationality.Name ?? string.Empty) : string.Empty,
                     FlagUrl = BuildFlagUrl(p.Nationality != null ? p.Nationality.Code : null),
-                    EsfMemberId = p.EsfMemberId ?? string.Empty,
-                    ExternalPlayerId = p.ExternalPlayerId
+                    EsfMemberId = p.EsfMemberId ?? string.Empty
                 })
                 .ToList();
 
@@ -108,8 +107,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 Name = model.Name?.Trim() ?? string.Empty,
                 NationalityId = model.NationalityId,
-                EsfMemberId = string.IsNullOrWhiteSpace(model.EsfMemberId) ? null : model.EsfMemberId.Trim(),
-                ExternalPlayerId = model.ExternalPlayerId
+                EsfMemberId = string.IsNullOrWhiteSpace(model.EsfMemberId) ? null : model.EsfMemberId.Trim()
             };
 
             _dataContext.Players.Add(player);
@@ -136,7 +134,6 @@ namespace Squash.Web.Areas.Administration.Controllers
                 Name = player.Name,
                 NationalityId = player.NationalityId,
                 EsfMemberId = player.EsfMemberId,
-                ExternalPlayerId = player.ExternalPlayerId,
                 AvailableNationalities = GetNationalityOptions(player.NationalityId)
             };
 
@@ -164,7 +161,6 @@ namespace Squash.Web.Areas.Administration.Controllers
             player.Name = model.Name?.Trim() ?? string.Empty;
             player.NationalityId = model.NationalityId;
             player.EsfMemberId = string.IsNullOrWhiteSpace(model.EsfMemberId) ? null : model.EsfMemberId.Trim();
-            player.ExternalPlayerId = model.ExternalPlayerId;
 
             _dataContext.SaveChanges();
 

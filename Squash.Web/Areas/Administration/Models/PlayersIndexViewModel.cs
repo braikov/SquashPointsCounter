@@ -21,6 +21,5 @@ namespace Squash.Web.Areas.Administration.Models
         public string CountryName { get; set; } = string.Empty;
         public string FlagUrl { get; set; } = string.Empty;
         public string EsfMemberId { get; set; } = string.Empty;
-        public int? ExternalPlayerId { get; set; }
     }
 }

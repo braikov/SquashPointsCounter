@@ -49,6 +49,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                     DrawsCount = t.Draws.Count,
                     CourtsCount = t.TournamentCourts.Count,
                     MatchesCount = t.Matches.Count,
+                    PlayersCount = t.TournamentPlayers.Count,
                     FirstDayId = t.Days
                         .OrderBy(d => d.Date)
                         .Select(d => (int?)d.Id)
@@ -221,7 +222,7 @@ namespace Squash.Web.Areas.Administration.Controllers
         }
 
         [HttpGet]
-        public IActionResult DayMatches(int id, int? dayId, string? country, string? draw, string? round, string? court)
+        public IActionResult DayMatches(int id, int? dayId, string? eventName, string? country, string? draw, string? round, string? court)
         {
             var tournament = _dataContext.Tournaments
                 .AsNoTracking()
@@ -241,6 +242,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             var selectedDay = dayId.HasValue ? days.FirstOrDefault(d => d.Id == dayId.Value) : days.FirstOrDefault();
 
             var matches = new List<TournamentMatchRowViewModel>();
+            var availableEvents = new List<FilterOption>();
             var availableCountries = new List<FilterOption>();
             var availableDraws = new List<FilterOption>();
             var availableRounds = new List<FilterOption>();
@@ -252,7 +254,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 var matchEntities = _dataContext.Matches
                     .AsNoTracking()
                     .Where(m => m.TournamentId == id && m.TournamentDayId == selectedDay.Id)
-                    .Include(m => m.Draw)
+                    .Include(m => m.Draw).ThenInclude(d => d.Event)
                     .Include(m => m.Round)
                     .Include(m => m.Court)
                     .Include(m => m.Player1)!.ThenInclude(p => p.Nationality)
@@ -266,6 +268,12 @@ namespace Squash.Web.Areas.Administration.Controllers
 
                 // Apply filters
                 var filteredMatches = matchEntities.AsEnumerable();
+
+                if (!string.IsNullOrEmpty(eventName))
+                {
+                    filteredMatches = filteredMatches.Where(m => 
+                        m.Draw?.Event?.Name != null && m.Draw.Event.Name.Equals(eventName, StringComparison.OrdinalIgnoreCase));
+                }
 
                 if (!string.IsNullOrEmpty(country))
                 {
@@ -292,6 +300,13 @@ namespace Squash.Web.Areas.Administration.Controllers
                 var filteredMatchesList = filteredMatches.ToList();
 
                 // Build available filter options from filtered matches
+                availableEvents = _dataContext.Events
+                    .AsNoTracking()
+                    .Where(e => e.TournamentId == id)
+                    .OrderBy(e => e.Name)
+                    .Select(e => new FilterOption { Value = e.Name, Text = e.Name })
+                    .ToList();
+
                 availableCountries = filteredMatchesList
                     .SelectMany(m => new[] { m.Player1?.Nationality?.Code, m.Player2?.Nationality?.Code })
                     .Where(c => !string.IsNullOrWhiteSpace(c))
@@ -324,6 +339,18 @@ namespace Squash.Web.Areas.Administration.Controllers
                     .Select(c => new FilterOption { Value = c, Text = c })
                     .ToList();
 
+                // Get TournamentPlayer IDs for all players in the matches
+                var playerIds = filteredMatchesList
+                    .SelectMany(m => new[] { m.Player1Id, m.Player2Id })
+                    .Where(pid => pid.HasValue)
+                    .Distinct()
+                    .ToList();
+
+                var tournamentPlayerIds = _dataContext.TournamentPlayers
+                    .AsNoTracking()
+                    .Where(tp => tp.TournamentId == id && playerIds.Contains(tp.PlayerId))
+                    .ToDictionary(tp => tp.PlayerId, tp => tp.Id);
+
                 matches = filteredMatchesList
                     .Select(m => new TournamentMatchRowViewModel
                     {
@@ -335,6 +362,8 @@ namespace Squash.Web.Areas.Administration.Controllers
                         Court = m.Court == null ? string.Empty : m.Court.Name,
                         Player1 = m.Player1 == null ? string.Empty : m.Player1.Name,
                         Player2 = m.Player2 == null ? string.Empty : m.Player2.Name,
+                        Player1TournamentPlayerId = m.Player1Id.HasValue && tournamentPlayerIds.ContainsKey(m.Player1Id.Value) ? tournamentPlayerIds[m.Player1Id.Value] : null,
+                        Player2TournamentPlayerId = m.Player2Id.HasValue && tournamentPlayerIds.ContainsKey(m.Player2Id.Value) ? tournamentPlayerIds[m.Player2Id.Value] : null,
                         Player1FlagUrl = BuildFlagUrl(m.Player1?.Nationality?.Code),
                         Player2FlagUrl = BuildFlagUrl(m.Player2?.Nationality?.Code),
                         Player1CountryCode = m.Player1?.Nationality?.Code ?? string.Empty,
@@ -372,10 +401,12 @@ namespace Squash.Web.Areas.Administration.Controllers
                     IsSelected = selectedDay != null && d.Id == selectedDay.Id
                 }).ToList(),
                 Matches = matches,
+                FilterEvent = eventName,
                 FilterCountry = country,
                 FilterDraw = draw,
                 FilterRound = round,
                 FilterCourt = court,
+                AvailableEvents = availableEvents,
                 AvailableCountries = availableCountries,
                 AvailableDraws = availableDraws,
                 AvailableRounds = availableRounds,
@@ -388,7 +419,7 @@ namespace Squash.Web.Areas.Administration.Controllers
         }
 
         [HttpGet]
-        public IActionResult Players(int id, string? country, string? draw, string? round, string? court)
+        public IActionResult Players(int id, string? eventName, string? country, string? draw, string? round, string? court)
         {
             var tournament = _dataContext.Tournaments
                 .AsNoTracking()
@@ -402,7 +433,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             var matchEntities = _dataContext.Matches
                 .AsNoTracking()
                 .Where(m => m.TournamentId == id)
-                .Include(m => m.Draw)
+                .Include(m => m.Draw).ThenInclude(d => d.Event)
                 .Include(m => m.Round)
                 .Include(m => m.Court)
                 .Include(m => m.Player1)!.ThenInclude(p => p.Nationality)
@@ -416,6 +447,12 @@ namespace Squash.Web.Areas.Administration.Controllers
                 .Count();
 
             var filteredMatches = matchEntities.AsEnumerable();
+
+            if (!string.IsNullOrEmpty(eventName))
+            {
+                filteredMatches = filteredMatches.Where(m => 
+                    m.Draw?.Event?.Name != null && m.Draw.Event.Name.Equals(eventName, StringComparison.OrdinalIgnoreCase));
+            }
 
             if (!string.IsNullOrEmpty(country))
             {
@@ -440,6 +477,13 @@ namespace Squash.Web.Areas.Administration.Controllers
             }
 
             var filteredMatchesList = filteredMatches.ToList();
+
+            var availableEvents = _dataContext.Events
+                .AsNoTracking()
+                .Where(e => e.TournamentId == id)
+                .OrderBy(e => e.Name)
+                .Select(e => new FilterOption { Value = e.Name, Text = e.Name })
+                .ToList();
 
             var availableCountries = filteredMatchesList
                 .SelectMany(m => new[] { m.Player1?.Nationality?.Code, m.Player2?.Nationality?.Code })
@@ -486,15 +530,23 @@ namespace Squash.Web.Areas.Administration.Controllers
                     p.Nationality?.Code != null && p.Nationality.Code.Equals(country, StringComparison.OrdinalIgnoreCase));
             }
 
+            // Get TournamentPlayer IDs for each player
+            var playerIds = playersFromMatches.Select(p => p.Id).ToList();
+            var tournamentPlayers = _dataContext.TournamentPlayers
+                .AsNoTracking()
+                .Where(tp => tp.TournamentId == id && playerIds.Contains(tp.PlayerId))
+                .ToDictionary(tp => tp.PlayerId, tp => tp.Id);
+
             var playerItems = playersFromMatches
                 .OrderBy(p => p.Name)
                 .Select(p => new TournamentPlayerItemViewModel
                 {
-                    Id = p.Id,
+                    Id = tournamentPlayers.ContainsKey(p.Id) ? tournamentPlayers[p.Id] : 0,
                     Name = p.Name,
                     CountryCode = p.Nationality?.Code ?? string.Empty,
                     FlagUrl = BuildFlagUrl(p.Nationality?.Code)
                 })
+                .Where(p => p.Id > 0) // Only include players that have a TournamentPlayer record
                 .ToList();
 
             var playerGroups = playerItems
@@ -512,10 +564,12 @@ namespace Squash.Web.Areas.Administration.Controllers
                 TournamentId = tournament.Id,
                 TournamentName = tournament.Name,
                 PlayerGroups = playerGroups,
+                FilterEvent = eventName,
                 FilterCountry = country,
                 FilterDraw = draw,
                 FilterRound = round,
                 FilterCourt = court,
+                AvailableEvents = availableEvents,
                 AvailableCountries = availableCountries,
                 AvailableDraws = availableDraws,
                 AvailableRounds = availableRounds,
@@ -1172,6 +1226,66 @@ namespace Squash.Web.Areas.Administration.Controllers
             // I will implement this as a redirect back to Venues.
             
             return RedirectToAction(nameof(Venues), new { id = id });
+        }
+
+        // GET: Administration/Tournaments/TournamentPlayer/5
+        public async Task<IActionResult> TournamentPlayer(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tournamentPlayer = await _dataContext.TournamentPlayers
+                .Include(tp => tp.Player)
+                .Include(tp => tp.Tournament)
+                .FirstOrDefaultAsync(tp => tp.Id == id);
+
+            if (tournamentPlayer == null)
+            {
+                return NotFound();
+            }
+
+            // Get all matches for this player in this tournament
+            var allMatches = await _dataContext.Matches
+                .Include(m => m.TournamentDay)
+                .Include(m => m.Round)
+                .Include(m => m.Court)
+                .Include(m => m.Draw)
+                .Include(m => m.Player1)
+                    .ThenInclude(p => p.Nationality)
+                .Include(m => m.Player2)
+                    .ThenInclude(p => p.Nationality)
+                .Include(m => m.Games)
+                .Where(m => m.TournamentId == tournamentPlayer.TournamentId &&
+                           (m.Player1Id == tournamentPlayer.PlayerId || m.Player2Id == tournamentPlayer.PlayerId))
+                .OrderBy(m => m.TournamentDay.Date)
+                .ThenBy(m => m.StartTime)
+                .ToListAsync();
+
+            // Calculate win-loss record only for finished matches
+            var finishedMatches = allMatches.Where(m => m.WinnerPlayerId.HasValue).ToList();
+            var wins = finishedMatches.Count(m => m.WinnerPlayerId == tournamentPlayer.PlayerId);
+            var losses = finishedMatches.Count(m => m.WinnerPlayerId != tournamentPlayer.PlayerId);
+
+            // Get all TournamentPlayer IDs for opponents to create links
+            var opponentPlayerIds = allMatches
+                .SelectMany(m => new[] { m.Player1Id, m.Player2Id })
+                .Where(pid => pid.HasValue && pid != tournamentPlayer.PlayerId)
+                .Distinct()
+                .ToList();
+
+            var opponentTournamentPlayers = await _dataContext.TournamentPlayers
+                .Where(tp => tp.TournamentId == tournamentPlayer.TournamentId && opponentPlayerIds.Contains(tp.PlayerId))
+                .ToDictionaryAsync(tp => tp.PlayerId, tp => tp.Id);
+
+            ViewBag.Matches = allMatches;
+            ViewBag.Wins = wins;
+            ViewBag.Losses = losses;
+            ViewBag.TotalMatches = finishedMatches.Count;
+            ViewBag.OpponentTournamentPlayers = opponentTournamentPlayers;
+
+            return View(tournamentPlayer);
         }
     }
 }

@@ -54,7 +54,7 @@
                         <th>Name</th>
                         <th>Country</th>
                         <th>ESF Member Id</th>
-                        <th>External Id</th>
+
                         <th class="text-end">Actions</th>
                     </tr>
                 </thead>
@@ -90,7 +90,6 @@
                                     </div>
                                 </td>
                                 <td>@(string.IsNullOrWhiteSpace(player.EsfMemberId) ? "-" : player.EsfMemberId)</td>
-                                <td>@(player.ExternalPlayerId.HasValue ? player.ExternalPlayerId.Value.ToString() : "-")</td>
                                 <td class="text-end">
                                     <a class="btn btn-sm btn-outline-primary" asp-area="Administration" asp-controller="Players" asp-action="Details" asp-route-id="@player.Id">Edit</a>
                                 </td>

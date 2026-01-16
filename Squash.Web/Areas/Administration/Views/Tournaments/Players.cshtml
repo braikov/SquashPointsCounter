@@ -5,7 +5,7 @@
 
 @{
     ViewData["Title"] = Model.TournamentName;
-    var hasFilters = !string.IsNullOrEmpty(Model.FilterCountry) || !string.IsNullOrEmpty(Model.FilterDraw);
+    var hasFilters = !string.IsNullOrEmpty(Model.FilterEvent) || !string.IsNullOrEmpty(Model.FilterCountry) || !string.IsNullOrEmpty(Model.FilterDraw);
     var letterSet = new HashSet<string>(Model.PlayerGroups.Select(g => g.Letter), StringComparer.OrdinalIgnoreCase);
     var alphabet = Enumerable.Range('A', 26).Select(c => ((char)c).ToString()).ToList();
     var letterNav = new List<string>();
@@ -38,6 +38,13 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <strong>Filters</strong>
         <div class="d-flex gap-2 flex-wrap">
+            <select id="eventFilter" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All Events</option>
+                @foreach (var opt in Model.AvailableEvents)
+                {
+                    <option value="@opt.Value" selected="@(Model.FilterEvent == opt.Value)">@opt.Text</option>
+                }
+            </select>
             <select id="countryFilter" class="form-select form-select-sm" style="width: auto;">
                 <option value="">All Countries</option>
                 @foreach (var opt in Model.AvailableCountries)
@@ -84,7 +91,11 @@
                             <div class="player-letter-list">
                                 @foreach (var player in group.Players)
                                 {
-                                    <div class="player-row">
+                                    <a asp-area="Administration"
+                                       asp-controller="Tournaments"
+                                       asp-action="TournamentPlayer"
+                                       asp-route-id="@player.Id"
+                                       class="player-row player-row-link">
                                         @if (!string.IsNullOrWhiteSpace(player.FlagUrl))
                                         {
                                             <img class="player-flag" src="@player.FlagUrl" alt="" />
@@ -94,7 +105,7 @@
                                         {
                                             <span class="player-country">@player.CountryCode.ToUpperInvariant()</span>
                                         }
-                                    </div>
+                                    </a>
                                 }
                             </div>
                         </div>
@@ -119,14 +130,22 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            var eventFilter = document.getElementById('eventFilter');
             var countryFilter = document.getElementById('countryFilter');
             var drawFilter = document.getElementById('drawFilter');
 
+            eventFilter.value = '@Model.FilterEvent';
             countryFilter.value = '@Model.FilterCountry';
             drawFilter.value = '@Model.FilterDraw';
 
             function applyFilters() {
                 var url = new URL(window.location.href);
+
+                if (eventFilter.value) {
+                    url.searchParams.set('eventName', eventFilter.value);
+                } else {
+                    url.searchParams.delete('eventName');
+                }
 
                 if (countryFilter.value) {
                     url.searchParams.set('country', countryFilter.value);
@@ -143,6 +162,7 @@
                 window.location.href = url.toString();
             }
 
+            eventFilter.addEventListener('change', applyFilters);
             countryFilter.addEventListener('change', applyFilters);
             drawFilter.addEventListener('change', applyFilters);
         });

@@ -1,0 +1,222 @@
+@using Squash.DataAccess.Entities
+@model TournamentPlayer
+
+@{
+    ViewData["Title"] = "Player Details";
+    var matches = ViewBag.Matches as List<Match> ?? new List<Match>();
+    var wins = (int)ViewBag.Wins;
+    var losses = (int)ViewBag.Losses;
+    var totalMatches = (int)ViewBag.TotalMatches;
+    var winPercentage = totalMatches > 0 ? (wins * 100.0 / totalMatches) : 0;
+    var opponentTournamentPlayers = ViewBag.OpponentTournamentPlayers as Dictionary<int, int> ?? new Dictionary<int, int>();
+}
+
+<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.Tournament.Name, ActiveTab = "Players" }' />
+
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col-auto">
+                @if (!string.IsNullOrEmpty(Model.Player.PictureUrl))
+                {
+                    <img src="@Model.Player.PictureUrl" alt="@Model.Player.Name" class="rounded-circle" style="width: 80px; height: 80px; object-fit: cover;" />
+                }
+                else
+                {
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="text-white fs-4">
+                            @{
+                                var nameParts = Model.Player.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                if (nameParts.Length >= 2)
+                                {
+                                    @(nameParts[0][0].ToString() + nameParts[^1][0].ToString())
+                                }
+                                else if (nameParts.Length == 1)
+                                {
+                                    @nameParts[0][0].ToString()
+                                }
+                            }
+                        </span>
+                    </div>
+                }
+            </div>
+            <div class="col">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    @if (Model.Player.Nationality != null)
+                    {
+                        <img src="/images/flags/@(Model.Player.Nationality.Code.ToLowerInvariant()).svg" 
+                             alt="@Model.Player.Nationality.Name" 
+                             title="@Model.Player.Nationality.Name"
+                             style="width: 24px; height: 16px;" 
+                             onerror="this.style.display='none'" />
+                    }
+                    <h3 class="mb-0">@Model.Player.Name</h3>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Player.EsfMemberId))
+                {
+                    <p class="text-muted mb-0">
+                        <a href="javascript:alert('ESF Member profile not implemented yet')" class="text-decoration-none">
+                            ESF Member ID: @Model.Player.EsfMemberId
+                        </a>
+                    </p>
+                }
+            </div>
+            <div class="col-auto">
+                <div style="min-width: 250px;">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="fw-bold">Win-Loss</span>
+                        <span class="text-muted">@wins-@losses (@totalMatches)</span>
+                    </div>
+                    <div class="progress" style="height: 24px;" title="@winPercentage.ToString("F1")% won">
+                        @if (wins > 0)
+                        {
+                            <div class="progress-bar bg-success" role="progressbar" style="width: @winPercentage%" 
+                                 aria-valuenow="@winPercentage" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        }
+                        @if (losses > 0)
+                        {
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: @((100-winPercentage))%" 
+                                 aria-valuenow="@((100-winPercentage))" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0">Matches</h4>
+    </div>
+    <div class="card-body p-0">
+        @if (matches.Any())
+        {
+            <div class="list-group list-group-flush">
+                @foreach (var match in matches)
+                {
+                    var isPlayer1 = match.Player1Id == Model.PlayerId;
+                    var opponent = isPlayer1 ? match.Player2 : match.Player1;
+                    var isWin = match.WinnerPlayerId == Model.PlayerId;
+                    var isLoss = match.WinnerPlayerId.HasValue && match.WinnerPlayerId != Model.PlayerId;
+
+                    <div class="list-group-item">
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                                <small class="text-muted d-block">@match.Round?.Name</small>
+                                <small class="text-muted d-block">@match.Draw?.Name</small>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="d-flex align-items-center gap-2">
+                                    @if (isWin)
+                                    {
+                                        <span class="badge bg-success">W</span>
+                                    }
+                                    else if (isLoss)
+                                    {
+                                        <span class="badge bg-danger">L</span>
+                                    }
+                                    
+                                    @* Current player *@
+                                    @if (Model.Player.Nationality != null)
+                                    {
+                                        <img src="/images/flags/@(Model.Player.Nationality.Code.ToLowerInvariant()).svg" 
+                                             alt="@Model.Player.Nationality.Name" 
+                                             title="@Model.Player.Nationality.Name"
+                                             style="width: 20px; height: 14px;" 
+                                             onerror="this.style.display='none'" />
+                                    }
+                                    <span>@Model.Player.Name</span>
+                                    
+                                    <span class="text-muted">vs</span>
+                                    
+                                    @* Opponent *@
+                                    @if (opponent?.Nationality != null)
+                                    {
+                                        <img src="/images/flags/@(opponent.Nationality.Code.ToLowerInvariant()).svg" 
+                                             alt="@opponent.Nationality.Name" 
+                                             title="@opponent.Nationality.Name"
+                                             style="width: 20px; height: 14px;" 
+                                             onerror="this.style.display='none'" />
+                                    }
+                                    
+                                    @if (opponent != null)
+                                    {
+                                        @if (opponentTournamentPlayers.ContainsKey(opponent.Id))
+                                        {
+                                            <a asp-controller="Tournaments" asp-action="TournamentPlayer" asp-route-id="@opponentTournamentPlayers[opponent.Id]" 
+                                               class="text-decoration-none">
+                                                @opponent.Name
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <span>@opponent.Name</span>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-2 text-center">
+                                @if (match.Games.Any())
+                                {
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        @foreach (var game in match.Games.OrderBy(g => g.GameNumber))
+                                        {
+                                            var player1Points = game.Side1Points ?? 0;
+                                            var player2Points = game.Side2Points ?? 0;
+                                            var playerPoints = isPlayer1 ? player1Points : player2Points;
+                                            var opponentPoints = isPlayer1 ? player2Points : player1Points;
+                                            var playerWon = playerPoints > opponentPoints;
+                                            
+                                            <div class="small">
+                                                <div class="@(playerWon ? "fw-bold" : "")">
+                                                    @playerPoints
+                                                </div>
+                                                <div class="@(!playerWon ? "fw-bold" : "")">
+                                                    @opponentPoints
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-md-3">
+                                @if (match.TournamentDay != null)
+                                {
+                                    <small class="text-muted d-block">
+                                        <i class="bi bi-clock"></i> 
+                                        @match.TournamentDay.Date.ToString("ddd dd/MM/yyyy")
+                                        @if (match.StartTime.HasValue)
+                                        {
+                                            @match.StartTime.Value.ToString(@"hh\:mm")
+                                        }
+                                    </small>
+                                }
+                                @if (match.Court != null)
+                                {
+                                    <small class="text-muted d-block">
+                                        <i class="bi bi-geo-alt"></i> @match.Court.Name
+                                    </small>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="p-4 text-center text-muted">
+                No matches found for this player in this tournament.
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Any additional JavaScript for the page
+    </script>
+}

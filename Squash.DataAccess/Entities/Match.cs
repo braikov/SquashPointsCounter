@@ -47,8 +47,8 @@ namespace Squash.DataAccess.Entities
             {
                 var datePart = TournamentDay?.Date.ToString("yyyyMMdd", CultureInfo.InvariantCulture) ?? "00000000";
                 var timePart = StartTime?.ToString(@"hh\:mm", CultureInfo.InvariantCulture) ?? (StartTimeText ?? string.Empty).Trim();
-                var side1 = Player1?.ExternalPlayerId ?? 0;
-                var side2 = Player2?.ExternalPlayerId ?? 0;
+                var side1 = Player1?.Id ?? 0;
+                var side2 = Player2?.Id ?? 0;
                 return $"{datePart}|{timePart}|{side1}|{side2}";
             }
         }

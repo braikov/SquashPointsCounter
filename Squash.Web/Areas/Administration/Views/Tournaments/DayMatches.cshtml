@@ -8,7 +8,7 @@
         .GroupBy(m => string.IsNullOrWhiteSpace(m.Time) ? "-" : m.Time)
         .OrderBy(g => g.Key)
         .ToList();
-    var hasFilters = !string.IsNullOrEmpty(Model.FilterCountry) || !string.IsNullOrEmpty(Model.FilterDraw) || !string.IsNullOrEmpty(Model.FilterRound) || !string.IsNullOrEmpty(Model.FilterCourt);
+    var hasFilters = !string.IsNullOrEmpty(Model.FilterEvent) || !string.IsNullOrEmpty(Model.FilterCountry) || !string.IsNullOrEmpty(Model.FilterDraw) || !string.IsNullOrEmpty(Model.FilterRound) || !string.IsNullOrEmpty(Model.FilterCourt);
 }
 
 <partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.TournamentName, ActiveTab = "DayMatches" }' />
@@ -53,6 +53,13 @@
     <div class="card-header d-flex justify-content-between align-items-center">
         <strong>Filters</strong>
         <div class="d-flex gap-2">
+            <select id="eventFilter" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All Events</option>
+                @foreach (var opt in Model.AvailableEvents)
+                {
+                    <option value="@opt.Value" selected="@(Model.FilterEvent == opt.Value)">@opt.Text</option>
+                }
+            </select>
             <select id="countryFilter" class="form-select form-select-sm" style="width: auto;">
                 <option value="">All Countries</option>
                 @foreach (var opt in Model.AvailableCountries)
@@ -146,19 +153,65 @@
                                     <div class="match-card-body">
                                         <div class="match-card-players">
                                             <div class="match-player @(match.Player1IsWinner ? "is-winner" : "")">
-                                                @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
+                                                @if (match.Player1TournamentPlayerId.HasValue)
                                                 {
-                                                    <img class="match-player-flag" src="@match.Player1FlagUrl" alt="" />
+                                                    <a asp-controller="Tournaments" asp-action="TournamentPlayer" asp-route-id="@match.Player1TournamentPlayerId" class="player-row player-row-link" style="flex: 1; min-width: 0;">
+                                                        @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
+                                                        {
+                                                            <img class="player-flag" src="@match.Player1FlagUrl" alt="" />
+                                                        }
+                                                        <span class="player-name">@match.Player1</span>
+                                                        @if (!string.IsNullOrWhiteSpace(match.Player1CountryCode))
+                                                        {
+                                                            <span class="player-country">@match.Player1CountryCode.ToUpperInvariant()</span>
+                                                        }
+                                                    </a>
                                                 }
-                                                <span class="match-player-name">@match.Player1</span>
+                                                else
+                                                {
+                                                    <div class="player-row" style="flex: 1; min-width: 0;">
+                                                        @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
+                                                        {
+                                                            <img class="player-flag" src="@match.Player1FlagUrl" alt="" />
+                                                        }
+                                                        <span class="player-name">@match.Player1</span>
+                                                        @if (!string.IsNullOrWhiteSpace(match.Player1CountryCode))
+                                                        {
+                                                            <span class="player-country">@match.Player1CountryCode.ToUpperInvariant()</span>
+                                                        }
+                                                    </div>
+                                                }
                                             </div>
                                             <span class="match-player-separator">-</span>
                                             <div class="match-player @(match.Player2IsWinner ? "is-winner" : "")">
-                                                @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
+                                                @if (match.Player2TournamentPlayerId.HasValue)
                                                 {
-                                                    <img class="match-player-flag" src="@match.Player2FlagUrl" alt="" />
+                                                    <a asp-controller="Tournaments" asp-action="TournamentPlayer" asp-route-id="@match.Player2TournamentPlayerId" class="player-row player-row-link" style="flex: 1; min-width: 0;">
+                                                        @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
+                                                        {
+                                                            <img class="player-flag" src="@match.Player2FlagUrl" alt="" />
+                                                        }
+                                                        <span class="player-name">@match.Player2</span>
+                                                        @if (!string.IsNullOrWhiteSpace(match.Player2CountryCode))
+                                                        {
+                                                            <span class="player-country">@match.Player2CountryCode.ToUpperInvariant()</span>
+                                                        }
+                                                    </a>
                                                 }
-                                                <span class="match-player-name">@match.Player2</span>
+                                                else
+                                                {
+                                                    <div class="player-row" style="flex: 1; min-width: 0;">
+                                                        @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
+                                                        {
+                                                            <img class="player-flag" src="@match.Player2FlagUrl" alt="" />
+                                                        }
+                                                        <span class="player-name">@match.Player2</span>
+                                                        @if (!string.IsNullOrWhiteSpace(match.Player2CountryCode))
+                                                        {
+                                                            <span class="player-country">@match.Player2CountryCode.ToUpperInvariant()</span>
+                                                        }
+                                                    </div>
+                                                }
                                             </div>
                                         </div>
                                         @if (match.IsFinished && match.Games.Count > 0)
@@ -195,12 +248,14 @@
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            var eventFilter = document.getElementById('eventFilter');
             var countryFilter = document.getElementById('countryFilter');
             var drawFilter = document.getElementById('drawFilter');
             var roundFilter = document.getElementById('roundFilter');
             var courtFilter = document.getElementById('courtFilter');
 
             // Set current filter values
+            eventFilter.value = '@Model.FilterEvent';
             countryFilter.value = '@Model.FilterCountry';
             drawFilter.value = '@Model.FilterDraw';
             roundFilter.value = '@Model.FilterRound';
@@ -209,6 +264,12 @@
             function applyFilters() {
                 var url = new URL(window.location.href);
                 
+                if (eventFilter.value) {
+                    url.searchParams.set('eventName', eventFilter.value);
+                } else {
+                    url.searchParams.delete('eventName');
+                }
+
                 if (countryFilter.value) {
                     url.searchParams.set('country', countryFilter.value);
                 } else {
@@ -236,6 +297,7 @@
                 window.location.href = url.toString();
             }
 
+            eventFilter.addEventListener('change', applyFilters);
             countryFilter.addEventListener('change', applyFilters);
             drawFilter.addEventListener('change', applyFilters);
             roundFilter.addEventListener('change', applyFilters);

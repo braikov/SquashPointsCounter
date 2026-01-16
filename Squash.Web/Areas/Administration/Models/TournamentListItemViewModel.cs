@@ -10,6 +10,7 @@ namespace Squash.Web.Areas.Administration.Models
         public int DrawsCount { get; set; }
         public int CourtsCount { get; set; }
         public int MatchesCount { get; set; }
+        public int PlayersCount { get; set; }
         public int? FirstDayId { get; set; }
     }
 }

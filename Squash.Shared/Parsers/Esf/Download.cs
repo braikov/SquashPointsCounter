@@ -266,7 +266,7 @@ namespace Squash.Shared.Parsers.Esf
             // Find rounds in database, create if not exists. Update result.Rounds' RoundId.
             CreateOrUpdateRounds(dbContext, result.Rounds);
             // Find players in database, create if not exists. Update result.Players' PlayerId.
-            CreateOrUpdatePlayers(dbContext, result.Players, result.Tournament.Id);
+            CreateOrUpdatePlayers(dbContext, result.Players, result.Tournament.Id, result.TournamentPlayerIds);
             // Find matches in database, create if not exists. Update result.Matches' MatchId.
             CreateOrUpdateMatches(dbContext, result.Matches, result.Tournament.Id, result.TournamentDay.Id);
             // Find match games in database, create if not exists. Update result.Games' MatchGameId.
@@ -438,17 +438,34 @@ namespace Squash.Shared.Parsers.Esf
 
                     if (existingDraw == null)
                     {
+                        // Find matching event by name prefix
+                        var matchingEvent = dbContext.Events
+                            .Where(e => e.TournamentId == tournamentId && !string.IsNullOrEmpty(e.Name) && draw.Name.StartsWith(e.Name))
+                            .OrderByDescending(e => e.Name.Length)
+                            .FirstOrDefault();
+
                         existingDraw = new Draw
                         {
                             TournamentId = tournamentId,
                             ExternalDrawId = draw.ExternalDrawId,
-                            Name = draw.Name
+                            Name = draw.Name,
+                            EventId = matchingEvent?.Id
                         };
                         dbContext.Draws.Add(existingDraw);
                     }
 
                     existingDraw.Name = draw.Name;
                     existingDraw.ExternalDrawId = draw.ExternalDrawId;
+                    
+                    // Update EventId if not set
+                    if (!existingDraw.EventId.HasValue)
+                    {
+                        var matchingEvent = dbContext.Events
+                            .Where(e => e.TournamentId == tournamentId && !string.IsNullOrEmpty(e.Name) && draw.Name.StartsWith(e.Name))
+                            .OrderByDescending(e => e.Name.Length)
+                            .FirstOrDefault();
+                        existingDraw.EventId = matchingEvent?.Id;
+                    }
 
                     dbContext.SaveChanges();
                     draw.Id = existingDraw.Id;
@@ -487,21 +504,18 @@ namespace Squash.Shared.Parsers.Esf
                 }
             }
 
-            static void CreateOrUpdatePlayers(IDataContext dbContext, IEnumerable<Player> players, int tournamentId)
+            static void CreateOrUpdatePlayers(IDataContext dbContext, IEnumerable<Player> players, int tournamentId, Dictionary<Player, int> tournamentPlayerIds)
             {
                 foreach (var player in players)
                 {
                     var existingPlayer = !string.IsNullOrWhiteSpace(player.EsfMemberId)
                         ? dbContext.Players.FirstOrDefault(p => p.EsfMemberId == player.EsfMemberId)
-                        : (player.ExternalPlayerId.HasValue
-                            ? dbContext.Players.FirstOrDefault(p => p.ExternalPlayerId == player.ExternalPlayerId)
-                            : dbContext.Players.FirstOrDefault(p => p.Name == player.Name));
+                        : dbContext.Players.FirstOrDefault(p => p.Name == player.Name);
 
                     if (existingPlayer == null)
                     {
                         existingPlayer = new Player
                         {
-                            ExternalPlayerId = player.ExternalPlayerId,
                             Name = player.Name
                         };
                         dbContext.Players.Add(existingPlayer);
@@ -515,17 +529,28 @@ namespace Squash.Shared.Parsers.Esf
                     player.Id = existingPlayer.Id;
                     player.NationalityId = existingPlayer.NationalityId;
 
-                    var linkExists = dbContext.PlayerTournaments
-                        .Any(pt => pt.PlayerId == existingPlayer.Id && pt.TournamentId == tournamentId);
-                    if (!linkExists)
+                    // Get TournamentPlayerId from the dictionary
+                    var tournamentPlayerId = tournamentPlayerIds.ContainsKey(player) ? tournamentPlayerIds[player] : (int?)null;
+
+                    var tournamentPlayer = dbContext.TournamentPlayers
+                        .FirstOrDefault(pt => pt.PlayerId == existingPlayer.Id && pt.TournamentId == tournamentId);
+                    
+                    if (tournamentPlayer == null)
                     {
-                        dbContext.PlayerTournaments.Add(new PlayerTournament
+                        tournamentPlayer = new TournamentPlayer
                         {
                             PlayerId = existingPlayer.Id,
-                            TournamentId = tournamentId
-                        });
-                        dbContext.SaveChanges();
+                            TournamentId = tournamentId,
+                            TournamentPlayerId = tournamentPlayerId
+                        };
+                        dbContext.TournamentPlayers.Add(tournamentPlayer);
                     }
+                    else if (tournamentPlayerId.HasValue && !tournamentPlayer.TournamentPlayerId.HasValue)
+                    {
+                        tournamentPlayer.TournamentPlayerId = tournamentPlayerId;
+                    }
+                    
+                    dbContext.SaveChanges();
                 }
             }
 
@@ -724,21 +749,35 @@ namespace Squash.Shared.Parsers.Esf
                 var existingDraw = dbContext.Draws.FirstOrDefault(d => d.TournamentId == tournamentId && d.ExternalDrawId == draw.ExternalDrawId);
                 if (existingDraw == null)
                 {
-                    existingDraw = new Draw
-                    {
-                        TournamentId = tournamentId,
-                        ExternalDrawId = draw.ExternalDrawId,
-                        Name = draw.Name
-                    };
-                    dbContext.Draws.Add(existingDraw);
-                }
+                // Find matching event by name prefix
+                var matchingEvent = dbContext.Events
+                    .Where(e => e.TournamentId == tournamentId && !string.IsNullOrEmpty(e.Name) && draw.Name.StartsWith(e.Name))
+                    .OrderByDescending(e => e.Name.Length)
+                    .FirstOrDefault();
 
-                existingDraw.Name = draw.Name;
-                existingDraw.ExternalDrawId = draw.ExternalDrawId;
-                existingDraw.Type = draw.Type;
+                existingDraw = new Draw
+                {
+                    TournamentId = tournamentId,
+                    ExternalDrawId = draw.ExternalDrawId,
+                    Name = draw.Name,
+                    EventId = matchingEvent?.Id
+                };
+                dbContext.Draws.Add(existingDraw);
+            }
 
-                dbContext.SaveChanges();
-                draw.Id = existingDraw.Id;
+            existingDraw.Name = draw.Name;
+            existingDraw.ExternalDrawId = draw.ExternalDrawId;
+            existingDraw.Type = draw.Type;
+            
+            // Update EventId if not set
+            if (!existingDraw.EventId.HasValue)
+            {
+                var matchingEvent = dbContext.Events
+                    .Where(e => e.TournamentId == tournamentId && !string.IsNullOrEmpty(e.Name) && draw.Name.StartsWith(e.Name))
+                    .OrderByDescending(e => e.Name.Length)
+                    .FirstOrDefault();
+                existingDraw.EventId = matchingEvent?.Id;
+            }
                 draw.TournamentId = existingDraw.TournamentId;
             }
         }

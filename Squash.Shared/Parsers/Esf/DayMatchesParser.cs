@@ -88,6 +88,7 @@ namespace Squash.Shared.Parsers.Esf
                             Name = drawName,
                             ExternalDrawId = drawId,
                             Tournament = result.Tournament
+                            // EventId will be set when saving to database by matching name prefix
                         };
 
                         drawsByKey[drawKey] = draw;
@@ -498,7 +499,6 @@ namespace Squash.Shared.Parsers.Esf
                     {
                         player = new Player
                         {
-                            ExternalPlayerId = playerId,
                             Name = playerName ?? string.Empty,
                             Nationality = nationality,
                             EntitySourceId = EntitySource.Esf
@@ -511,6 +511,12 @@ namespace Squash.Shared.Parsers.Esf
                         {
                             nationality.Players.Add(player);
                         }
+                    }
+                    
+                    // Track external player ID for this tournament
+                    if (playerId.HasValue && !result.TournamentPlayerIds.ContainsKey(player))
+                    {
+                        result.TournamentPlayerIds[player] = playerId.Value;
                     }
                 }
 
@@ -631,5 +637,8 @@ namespace Squash.Shared.Parsers.Esf
         public List<Player> Players { get; } = new();
         public List<Match> Matches { get; } = new();
         public List<MatchGame> Games { get; } = new();
+        
+        // Maps Player to their TournamentPlayerId (ExternalPlayerId from ESF)
+        public Dictionary<Player, int> TournamentPlayerIds { get; } = new();
     }
 }

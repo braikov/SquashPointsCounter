@@ -13,12 +13,14 @@ namespace Squash.Web.Areas.Administration.Models
         public List<TournamentMatchRowViewModel> Matches { get; set; } = new();
 
         // Filters
+        public string? FilterEvent { get; set; }
         public string? FilterCountry { get; set; }
         public string? FilterDraw { get; set; }
         public string? FilterRound { get; set; }
         public string? FilterCourt { get; set; }
 
         // Available filter options
+        public List<FilterOption> AvailableEvents { get; set; } = new();
         public List<FilterOption> AvailableCountries { get; set; } = new();
         public List<FilterOption> AvailableDraws { get; set; } = new();
         public List<FilterOption> AvailableRounds { get; set; } = new();
@@ -50,6 +52,8 @@ namespace Squash.Web.Areas.Administration.Models
         public string Court { get; set; } = string.Empty;
         public string Player1 { get; set; } = string.Empty;
         public string Player2 { get; set; } = string.Empty;
+        public int? Player1TournamentPlayerId { get; set; }
+        public int? Player2TournamentPlayerId { get; set; }
         public string Player1FlagUrl { get; set; } = string.Empty;
         public string Player2FlagUrl { get; set; } = string.Empty;
         public string Player1CountryCode { get; set; } = string.Empty;

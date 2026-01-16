@@ -5,6 +5,9 @@ namespace Squash.DataAccess.Entities
         public int TournamentId { get; set; }
         public Tournament Tournament { get; set; } = null!;
 
+        public int? EventId { get; set; }
+        public Event? Event { get; set; }
+
         public int? ExternalDrawId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string? Type { get; set; }

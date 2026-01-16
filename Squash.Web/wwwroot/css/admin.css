@@ -415,6 +415,22 @@
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
 }
 
+.player-row-link {
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+
+.player-row-link:hover {
+    border-color: var(--cui-primary);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.12);
+    transform: translateY(-1px);
+}
+
+.player-row-link:active {
+    transform: translateY(0);
+}
+
 .player-flag {
     width: 20px;
     height: 14px;
