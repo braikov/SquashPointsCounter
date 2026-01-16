@@ -12,7 +12,7 @@ using Squash.SqlServer;
 namespace Squash.SqlServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260115205534_InitialMigration")]
+    [Migration("20260116134346_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -83,11 +83,57 @@ namespace Squash.SqlServer.Migrations
                     b.Property<int>("TournamentId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("TournamentId");
 
                     b.ToTable("Draws");
+                });
+
+            modelBuilder.Entity("Squash.DataAccess.Entities.Event", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Age")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Direction")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ExternalEventId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("LastOperationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MatchType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TournamentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TournamentId");
+
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.GameLog", b =>
@@ -428,6 +474,9 @@ namespace Squash.SqlServer.Migrations
                     b.Property<int>("EntitySourceId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime?>("EntryOpensDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("ExternalCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -456,6 +505,9 @@ namespace Squash.SqlServer.Migrations
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("WithdrawalDeadlineDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -760,6 +812,17 @@ namespace Squash.SqlServer.Migrations
                     b.Navigation("Tournament");
                 });
 
+            modelBuilder.Entity("Squash.DataAccess.Entities.Event", b =>
+                {
+                    b.HasOne("Squash.DataAccess.Entities.Tournament", "Tournament")
+                        .WithMany("Events")
+                        .HasForeignKey("TournamentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tournament");
+                });
+
             modelBuilder.Entity("Squash.DataAccess.Entities.GameLog", b =>
                 {
                     b.HasOne("Squash.DataAccess.Entities.MatchGame", "MatchGame")
@@ -1020,6 +1083,8 @@ namespace Squash.SqlServer.Migrations
                     b.Navigation("Days");
 
                     b.Navigation("Draws");
+
+                    b.Navigation("Events");
 
                     b.Navigation("Matches");
 

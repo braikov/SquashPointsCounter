@@ -13,12 +13,15 @@ namespace Squash.DataAccess.Entities
         public string? OrganizationCode { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public DateTime? EntryOpensDate { get; set; }
         public DateTime? ClosingSigninDate { get; set; }
+        public DateTime? WithdrawalDeadlineDate { get; set; }
         public string? Regulations { get; set; }
         public EntitySource EntitySourceId { get; set; } = EntitySource.Native;
         public string? SourceUrls { get; set; }
 
         public ICollection<TournamentDay> Days { get; set; } = new List<TournamentDay>();
+        public ICollection<Event> Events { get; set; } = new List<Event>();
         public ICollection<Draw> Draws { get; set; } = new List<Draw>();
         public ICollection<Match> Matches { get; set; } = new List<Match>();
         public ICollection<TournamentVenue> TournamentVenues { get; set; } = new List<TournamentVenue>();

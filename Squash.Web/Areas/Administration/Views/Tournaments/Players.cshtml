@@ -1,0 +1,150 @@
+@using System
+@using System.Collections.Generic
+@using System.Linq
+@model Squash.Web.Areas.Administration.Models.TournamentPlayersViewModel
+
+@{
+    ViewData["Title"] = Model.TournamentName;
+    var hasFilters = !string.IsNullOrEmpty(Model.FilterCountry) || !string.IsNullOrEmpty(Model.FilterDraw);
+    var letterSet = new HashSet<string>(Model.PlayerGroups.Select(g => g.Letter), StringComparer.OrdinalIgnoreCase);
+    var alphabet = Enumerable.Range('A', 26).Select(c => ((char)c).ToString()).ToList();
+    var letterNav = new List<string>();
+    if (letterSet.Contains("#"))
+    {
+        letterNav.Add("#");
+    }
+    letterNav.AddRange(alphabet);
+}
+
+<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.TournamentName, ActiveTab = "Players" }' />
+
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="h3 mb-1">Players</h1>
+        <div class="text-medium-emphasis">
+            @if (hasFilters)
+            {
+                <span>Showing @Model.FilteredPlayersCount of @Model.TotalPlayersCount players</span>
+            }
+            else
+            {
+                <span>Showing @Model.TotalPlayersCount players</span>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Filters</strong>
+        <div class="d-flex gap-2 flex-wrap">
+            <select id="countryFilter" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All Countries</option>
+                @foreach (var opt in Model.AvailableCountries)
+                {
+                    <option value="@opt.Value" selected="@(Model.FilterCountry == opt.Value)">@opt.Text</option>
+                }
+            </select>
+            <select id="drawFilter" class="form-select form-select-sm" style="width: auto;">
+                <option value="">All Draws</option>
+                @foreach (var opt in Model.AvailableDraws)
+                {
+                    <option value="@opt.Value" selected="@(Model.FilterDraw == opt.Value)">@opt.Text</option>
+                }
+            </select>
+            @if (hasFilters)
+            {
+                <a class="btn btn-sm btn-outline-secondary"
+                   asp-area="Administration"
+                   asp-controller="Tournaments"
+                   asp-action="Players"
+                   asp-route-id="@Model.TournamentId">
+                    Clear
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        @if (Model.PlayerGroups.Count == 0)
+        {
+            <div class="text-medium-emphasis">No players available.</div>
+        }
+        else
+        {
+            <div class="tournament-players-layout">
+                <div class="tournament-players-list">
+                    @foreach (var group in Model.PlayerGroups)
+                    {
+                        var groupAnchor = group.Letter == "#" ? "letter-other" : $"letter-{group.Letter}";
+                        <div class="player-letter-group" id="@groupAnchor">
+                            <div class="player-letter">@group.Letter</div>
+                            <div class="player-letter-list">
+                                @foreach (var player in group.Players)
+                                {
+                                    <div class="player-row">
+                                        @if (!string.IsNullOrWhiteSpace(player.FlagUrl))
+                                        {
+                                            <img class="player-flag" src="@player.FlagUrl" alt="" />
+                                        }
+                                        <span class="player-name">@player.Name</span>
+                                        @if (!string.IsNullOrWhiteSpace(player.CountryCode))
+                                        {
+                                            <span class="player-country">@player.CountryCode.ToUpperInvariant()</span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="tournament-players-nav">
+                    <div class="player-letter-nav">
+                        @foreach (var letter in letterNav)
+                        {
+                            var hasLetter = letterSet.Contains(letter);
+                            var anchor = letter == "#" ? "letter-other" : $"letter-{letter}";
+                            <a class="player-letter-link @(hasLetter ? "" : "is-disabled")"
+                               href="@(hasLetter ? "#" + anchor : "#")">@letter</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var countryFilter = document.getElementById('countryFilter');
+            var drawFilter = document.getElementById('drawFilter');
+
+            countryFilter.value = '@Model.FilterCountry';
+            drawFilter.value = '@Model.FilterDraw';
+
+            function applyFilters() {
+                var url = new URL(window.location.href);
+
+                if (countryFilter.value) {
+                    url.searchParams.set('country', countryFilter.value);
+                } else {
+                    url.searchParams.delete('country');
+                }
+
+                if (drawFilter.value) {
+                    url.searchParams.set('draw', drawFilter.value);
+                } else {
+                    url.searchParams.delete('draw');
+                }
+
+                window.location.href = url.toString();
+            }
+
+            countryFilter.addEventListener('change', applyFilters);
+            drawFilter.addEventListener('change', applyFilters);
+        });
+    </script>
+}

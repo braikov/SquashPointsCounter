@@ -157,7 +157,9 @@ namespace Squash.SqlServer.Migrations
                     OrganizationCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EntryOpensDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ClosingSigninDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    WithdrawalDeadlineDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Regulations = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EntitySourceId = table.Column<int>(type: "int", nullable: false),
                     SourceUrls = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -191,6 +193,7 @@ namespace Squash.SqlServer.Migrations
                     TournamentId = table.Column<int>(type: "int", nullable: false),
                     ExternalDrawId = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastOperationUserId = table.Column<int>(type: "int", nullable: false)
@@ -200,6 +203,33 @@ namespace Squash.SqlServer.Migrations
                     table.PrimaryKey("PK_Draws", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Draws_Tournaments_TournamentId",
+                        column: x => x.TournamentId,
+                        principalTable: "Tournaments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TournamentId = table.Column<int>(type: "int", nullable: false),
+                    ExternalEventId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MatchType = table.Column<int>(type: "int", nullable: false),
+                    Age = table.Column<int>(type: "int", nullable: false),
+                    Direction = table.Column<int>(type: "int", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastOperationUserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_Tournaments_TournamentId",
                         column: x => x.TournamentId,
                         principalTable: "Tournaments",
                         principalColumn: "Id",
@@ -496,6 +526,11 @@ namespace Squash.SqlServer.Migrations
                 column: "TournamentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Events_TournamentId",
+                table: "Events",
+                column: "TournamentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GameLogs_MatchGameId",
                 table: "GameLogs",
                 column: "MatchGameId");
@@ -633,6 +668,9 @@ namespace Squash.SqlServer.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Events");
+
             migrationBuilder.DropTable(
                 name: "GameLogs");
 

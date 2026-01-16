@@ -20,7 +20,9 @@ namespace Squash.Shared.Parsers.Esf
 
             var tournamentName = ExtractTournamentName(doc);
             var regulations = ExtractRegulations(doc);
+            var entryOpensDate = ExtractTimelineDate(doc, "Entry opens");
             var closingDate = ExtractTimelineDate(doc, "Closing deadline");
+            var withdrawalDeadlineDate = ExtractTimelineDate(doc, "Withdrawal deadline");
             var startDate = ExtractTimelineDate(doc, "Start tournament");
             var endDate = ExtractTimelineDate(doc, "End of tournament");
             var hostNation = ExtractHostNation(doc);
@@ -30,7 +32,9 @@ namespace Squash.Shared.Parsers.Esf
             var tournament = new Tournament
             {
                 Name = tournamentName ?? string.Empty,
+                EntryOpensDate = entryOpensDate,
                 ClosingSigninDate = closingDate,
+                WithdrawalDeadlineDate = withdrawalDeadlineDate,
                 StartDate = startDate,
                 EndDate = endDate,
                 Regulations = regulations

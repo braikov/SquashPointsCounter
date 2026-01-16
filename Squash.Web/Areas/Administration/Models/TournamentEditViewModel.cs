@@ -19,9 +19,17 @@ namespace Squash.Web.Areas.Administration.Models
         [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
 
-        [Display(Name = "Closing sign-in date")]
+        [Display(Name = "Entry opens")]
+        [DataType(DataType.Date)]
+        public DateTime? EntryOpensDate { get; set; }
+
+        [Display(Name = "Closing deadline")]
         [DataType(DataType.Date)]
         public DateTime? ClosingSigninDate { get; set; }
+
+        [Display(Name = "Withdrawal deadline")]
+        [DataType(DataType.Date)]
+        public DateTime? WithdrawalDeadlineDate { get; set; }
 
         [Display(Name = "Regulations")]
         public string? Regulations { get; set; }

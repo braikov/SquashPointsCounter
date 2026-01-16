@@ -32,19 +32,31 @@
                     </div>
 
                     <div class="row gx-3">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-lg mb-3">
+                            <label asp-for="EntryOpensDate" class="form-label"></label>
+                            <input asp-for="EntryOpensDate" class="form-control" type="date" />
+                            <span asp-validation-for="EntryOpensDate" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-lg mb-3">
                             <label asp-for="ClosingSigninDate" class="form-label"></label>
                             <input asp-for="ClosingSigninDate" class="form-control" type="date" />
                             <span asp-validation-for="ClosingSigninDate" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-lg mb-3">
+                            <label asp-for="WithdrawalDeadlineDate" class="form-label"></label>
+                            <input asp-for="WithdrawalDeadlineDate" class="form-control" type="date" />
+                            <span asp-validation-for="WithdrawalDeadlineDate" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-lg mb-3">
                             <label asp-for="StartDate" class="form-label"></label>
                             <input asp-for="StartDate" class="form-control" type="date" />
                             <span asp-validation-for="StartDate" class="text-danger small"></span>
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-lg mb-3">
                             <label asp-for="EndDate" class="form-label"></label>
                             <input asp-for="EndDate" class="form-control" type="date" />
                             <span asp-validation-for="EndDate" class="text-danger small"></span>

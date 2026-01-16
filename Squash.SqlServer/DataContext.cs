@@ -9,6 +9,7 @@ namespace Squash.SqlServer
     {
         public DbSet<Tournament> Tournaments { get; set; }
         public DbSet<TournamentDay> TournamentDays { get; set; }
+        public DbSet<Event> Events { get; set; }
         public DbSet<Draw> Draws { get; set; }
         public DbSet<Round> Rounds { get; set; }
         public DbSet<Court> Courts { get; set; }

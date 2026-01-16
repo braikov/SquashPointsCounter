@@ -7,6 +7,7 @@ namespace Squash.DataAccess
     {
         DbSet<Tournament> Tournaments { get; set; }
         DbSet<TournamentDay> TournamentDays { get; set; }
+        DbSet<Event> Events { get; set; }
         DbSet<Draw> Draws { get; set; }
         DbSet<Round> Rounds { get; set; }
         DbSet<Court> Courts { get; set; }

@@ -372,3 +372,133 @@
     border-top: 0;
 }
 
+.tournament-players-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.tournament-players-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.player-letter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.player-letter {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--cui-primary);
+    border-bottom: 1px solid var(--cui-border-color);
+    padding-bottom: 0.25rem;
+}
+
+.player-letter-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.5rem;
+}
+
+.player-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 10px;
+    border: 1px solid var(--cui-border-color);
+    background: var(--cui-body-bg);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+.player-flag {
+    width: 20px;
+    height: 14px;
+    object-fit: cover;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.player-name {
+    flex: 1;
+    font-weight: 600;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.player-country {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--cui-text-muted);
+}
+
+.tournament-players-nav {
+    display: flex;
+    justify-content: flex-start;
+    order: -1;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0.5rem 0;
+    background: var(--cui-body-bg);
+}
+
+.player-letter-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    padding: 0.25rem;
+    border-radius: 12px;
+    background: var(--cui-tertiary-bg);
+    border: 1px solid var(--cui-border-color);
+}
+
+.player-letter-link {
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: var(--cui-body-color);
+    background: var(--cui-body-bg);
+    border: 1px solid transparent;
+    transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+
+.player-letter-link:hover {
+    border-color: var(--cui-primary);
+    transform: translateY(-1px);
+}
+
+.player-letter-link.is-disabled {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+@media (min-width: 992px) {
+    .tournament-players-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .tournament-players-nav {
+        order: 0;
+    }
+
+    .player-letter-nav {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+

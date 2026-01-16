@@ -144,7 +144,9 @@ namespace Squash.Web.Areas.Administration.Controllers
                 Name = model.Name?.Trim() ?? string.Empty,
                 StartDate = model.StartDate,
                 EndDate = model.EndDate,
+                EntryOpensDate = model.EntryOpensDate,
                 ClosingSigninDate = model.ClosingSigninDate,
+                WithdrawalDeadlineDate = model.WithdrawalDeadlineDate,
                 Regulations = model.Regulations,
                 NationalityId = model.NationalityId,
                 UserId = userId,
@@ -175,7 +177,9 @@ namespace Squash.Web.Areas.Administration.Controllers
                 Name = tournament.Name,
                 StartDate = tournament.StartDate,
                 EndDate = tournament.EndDate,
+                EntryOpensDate = tournament.EntryOpensDate,
                 ClosingSigninDate = tournament.ClosingSigninDate,
+                WithdrawalDeadlineDate = tournament.WithdrawalDeadlineDate,
                 Regulations = tournament.Regulations,
                 NationalityId = tournament.NationalityId
             };
@@ -205,8 +209,9 @@ namespace Squash.Web.Areas.Administration.Controllers
             tournament.Name = model.Name?.Trim() ?? string.Empty;
             tournament.StartDate = model.StartDate;
             tournament.EndDate = model.EndDate;
+            tournament.EntryOpensDate = model.EntryOpensDate;
             tournament.ClosingSigninDate = model.ClosingSigninDate;
-            tournament.ClosingSigninDate = model.ClosingSigninDate;
+            tournament.WithdrawalDeadlineDate = model.WithdrawalDeadlineDate;
             tournament.Regulations = model.Regulations;
             tournament.NationalityId = model.NationalityId;
 
@@ -382,6 +387,313 @@ namespace Squash.Web.Areas.Administration.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult Players(int id, string? country, string? draw, string? round, string? court)
+        {
+            var tournament = _dataContext.Tournaments
+                .AsNoTracking()
+                .FirstOrDefault(t => t.Id == id);
+
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            var matchEntities = _dataContext.Matches
+                .AsNoTracking()
+                .Where(m => m.TournamentId == id)
+                .Include(m => m.Draw)
+                .Include(m => m.Round)
+                .Include(m => m.Court)
+                .Include(m => m.Player1)!.ThenInclude(p => p.Nationality)
+                .Include(m => m.Player2)!.ThenInclude(p => p.Nationality)
+                .ToList();
+
+            var totalPlayersCount = matchEntities
+                .SelectMany(m => new[] { m.Player1, m.Player2 })
+                .Where(p => p != null)
+                .GroupBy(p => p!.Id)
+                .Count();
+
+            var filteredMatches = matchEntities.AsEnumerable();
+
+            if (!string.IsNullOrEmpty(country))
+            {
+                filteredMatches = filteredMatches.Where(m =>
+                    (m.Player1?.Nationality?.Code != null && m.Player1.Nationality.Code.Equals(country, StringComparison.OrdinalIgnoreCase)) ||
+                    (m.Player2?.Nationality?.Code != null && m.Player2.Nationality.Code.Equals(country, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            if (!string.IsNullOrEmpty(draw))
+            {
+                filteredMatches = filteredMatches.Where(m => m.Draw != null && m.Draw.Name.Equals(draw, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrEmpty(round))
+            {
+                filteredMatches = filteredMatches.Where(m => m.Round != null && m.Round.Name.Equals(round, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrEmpty(court))
+            {
+                filteredMatches = filteredMatches.Where(m => m.Court != null && m.Court.Name.Equals(court, StringComparison.OrdinalIgnoreCase));
+            }
+
+            var filteredMatchesList = filteredMatches.ToList();
+
+            var availableCountries = filteredMatchesList
+                .SelectMany(m => new[] { m.Player1?.Nationality?.Code, m.Player2?.Nationality?.Code })
+                .Where(c => !string.IsNullOrWhiteSpace(c))
+                .Distinct()
+                .OrderBy(c => c)
+                .Select(c => new FilterOption { Value = c!, Text = c!.ToUpperInvariant() })
+                .ToList();
+
+            var availableDraws = filteredMatchesList
+                .Where(m => m.Draw != null)
+                .Select(m => m.Draw!.Name)
+                .Distinct()
+                .OrderBy(d => d)
+                .Select(d => new FilterOption { Value = d, Text = d })
+                .ToList();
+
+            var availableRounds = filteredMatchesList
+                .Where(m => m.Round != null)
+                .Select(m => m.Round!.Name)
+                .Distinct()
+                .OrderBy(r => r)
+                .Select(r => new FilterOption { Value = r, Text = r })
+                .ToList();
+
+            var availableCourts = filteredMatchesList
+                .Where(m => m.Court != null)
+                .Select(m => m.Court!.Name)
+                .Distinct()
+                .OrderBy(c => c)
+                .Select(c => new FilterOption { Value = c, Text = c })
+                .ToList();
+
+            var playersFromMatches = filteredMatchesList
+                .SelectMany(m => new[] { m.Player1, m.Player2 })
+                .Where(p => p != null)
+                .GroupBy(p => p!.Id)
+                .Select(g => g.First()!);
+
+            // Apply country filter to players themselves, not just to matches
+            if (!string.IsNullOrEmpty(country))
+            {
+                playersFromMatches = playersFromMatches.Where(p =>
+                    p.Nationality?.Code != null && p.Nationality.Code.Equals(country, StringComparison.OrdinalIgnoreCase));
+            }
+
+            var playerItems = playersFromMatches
+                .OrderBy(p => p.Name)
+                .Select(p => new TournamentPlayerItemViewModel
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    CountryCode = p.Nationality?.Code ?? string.Empty,
+                    FlagUrl = BuildFlagUrl(p.Nationality?.Code)
+                })
+                .ToList();
+
+            var playerGroups = playerItems
+                .GroupBy(p => GetPlayerLetter(p.Name))
+                .OrderBy(g => g.Key)
+                .Select(g => new TournamentPlayerGroupViewModel
+                {
+                    Letter = g.Key,
+                    Players = g.ToList()
+                })
+                .ToList();
+
+            var model = new TournamentPlayersViewModel
+            {
+                TournamentId = tournament.Id,
+                TournamentName = tournament.Name,
+                PlayerGroups = playerGroups,
+                FilterCountry = country,
+                FilterDraw = draw,
+                FilterRound = round,
+                FilterCourt = court,
+                AvailableCountries = availableCountries,
+                AvailableDraws = availableDraws,
+                AvailableRounds = availableRounds,
+                AvailableCourts = availableCourts,
+                TotalPlayersCount = totalPlayersCount,
+                FilteredPlayersCount = playerItems.Count
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Events(int id, int? eventId)
+        {
+            var tournament = _dataContext.Tournaments
+                .AsNoTracking()
+                .FirstOrDefault(t => t.Id == id);
+
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            var form = new TournamentEventEditViewModel
+            {
+                TournamentId = id,
+                UsePresetAge = true
+            };
+
+            if (eventId.HasValue)
+            {
+                var existing = _dataContext.Events
+                    .AsNoTracking()
+                    .FirstOrDefault(e => e.TournamentId == id && e.Id == eventId.Value);
+                if (existing != null)
+                {
+                    form.Id = existing.Id;
+                    form.Name = existing.Name;
+                    form.MatchType = existing.MatchType;
+
+                    if (TryGetAgePreset(existing.Age, existing.Direction, out var preset))
+                    {
+                        form.UsePresetAge = true;
+                        form.AgePreset = preset;
+                    }
+                    else
+                    {
+                        form.UsePresetAge = false;
+                        form.CustomAge = existing.Age;
+                        form.Direction = existing.Direction;
+                    }
+                }
+            }
+
+            var model = BuildEventsViewModel(id, tournament.Name, form);
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Draws(int id, int? eventId)
+        {
+            var tournament = _dataContext.Tournaments
+                .AsNoTracking()
+                .FirstOrDefault(t => t.Id == id);
+
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            string? eventName = null;
+            if (eventId.HasValue)
+            {
+                eventName = _dataContext.Events
+                    .AsNoTracking()
+                    .Where(e => e.TournamentId == id && e.Id == eventId.Value)
+                    .Select(e => e.Name)
+                    .FirstOrDefault();
+            }
+
+            var drawsQuery = _dataContext.Draws
+                .AsNoTracking()
+                .Where(d => d.TournamentId == id);
+
+            if (!string.IsNullOrWhiteSpace(eventName))
+            {
+                var prefix = eventName.ToLowerInvariant();
+                drawsQuery = drawsQuery.Where(d => d.Name.ToLower().StartsWith(prefix));
+            }
+
+            var draws = drawsQuery
+                .OrderBy(d => d.Name)
+                .Select(d => new TournamentDrawListItemViewModel
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Type = d.Type
+                })
+                .ToList();
+
+            var entries = BuildEntriesList(id, eventName);
+
+            var model = new TournamentDrawsViewModel
+            {
+                TournamentId = id,
+                TournamentName = tournament.Name,
+                EventName = eventName,
+                Draws = draws,
+                Entries = entries
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SaveEvent([Bind(Prefix = "EventForm")] TournamentEventEditViewModel model)
+        {
+            var tournament = _dataContext.Tournaments
+                .AsNoTracking()
+                .FirstOrDefault(t => t.Id == model.TournamentId);
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            if (!TryResolveAge(model, out var age, out var direction))
+            {
+                var invalidModel = BuildEventsViewModel(model.TournamentId, tournament.Name, model);
+                return View("Events", invalidModel);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var invalidModel = BuildEventsViewModel(model.TournamentId, tournament.Name, model);
+                return View("Events", invalidModel);
+            }
+
+            Event? entity = null;
+            if (model.Id.HasValue)
+            {
+                entity = _dataContext.Events.FirstOrDefault(e => e.Id == model.Id.Value && e.TournamentId == model.TournamentId);
+            }
+
+            if (entity == null)
+            {
+                entity = new Event
+                {
+                    TournamentId = model.TournamentId
+                };
+                _dataContext.Events.Add(entity);
+            }
+
+            entity.Name = model.Name?.Trim() ?? string.Empty;
+            entity.MatchType = model.MatchType;
+            entity.Age = age;
+            entity.Direction = direction;
+
+            _dataContext.SaveChanges();
+
+            return RedirectToAction(nameof(Events), new { id = model.TournamentId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteEvent(int id, int eventId)
+        {
+            var entity = _dataContext.Events
+                .FirstOrDefault(e => e.TournamentId == id && e.Id == eventId);
+            if (entity != null)
+            {
+                _dataContext.Events.Remove(entity);
+                _dataContext.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(Events), new { id });
+        }
+
         private static string BuildFlagUrl(string? nationalityCode)
         {
             if (string.IsNullOrWhiteSpace(nationalityCode))
@@ -390,6 +702,23 @@ namespace Squash.Web.Areas.Administration.Controllers
             }
 
             return $"/images/flags/{nationalityCode.ToLowerInvariant()}.svg";
+        }
+
+        private static string GetPlayerLetter(string? name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return "#";
+            }
+
+            var trimmed = name.Trim();
+            if (trimmed.Length == 0)
+            {
+                return "#";
+            }
+
+            var letter = trimmed[0];
+            return char.IsLetter(letter) ? char.ToUpperInvariant(letter).ToString() : "#";
         }
 
         [HttpGet]
@@ -469,6 +798,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 }
 
                 Squash.Shared.Parsers.Esf.Download.StoreTournament(parseResult, appUser.Id);
+                Squash.Shared.Parsers.Esf.Download.DownloadParseAndStoreEventsAndDraws(tournamentId, parseResult.Tournament.Id);
 
                 var start = parseResult.Tournament.StartDate.Value.Date;
                 var end = parseResult.Tournament.EndDate.Value.Date;
@@ -512,6 +842,148 @@ namespace Squash.Web.Areas.Administration.Controllers
                     Text = n.CountryName
                 })
                 .ToList();
+        }
+
+        private TournamentEventsViewModel BuildEventsViewModel(int tournamentId, string tournamentName, TournamentEventEditViewModel form)
+        {
+            var events = _dataContext.Events
+                .AsNoTracking()
+                .Where(e => e.TournamentId == tournamentId)
+                .OrderBy(e => e.Name)
+                .Select(e => new TournamentEventListItemViewModel
+                {
+                    Id = e.Id,
+                    Name = e.Name,
+                    MatchType = e.MatchType,
+                    Age = e.Age,
+                    Direction = e.Direction
+                })
+                .ToList();
+
+            form.TournamentId = tournamentId;
+
+            return new TournamentEventsViewModel
+            {
+                TournamentId = tournamentId,
+                TournamentName = tournamentName,
+                Events = events,
+                EventForm = form
+            };
+        }
+
+        private List<TournamentEntryListItemViewModel> BuildEntriesList(int tournamentId, string? eventName)
+        {
+            if (string.IsNullOrWhiteSpace(eventName))
+            {
+                return new List<TournamentEntryListItemViewModel>();
+            }
+
+            var prefix = eventName.ToLowerInvariant();
+            var drawNames = _dataContext.Draws
+                .AsNoTracking()
+                .Where(d => d.TournamentId == tournamentId && d.Name.ToLower().StartsWith(prefix))
+                .Select(d => d.Name)
+                .ToList();
+
+            if (drawNames.Count == 0)
+            {
+                return new List<TournamentEntryListItemViewModel>();
+            }
+
+            return _dataContext.Matches
+                .AsNoTracking()
+                .Where(m => m.TournamentId == tournamentId
+                    && m.Draw != null
+                    && drawNames.Contains(m.Draw.Name))
+                .Select(m => m.Player1)
+                .Concat(_dataContext.Matches
+                    .AsNoTracking()
+                    .Where(m => m.TournamentId == tournamentId
+                        && m.Draw != null
+                        && drawNames.Contains(m.Draw.Name))
+                    .Select(m => m.Player2))
+                .Where(p => p != null)
+                .Select(p => new
+                {
+                    Name = p!.Name,
+                    CountryCode = p.Nationality != null ? p.Nationality.Code : null
+                })
+                .Distinct()
+                .OrderBy(entry => entry.Name)
+                .Select(entry => new TournamentEntryListItemViewModel
+                {
+                    Name = entry.Name,
+                    CountryCode = entry.CountryCode
+                })
+                .ToList();
+        }
+
+        private static bool TryResolveAge(TournamentEventEditViewModel model, out int age, out Direction direction)
+        {
+            age = 0;
+            direction = Direction.Under;
+
+            if (model.UsePresetAge)
+            {
+                if (!model.AgePreset.HasValue)
+                {
+                    return false;
+                }
+
+                return TryParseAgePreset(model.AgePreset.Value, out age, out direction);
+            }
+
+            if (!model.CustomAge.HasValue || model.CustomAge.Value <= 0)
+            {
+                return false;
+            }
+
+            if (!model.Direction.HasValue)
+            {
+                return false;
+            }
+
+            age = model.CustomAge.Value;
+            direction = model.Direction.Value;
+            return true;
+        }
+
+        private static bool TryGetAgePreset(int age, Direction direction, out EventAge preset)
+        {
+            foreach (var value in Enum.GetValues<EventAge>())
+            {
+                if (TryParseAgePreset(value, out var presetAge, out var presetDirection)
+                    && presetAge == age
+                    && presetDirection == direction)
+                {
+                    preset = value;
+                    return true;
+                }
+            }
+
+            preset = default;
+            return false;
+        }
+
+        private static bool TryParseAgePreset(EventAge preset, out int age, out Direction direction)
+        {
+            age = 0;
+            direction = Direction.Under;
+
+            var name = preset.ToString();
+            if (name.StartsWith("Under", StringComparison.OrdinalIgnoreCase))
+            {
+                direction = Direction.Under;
+                return int.TryParse(name.Substring("Under".Length), out age);
+            }
+
+            if (name.StartsWith("Above", StringComparison.OrdinalIgnoreCase))
+            {
+                direction = Direction.Above;
+                return int.TryParse(name.Substring("Above".Length), out age);
+            }
+
+            return false;
         }
 
         private static bool IsValidEsfTournamentUrl(string url, out Guid tournamentId)

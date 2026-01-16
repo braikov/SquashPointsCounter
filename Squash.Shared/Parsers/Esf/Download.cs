@@ -110,6 +110,35 @@ namespace Squash.Shared.Parsers.Esf
             }
         }
 
+        public static void DownloadParseAndStoreEventsAndDraws(Guid tournamentId, int tournamentDbId)
+        {
+            if (tournamentId == Guid.Empty)
+            {
+                throw new ArgumentOutOfRangeException(nameof(tournamentId));
+            }
+
+            if (tournamentDbId <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(tournamentDbId));
+            }
+
+            var eventsUrl = $"https://esf.tournamentsoftware.com/sport/events.aspx?id={tournamentId}";
+            var drawsUrl = $"https://esf.tournamentsoftware.com/sport/draws.aspx?id={tournamentId}";
+
+            var eventsHtml = Squash.Shared.Downloader.Download(eventsUrl);
+            var drawsHtml = Squash.Shared.Downloader.Download(drawsUrl);
+
+            var eventsParser = new EventsParser();
+            var drawsParser = new DrawsParser();
+
+            var eventsResult = eventsParser.Parse(eventsHtml);
+            var drawsResult = drawsParser.Parse(drawsHtml);
+
+            using var dbContext = CreateDataContext();
+            CreateOrUpdateEvents(dbContext, eventsResult.Events, tournamentDbId);
+            CreateOrUpdateDrawList(dbContext, drawsResult.Draws, tournamentDbId);
+        }
+
         private static IDataContext CreateDataContext()
         {
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
@@ -621,9 +650,17 @@ namespace Squash.Shared.Parsers.Esf
             {
                 existingTournament.EndDate = tournament.EndDate;
             }
+            if (tournament.EntryOpensDate.HasValue)
+            {
+                existingTournament.EntryOpensDate = tournament.EntryOpensDate;
+            }
             if (tournament.ClosingSigninDate.HasValue)
             {
                 existingTournament.ClosingSigninDate = tournament.ClosingSigninDate;
+            }
+            if (tournament.WithdrawalDeadlineDate.HasValue)
+            {
+                existingTournament.WithdrawalDeadlineDate = tournament.WithdrawalDeadlineDate;
             }
             if (!string.IsNullOrWhiteSpace(tournament.Regulations))
             {
@@ -637,6 +674,73 @@ namespace Squash.Shared.Parsers.Esf
 
             dbContext.SaveChanges();
             tournament.Id = existingTournament.Id;
+        }
+
+        private static void CreateOrUpdateEvents(IDataContext dbContext, IEnumerable<Event> events, int tournamentId)
+        {
+            foreach (var item in events)
+            {
+                if (string.IsNullOrWhiteSpace(item.Name))
+                {
+                    continue;
+                }
+
+                var existingEvent = item.ExternalEventId.HasValue
+                    ? dbContext.Events.FirstOrDefault(e => e.TournamentId == tournamentId && e.ExternalEventId == item.ExternalEventId)
+                    : dbContext.Events.FirstOrDefault(e => e.TournamentId == tournamentId && e.Name == item.Name);
+
+                if (existingEvent == null)
+                {
+                    existingEvent = new Event
+                    {
+                        TournamentId = tournamentId,
+                        ExternalEventId = item.ExternalEventId,
+                        Name = item.Name
+                    };
+                    dbContext.Events.Add(existingEvent);
+                }
+
+                existingEvent.Name = item.Name;
+                existingEvent.ExternalEventId = item.ExternalEventId;
+                existingEvent.MatchType = item.MatchType;
+                existingEvent.Age = item.Age;
+                existingEvent.Direction = item.Direction;
+
+                dbContext.SaveChanges();
+                item.Id = existingEvent.Id;
+                item.TournamentId = existingEvent.TournamentId;
+            }
+        }
+
+        private static void CreateOrUpdateDrawList(IDataContext dbContext, IEnumerable<Draw> draws, int tournamentId)
+        {
+            foreach (var draw in draws)
+            {
+                if (string.IsNullOrWhiteSpace(draw.Name) || !draw.ExternalDrawId.HasValue)
+                {
+                    continue;
+                }
+
+                var existingDraw = dbContext.Draws.FirstOrDefault(d => d.TournamentId == tournamentId && d.ExternalDrawId == draw.ExternalDrawId);
+                if (existingDraw == null)
+                {
+                    existingDraw = new Draw
+                    {
+                        TournamentId = tournamentId,
+                        ExternalDrawId = draw.ExternalDrawId,
+                        Name = draw.Name
+                    };
+                    dbContext.Draws.Add(existingDraw);
+                }
+
+                existingDraw.Name = draw.Name;
+                existingDraw.ExternalDrawId = draw.ExternalDrawId;
+                existingDraw.Type = draw.Type;
+
+                dbContext.SaveChanges();
+                draw.Id = existingDraw.Id;
+                draw.TournamentId = existingDraw.TournamentId;
+            }
         }
 
         private static Guid ExtractTournamentId(string url)
