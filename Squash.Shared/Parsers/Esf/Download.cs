@@ -590,6 +590,8 @@ namespace Squash.Shared.Parsers.Esf
                     existingMatch.CourtId = courtId;
                     existingMatch.Player1Id = player1Id;
                     existingMatch.Player2Id = player2Id;
+                    existingMatch.Player1Walkover = match.Player1Walkover;
+                    existingMatch.Player2Walkover = match.Player2Walkover;
                     existingMatch.WinnerPlayerId = winnerPlayerId;
                     existingMatch.StartTime = match.StartTime;
                     existingMatch.StartTimeText = match.StartTimeText;

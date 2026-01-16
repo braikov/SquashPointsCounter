@@ -131,10 +131,10 @@
                         <div class="match-items">
                                @foreach (var match in group)
                                {
-                                   var player1Walk = match.Player1Walkover || (match.Player2IsWinner && match.Games.Count == 0);
-                                     var player2Walk = match.Player2Walkover || (match.Player1IsWinner && match.Games.Count == 0);
-                                     var player1Wins = match.Player1IsWinner || player2Walk;
-                                     var player2Wins = match.Player2IsWinner || player1Walk; 
+                                                                     var player1Walk = match.Player1Walkover;
+                                                                         var player2Walk = match.Player2Walkover;
+                                                                         var player1Wins = match.Player1IsWinner || player2Walk;
+                                                                         var player2Wins = match.Player2IsWinner || player1Walk; 
 
                                 <div class="match-card">
                                     <div class="match-card-info">

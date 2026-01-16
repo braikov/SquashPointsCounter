@@ -146,19 +146,6 @@ namespace Squash.Shared.Parsers.Esf
 
                 var (player1, player2, winnerPlayer, player1Walkover, player2Walkover) = ExtractPlayers(matchNode, nationalitiesByCode, playersByKey, result);
 
-                // Fallback: if we have a winner but no games, mark the opposite side as walkover
-                if (winnerPlayer != null && !match.Games.Any())
-                {
-                    if (winnerPlayer == player1)
-                    {
-                        player2Walkover = true;
-                    }
-                    else if (winnerPlayer == player2)
-                    {
-                        player1Walkover = true;
-                    }
-                }
-
                 result.Tournament.Matches.Add(match);
                 result.TournamentDay.Matches.Add(match);
 
@@ -626,7 +613,9 @@ namespace Squash.Shared.Parsers.Esf
         {
             // Common markup: dedicated message span
             var tag = row.SelectSingleNode(".//span[contains(@class,'match__message') and contains(translate(normalize-space(text()), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'walkover')]")
-                      ?? row.SelectSingleNode(".//span[contains(@class,'tag--warning') and contains(translate(normalize-space(text()), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'walkover')]");
+                      ?? row.SelectSingleNode(".//span[contains(@class,'tag--warning') and contains(translate(normalize-space(text()), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'walkover')]")
+                      ?? row.SelectSingleNode(".//span[contains(@class,'match__status') and contains(translate(normalize-space(text()), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'w/o')]")
+                      ?? row.SelectSingleNode(".//span[contains(@class,'tag--success') and contains(translate(normalize-space(text()), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'w/o')]");
             if (tag != null)
             {
                 return true;
