@@ -201,8 +201,14 @@ namespace Squash.SqlServer.Migrations
                     b.Property<int?>("Player1Id")
                         .HasColumnType("int");
 
+                    b.Property<bool>("Player1Walkover")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("Player2Id")
                         .HasColumnType("int");
+
+                    b.Property<bool>("Player2Walkover")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("RoundId")
                         .HasColumnType("int");

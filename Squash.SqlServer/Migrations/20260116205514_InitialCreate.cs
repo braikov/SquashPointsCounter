@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Squash.SqlServer.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateSchema : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -389,7 +389,9 @@ namespace Squash.SqlServer.Migrations
                     RoundId = table.Column<int>(type: "int", nullable: true),
                     CourtId = table.Column<int>(type: "int", nullable: true),
                     Player1Id = table.Column<int>(type: "int", nullable: true),
+                    Player1Walkover = table.Column<bool>(type: "bit", nullable: false),
                     Player2Id = table.Column<int>(type: "int", nullable: true),
+                    Player2Walkover = table.Column<bool>(type: "bit", nullable: false),
                     WinnerPlayerId = table.Column<int>(type: "int", nullable: true),
                     StartTime = table.Column<TimeSpan>(type: "time", nullable: true),
                     StartTimeText = table.Column<string>(type: "nvarchar(max)", nullable: true),

@@ -12,8 +12,8 @@ using Squash.SqlServer;
 namespace Squash.SqlServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260116184335_UpdateSchema")]
-    partial class UpdateSchema
+    [Migration("20260116205514_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -204,8 +204,14 @@ namespace Squash.SqlServer.Migrations
                     b.Property<int?>("Player1Id")
                         .HasColumnType("int");
 
+                    b.Property<bool>("Player1Walkover")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("Player2Id")
                         .HasColumnType("int");
+
+                    b.Property<bool>("Player2Walkover")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("RoundId")
                         .HasColumnType("int");

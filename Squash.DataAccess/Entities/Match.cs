@@ -24,9 +24,11 @@ namespace Squash.DataAccess.Entities
 
         public int? Player1Id { get; set; }
         public Player? Player1 { get; set; }
+        public bool Player1Walkover { get; set; }
 
         public int? Player2Id { get; set; }
         public Player? Player2 { get; set; }
+        public bool Player2Walkover { get; set; }
 
         public int? WinnerPlayerId { get; set; }
         public Player? WinnerPlayer { get; set; }

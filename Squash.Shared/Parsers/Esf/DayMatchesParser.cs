@@ -144,10 +144,10 @@ namespace Squash.Shared.Parsers.Esf
                     court.Matches.Add(match);
                 }
 
-                var (player1, player2, winnerPlayer) = ExtractPlayers(matchNode, nationalitiesByCode, playersByKey, result);
+                var (player1, player2, winnerPlayer, player1Walkover, player2Walkover) = ExtractPlayers(matchNode, nationalitiesByCode, playersByKey, result);
 
-                if (player1 == null || player2 == null)
-                    continue;
+                //if (player1 == null || player2 == null)
+                //    continue;
 
                 result.Tournament.Matches.Add(match);
                 result.TournamentDay.Matches.Add(match);
@@ -155,6 +155,8 @@ namespace Squash.Shared.Parsers.Esf
                 match.Player1 = player1;
                 match.Player2 = player2;
                 match.WinnerPlayer = winnerPlayer;
+                match.Player1Walkover = player1Walkover;
+                match.Player2Walkover = player2Walkover;
 
                 foreach (var game in ExtractGames(matchNode))
                 {
@@ -403,7 +405,7 @@ namespace Squash.Shared.Parsers.Esf
             return title?.Trim();
         }
 
-        private static (Player? player1, Player? player2, Player? winner) ExtractPlayers(
+        private static (Player? player1, Player? player2, Player? winner, bool player1Walkover, bool player2Walkover) ExtractPlayers(
             HtmlNode matchNode,
             Dictionary<string, Nationality> nationalitiesByCode,
             Dictionary<string, Player> playersByKey,
@@ -415,18 +417,24 @@ namespace Squash.Shared.Parsers.Esf
 
             if (rows == null || rows.Count != 2)
             {
-                return (null, null, null);
+                return (null, null, null, false, false);
             }
 
             Player? player1 = null;
             Player? player2 = null;
             Player? winner = null;
+            bool player1Walkover = false;
+            bool player2Walkover = false;
 
             for (var i = 0; i < rows.Count && i < 2; i++)
             {
                 var row = rows[i];
                 var side = i + 1;
                 var isWinner = row.GetAttributeValue("class", string.Empty).Contains("has-won", StringComparison.OrdinalIgnoreCase);
+                
+                // Check for walkover tag
+                var walkoverTag = row.SelectSingleNode(".//span[contains(@class,'match__message') and normalize-space(text())='Walkover']");
+                var isWalkover = walkoverTag != null;
 
                 var playerLink = row.SelectSingleNode(".//a[@data-player-id]")
                                 ?? row.SelectSingleNode(".//a[contains(@href,'player.aspx')]");
@@ -435,16 +443,18 @@ namespace Squash.Shared.Parsers.Esf
                                  ?? playerLink?.InnerText?.Trim();
                 if (string.IsNullOrWhiteSpace(playerName))
                 {
-                    //if (row.SelectSingleNode(".//span[normalize-space(text())='Bye']") == null
-                    //    &&
-                    //    row.SelectSingleNode(".//span[normalize-space(text())='Walkover']") == null
-                    //    //&& 
-                    //    //row.SelectSingleNode(".//div[@class='match__row-title']").InnerText == ""
-                    //    )
-                    //    throw new Exception("missing player name");
-                    //else
-                        // only one player the other is Bye
-                        return (null, null, null);
+                    // Skip this row - could be Bye/Walkover, will set player1/player2 to null for this side
+                    if (side == 1)
+                    {
+                        player1 = null;
+                        player1Walkover = isWalkover;
+                    }
+                    else if (side == 2)
+                    {
+                        player2 = null;
+                        player2Walkover = isWalkover;
+                    }
+                    continue;
                 }
                 playerName = System.Text.RegularExpressions.Regex.Replace(playerName, "\\s*\\[[^\\]]*\\]\\s*$", string.Empty).Trim();
                 playerName = HtmlEntity.DeEntitize(playerName);
@@ -523,10 +533,12 @@ namespace Squash.Shared.Parsers.Esf
                 if (side == 1)
                 {
                     player1 = player;
+                    player1Walkover = isWalkover;
                 }
                 else if (side == 2)
                 {
                     player2 = player;
+                    player2Walkover = isWalkover;
                 }
 
                 if (isWinner && player != null)
@@ -535,7 +547,7 @@ namespace Squash.Shared.Parsers.Esf
                 }
             }
 
-            return (player1, player2, winner);
+            return (player1, player2, winner, player1Walkover, player2Walkover);
         }
 
         private static IEnumerable<MatchGame> ExtractGames(HtmlNode matchNode)
