@@ -22,6 +22,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{8067A27C-A590-478B-B420-03148E33B3C4}"
 	ProjectSection(SolutionItems) = preProject
 		docs\referee-events.md = docs\referee-events.md
+		docs\Spec.md = docs\Spec.md
 	EndProjectSection
 EndProject
 Global

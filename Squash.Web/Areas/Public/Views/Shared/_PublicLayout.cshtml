@@ -1,0 +1,32 @@
+@using System.Globalization
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@{
+    var path = Context.Request.Path.Value ?? "/";
+    var isBg = path.StartsWith("/bg", StringComparison.OrdinalIgnoreCase);
+    var targetPrefix = isBg ? "/en" : "/bg";
+    var trimmedPath = path.StartsWith("/bg", StringComparison.OrdinalIgnoreCase) || path.StartsWith("/en", StringComparison.OrdinalIgnoreCase)
+        ? path.Substring(3)
+        : path;
+    var switchUrl = string.IsNullOrEmpty(trimmedPath) ? targetPrefix : targetPrefix + trimmedPath;
+}
+
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@Localizer["SiteTitle"]</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="@switchUrl">
+                @(isBg ? Localizer["SwitchToEn"] : Localizer["SwitchToBg"])
+            </a>
+        </nav>
+    </header>
+    <main>
+        @RenderBody()
+    </main>
+</body>
+</html>

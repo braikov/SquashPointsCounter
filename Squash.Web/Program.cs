@@ -1,12 +1,15 @@
 using log4net;
 using log4net.Config;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Squash.DataAccess;
 using Squash.Identity;
 using Squash.Shared.Logging;
 using Squash.SqlServer;
+using Squash.Web.Localization;
+using System.Globalization;
 
 namespace Squash.Web
 {
@@ -38,8 +41,12 @@ namespace Squash.Web
                 ArgumentException.ThrowIfNullOrEmpty(connectionString);
                 Log4NetTableEnsurer.Ensure(connectionString);
 
-                builder.Services.AddControllersWithViews();
-                builder.Services.AddRazorPages();
+                builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+                builder.Services.AddControllersWithViews()
+                    .AddViewLocalization()
+                    .AddDataAnnotationsLocalization();
+                builder.Services.AddRazorPages()
+                    .AddViewLocalization();
                 builder.Services.AddDistributedMemoryCache();
                 builder.Services.AddSession(options =>
                 {
@@ -81,6 +88,25 @@ namespace Squash.Web
                 app.UseHttpsRedirection();
                 app.UseStaticFiles();
                 app.UseSession();
+
+                var supportedCultures = new[]
+                {
+                    new CultureInfo("bg-BG"),
+                    new CultureInfo("en-GB")
+                };
+                var localizationOptions = new RequestLocalizationOptions
+                {
+                    DefaultRequestCulture = new RequestCulture("en-GB"),
+                    SupportedCultures = supportedCultures,
+                    SupportedUICultures = supportedCultures
+                };
+                localizationOptions.RequestCultureProviders = new List<IRequestCultureProvider>
+                {
+                    new CookieRequestCultureProvider(),
+                    new RouteCultureProvider()
+                };
+                app.UseRequestLocalization(localizationOptions);
+
                 app.UseRouting();
 
                 app.UseAuthentication();
@@ -88,12 +114,29 @@ namespace Squash.Web
 
                 ApplyMigrations(app);
 
+                app.MapGet("/", (HttpContext context) =>
+                {
+                    var cookie = context.Request.Cookies[CookieRequestCultureProvider.DefaultCookieName];
+                    var culture = CookieRequestCultureProvider.ParseCookieValue(cookie)?.Cultures.FirstOrDefault().Value;
+
+                    var prefix = culture != null && culture.StartsWith("bg", StringComparison.OrdinalIgnoreCase)
+                        ? "/bg"
+                        : "/en";
+
+                    return Results.Redirect(prefix);
+                });
+
                 app.MapControllers();
 
                 app.MapControllerRoute(
                     name: "match-pin",
                     pattern: "m",
                     defaults: new { area = "Kiosk", controller = "MatchPin", action = "Index" });
+
+                app.MapControllerRoute(
+                    name: "public-area",
+                    pattern: "{culture:regex(^bg|en$)}/{controller=Home}/{action=Index}/{id?}",
+                    defaults: new { area = "Public" });
 
                 app.MapControllerRoute(
                     name: "areas",
