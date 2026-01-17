@@ -165,7 +165,7 @@
                                                                 {
                                                                     <img class="player-flag" src="@match.Player1FlagUrl" alt="" />
                                                                 }
-                                                                <span class="player-name">@match.Player1</span>
+                                                                <span class="player-name">@(!string.IsNullOrWhiteSpace(match.Player1) ? match.Player1 : "Bye")</span>
                                                                 
                                                             </a>
                                                         }
@@ -176,7 +176,7 @@
                                                                 {
                                                                     <img class="player-flag" src="@match.Player1FlagUrl" alt="" />
                                                                 }
-                                                                <span class="player-name">@match.Player1</span>
+                                                                <span class="player-name">@(!string.IsNullOrWhiteSpace(match.Player1) ? match.Player1 : "Bye")</span>
                                                                 
                                                             </div>
                                                         }
@@ -218,7 +218,7 @@
                                                                 {
                                                                     <img class="player-flag" src="@match.Player2FlagUrl" alt="" />
                                                                 }
-                                                                <span class="player-name">@match.Player2</span>
+                                                                <span class="player-name">@(!string.IsNullOrWhiteSpace(match.Player2) ? match.Player2 : "Bye")</span>
                                                                 
                                                             </a>
                                                         }
@@ -229,7 +229,7 @@
                                                                 {
                                                                     <img class="player-flag" src="@match.Player2FlagUrl" alt="" />
                                                                 }
-                                                                <span class="player-name">@match.Player2</span>
+                                                                <span class="player-name">@(!string.IsNullOrWhiteSpace(match.Player2) ? match.Player2 : "Bye")</span>
                                                                 
                                                             </div>
                                                         }

@@ -141,10 +141,10 @@
                                              style="width: 20px; height: 14px;" 
                                              onerror="this.style.display='none'" />
                                     }
-                                    
+
                                     @if (opponent != null)
                                     {
-                                        @if (opponentTournamentPlayers.ContainsKey(opponent.Id))
+                                        if (opponentTournamentPlayers.ContainsKey(opponent.Id))
                                         {
                                             <a asp-controller="Tournaments" asp-action="TournamentPlayer" asp-route-id="@opponentTournamentPlayers[opponent.Id]" 
                                                class="text-decoration-none">
@@ -155,6 +155,10 @@
                                         {
                                             <span>@opponent.Name</span>
                                         }
+                                    }
+                                    else
+                                    {
+                                        <span>Bye</span>
                                     }
                                 </div>
                             </div>
