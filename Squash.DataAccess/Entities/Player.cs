@@ -10,9 +10,10 @@ namespace Squash.DataAccess.Entities
         public string? EsfMemberId { get; set; }
         public EntitySource EntitySourceId { get; set; } = EntitySource.Native;
 
-        public int? NationalityId { get; set; }
-        public Nationality? Nationality { get; set; }
+        public int? CountryId { get; set; }
+        public Country? Country { get; set; }
 
         public ICollection<TournamentPlayer> TournamentPlayers { get; set; } = new List<TournamentPlayer>();
     }
 }
+

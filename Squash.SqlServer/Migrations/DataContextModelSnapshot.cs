@@ -22,6 +22,753 @@ namespace Squash.SqlServer.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Squash.DataAccess.Entities.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("CountryName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("LastOperationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nationality")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "CZE",
+                            CountryName = "Чехия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Чехия"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "POR",
+                            CountryName = "Португалия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Португалия"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "POL",
+                            CountryName = "Полша",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Полша"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Code = "DEN",
+                            CountryName = "Дания",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Дания"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Code = "SUI",
+                            CountryName = "Швейцария",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Швейцария"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Code = "BEL",
+                            CountryName = "Белгия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Белгия"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Code = "IRL",
+                            CountryName = "Ирландия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Ирландия"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Code = "ENG",
+                            CountryName = "Англия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Англия"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Code = "ISR",
+                            CountryName = "Израел",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Израел"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Code = "ESP",
+                            CountryName = "Испания",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Испания"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Code = "AUT",
+                            CountryName = "Австрия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Австрия"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Code = "CRO",
+                            CountryName = "Хърватия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Хърватия"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Code = "HUN",
+                            CountryName = "Унгария",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Унгария"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Code = "GER",
+                            CountryName = "Германия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Германия"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Code = "SVK",
+                            CountryName = "Словакия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Словакия"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Code = "ROM",
+                            CountryName = "Румъния",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Румъния"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Code = "NED",
+                            CountryName = "Нидерландия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Нидерландия"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Code = "UKR",
+                            CountryName = "Украйна",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Украйна"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Code = "KSA",
+                            CountryName = "Саудитска Арабия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Саудитска Арабия"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Code = "NIR",
+                            CountryName = "Северна Ирландия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Северна Ирландия"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Code = "ITA",
+                            CountryName = "Италия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Италия"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Code = "JPN",
+                            CountryName = "Япония",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Япония"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Code = "FRA",
+                            CountryName = "Франция",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Франция"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Code = "MON",
+                            CountryName = "Монако",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Монако"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Code = "BRA",
+                            CountryName = "Бразилия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Бразилия"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Code = "WAL",
+                            CountryName = "Уелс",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Уелс"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Code = "MRI",
+                            CountryName = "Мавриций",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Мавриций"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Code = "BUL",
+                            CountryName = "България",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "България"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Code = "EST",
+                            CountryName = "Естония",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Естония"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Code = "EGY",
+                            CountryName = "Египет",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Египет"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Code = "NOR",
+                            CountryName = "Норвегия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Норвегия"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Code = "MEX",
+                            CountryName = "Мексико",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Мексико"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Code = "PAK",
+                            CountryName = "Пакистан",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Пакистан"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Code = "CHN",
+                            CountryName = "Китай",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Китай"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Code = "MAC",
+                            CountryName = "Макао",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Макао"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Code = "LUX",
+                            CountryName = "Люксембург",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Люксембург"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Code = "GRE",
+                            CountryName = "Гърция",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Гърция"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Code = "IND",
+                            CountryName = "Индия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Индия"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Code = "RSF",
+                            CountryName = "Русия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Русия"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Code = "SCO",
+                            CountryName = "Шотландия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Шотландия"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            Code = "PNG",
+                            CountryName = "Папуа Нова Гвинея",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Папуа Нова Гвинея"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            Code = "USA",
+                            CountryName = "САЩ",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "САЩ"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            Code = "MLT",
+                            CountryName = "Малта",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Малта"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            Code = "PYF",
+                            CountryName = "Френска Полинезия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Френска Полинезия"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            Code = "TUR",
+                            CountryName = "Турция",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Турция"
+                        },
+                        new
+                        {
+                            Id = 46,
+                            Code = "FIN",
+                            CountryName = "Финландия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Финландия"
+                        },
+                        new
+                        {
+                            Id = 47,
+                            Code = "QAT",
+                            CountryName = "Катар",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Катар"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            Code = "SWE",
+                            CountryName = "Швеция",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Швеция"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            Code = "MAS",
+                            CountryName = "Малайзия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Малайзия"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            Code = "KUW",
+                            CountryName = "Кувейт",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Кувейт"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            Code = "CAN",
+                            CountryName = "Канада",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Канада"
+                        },
+                        new
+                        {
+                            Id = 52,
+                            Code = "THA",
+                            CountryName = "Тайланд",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Тайланд"
+                        },
+                        new
+                        {
+                            Id = 53,
+                            Code = "GUY",
+                            CountryName = "Гаяна",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Гаяна"
+                        },
+                        new
+                        {
+                            Id = 54,
+                            Code = "AUS",
+                            CountryName = "Австралия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Австралия"
+                        },
+                        new
+                        {
+                            Id = 55,
+                            Code = "ZIM",
+                            CountryName = "Зимбабве",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Зимбабве"
+                        },
+                        new
+                        {
+                            Id = 56,
+                            Code = "HKG",
+                            CountryName = "Хонконг",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Хонконг"
+                        },
+                        new
+                        {
+                            Id = 57,
+                            Code = "SIN",
+                            CountryName = "Сингапур",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Сингапур"
+                        },
+                        new
+                        {
+                            Id = 58,
+                            Code = "KOR",
+                            CountryName = "Южна Корея",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Южна Корея"
+                        },
+                        new
+                        {
+                            Id = 59,
+                            Code = "GGY",
+                            CountryName = "Гърнси",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Гърнси"
+                        },
+                        new
+                        {
+                            Id = 60,
+                            Code = "PER",
+                            CountryName = "Перу",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Перу"
+                        },
+                        new
+                        {
+                            Id = 61,
+                            Code = "IVB",
+                            CountryName = "Британски Вирджински острови",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Британски Вирджински острови"
+                        },
+                        new
+                        {
+                            Id = 62,
+                            Code = "RSA",
+                            CountryName = "Южна Африка",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Южна Африка"
+                        },
+                        new
+                        {
+                            Id = 63,
+                            Code = "TPE",
+                            CountryName = "Китайски Тайпей",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Китайски Тайпей"
+                        },
+                        new
+                        {
+                            Id = 64,
+                            Code = "MAR",
+                            CountryName = "Мароко",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Мароко"
+                        },
+                        new
+                        {
+                            Id = 65,
+                            Code = "ARG",
+                            CountryName = "Аржентина",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Аржентина"
+                        },
+                        new
+                        {
+                            Id = 66,
+                            Code = "NZL",
+                            CountryName = "Нова Зеландия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Нова Зеландия"
+                        },
+                        new
+                        {
+                            Id = 67,
+                            Code = "GBR",
+                            CountryName = "Великобритания",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Великобритания"
+                        },
+                        new
+                        {
+                            Id = 68,
+                            Code = "COL",
+                            CountryName = "Колумбия",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Колумбия"
+                        },
+                        new
+                        {
+                            Id = 69,
+                            Code = "KEN",
+                            CountryName = "Кения",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Кения"
+                        },
+                        new
+                        {
+                            Id = 70,
+                            Code = "SRI",
+                            CountryName = "Шри Ланка",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Шри Ланка"
+                        },
+                        new
+                        {
+                            Id = 71,
+                            Code = "UAE",
+                            CountryName = "Обединени арабски емирства",
+                            DateCreated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastOperationUserId = 0,
+                            Nationality = "Обединени арабски емирства"
+                        });
+                });
+
             modelBuilder.Entity("Squash.DataAccess.Entities.Court", b =>
                 {
                     b.Property<int>("Id")
@@ -166,6 +913,34 @@ namespace Squash.SqlServer.Migrations
                     b.HasIndex("MatchGameId");
 
                     b.ToTable("GameLogs");
+                });
+
+            modelBuilder.Entity("Squash.DataAccess.Entities.Language", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Code");
+
+                    b.ToTable("Languages");
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "bg-BG",
+                            Name = "Български"
+                        },
+                        new
+                        {
+                            Code = "en-GB",
+                            Name = "English"
+                        });
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Match", b =>
@@ -318,41 +1093,6 @@ namespace Squash.SqlServer.Migrations
                     b.ToTable("MatchGameEventLogs");
                 });
 
-            modelBuilder.Entity("Squash.DataAccess.Entities.Nationality", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<string>("CountryName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("LastOperationUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Nationalities");
-                });
-
             modelBuilder.Entity("Squash.DataAccess.Entities.Player", b =>
                 {
                     b.Property<int>("Id")
@@ -360,6 +1100,9 @@ namespace Squash.SqlServer.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CountryId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
@@ -380,9 +1123,6 @@ namespace Squash.SqlServer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("NationalityId")
-                        .HasColumnType("int");
-
                     b.Property<string>("PictureUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -391,7 +1131,7 @@ namespace Squash.SqlServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NationalityId");
+                    b.HasIndex("CountryId");
 
                     b.ToTable("Players");
                 });
@@ -483,6 +1223,9 @@ namespace Squash.SqlServer.Migrations
                     b.Property<DateTime?>("ClosingSigninDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("CountryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -512,9 +1255,6 @@ namespace Squash.SqlServer.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NationalityId")
-                        .HasColumnType("int");
-
                     b.Property<string>("OrganizationCode")
                         .HasColumnType("nvarchar(max)");
 
@@ -539,9 +1279,9 @@ namespace Squash.SqlServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IsPublished");
+                    b.HasIndex("CountryId");
 
-                    b.HasIndex("NationalityId");
+                    b.HasIndex("IsPublished");
 
                     b.HasIndex("Slug");
 
@@ -707,6 +1447,9 @@ namespace Squash.SqlServer.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int?>("CountryId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime2");
 
@@ -721,10 +1464,22 @@ namespace Squash.SqlServer.Migrations
                     b.Property<bool>("EmailNotificationsEnabled")
                         .HasColumnType("bit");
 
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<string>("IdentityUserId")
                         .IsRequired()
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("LastOperationUserId")
                         .HasColumnType("int");
@@ -741,6 +1496,14 @@ namespace Squash.SqlServer.Migrations
 
                     b.Property<int?>("PlayerId")
                         .HasColumnType("int");
+
+                    b.Property<string>("PreferredLanguage")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("PreferredSport")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("StripeCustomerId")
                         .HasMaxLength(128)
@@ -759,6 +1522,8 @@ namespace Squash.SqlServer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CountryId");
+
                     b.HasIndex("Email")
                         .IsUnique();
 
@@ -768,6 +1533,8 @@ namespace Squash.SqlServer.Migrations
                     b.HasIndex("PlayerId")
                         .IsUnique()
                         .HasFilter("[PlayerId] IS NOT NULL");
+
+                    b.HasIndex("PreferredLanguage");
 
                     b.ToTable("Users");
 
@@ -782,10 +1549,12 @@ namespace Squash.SqlServer.Migrations
                             DateUpdated = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "system@squash.local",
                             EmailNotificationsEnabled = false,
+                            Gender = "Unknown",
                             IdentityUserId = "SYSTEM",
                             LastOperationUserId = 0,
                             Name = "System",
                             Phone = "N/A",
+                            PreferredLanguage = "bg-BG",
                             Verified = true,
                             Zip = "0000"
                         });
@@ -984,11 +1753,11 @@ namespace Squash.SqlServer.Migrations
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Player", b =>
                 {
-                    b.HasOne("Squash.DataAccess.Entities.Nationality", "Nationality")
+                    b.HasOne("Squash.DataAccess.Entities.Country", "Country")
                         .WithMany("Players")
-                        .HasForeignKey("NationalityId");
+                        .HasForeignKey("CountryId");
 
-                    b.Navigation("Nationality");
+                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Round", b =>
@@ -1004,9 +1773,9 @@ namespace Squash.SqlServer.Migrations
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Tournament", b =>
                 {
-                    b.HasOne("Squash.DataAccess.Entities.Nationality", "Nationality")
+                    b.HasOne("Squash.DataAccess.Entities.Country", "Country")
                         .WithMany()
-                        .HasForeignKey("NationalityId")
+                        .HasForeignKey("CountryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1016,7 +1785,7 @@ namespace Squash.SqlServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Nationality");
+                    b.Navigation("Country");
 
                     b.Navigation("User");
                 });
@@ -1091,21 +1860,41 @@ namespace Squash.SqlServer.Migrations
 
             modelBuilder.Entity("Squash.DataAccess.Entities.User", b =>
                 {
+                    b.HasOne("Squash.DataAccess.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId");
+
                     b.HasOne("Squash.DataAccess.Entities.Player", "Player")
                         .WithOne("User")
                         .HasForeignKey("Squash.DataAccess.Entities.User", "PlayerId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Squash.DataAccess.Entities.Language", "Language")
+                        .WithMany()
+                        .HasForeignKey("PreferredLanguage")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Country");
+
+                    b.Navigation("Language");
 
                     b.Navigation("Player");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Venue", b =>
                 {
-                    b.HasOne("Squash.DataAccess.Entities.Nationality", "Country")
+                    b.HasOne("Squash.DataAccess.Entities.Country", "Country")
                         .WithMany("Venues")
                         .HasForeignKey("CountryId");
 
                     b.Navigation("Country");
+                });
+
+            modelBuilder.Entity("Squash.DataAccess.Entities.Country", b =>
+                {
+                    b.Navigation("Players");
+
+                    b.Navigation("Venues");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Court", b =>
@@ -1130,13 +1919,6 @@ namespace Squash.SqlServer.Migrations
             modelBuilder.Entity("Squash.DataAccess.Entities.MatchGame", b =>
                 {
                     b.Navigation("EventLogs");
-                });
-
-            modelBuilder.Entity("Squash.DataAccess.Entities.Nationality", b =>
-                {
-                    b.Navigation("Players");
-
-                    b.Navigation("Venues");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Player", b =>

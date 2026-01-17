@@ -12,6 +12,12 @@ namespace Squash.DataAccess.Entities
         [MaxLength(256)]
         public string Name { get; set; } = string.Empty;
 
+        [MaxLength(100)]
+        public string? FirstName { get; set; }
+
+        [MaxLength(100)]
+        public string? LastName { get; set; }
+
         [Required]
         [MaxLength(256)]
         public string Email { get; set; } = string.Empty;
@@ -22,6 +28,19 @@ namespace Squash.DataAccess.Entities
 
         [Required]
         public DateTime BirthDate { get; set; }
+
+        [MaxLength(20)]
+        public string? Gender { get; set; }
+
+        public int? CountryId { get; set; }
+        public Country? Country { get; set; }
+
+        [MaxLength(50)]
+        public string? PreferredSport { get; set; }
+
+        [MaxLength(10)]
+        public string? PreferredLanguage { get; set; }
+        public Language? Language { get; set; }
 
         [Required]
         [MaxLength(20)]
@@ -52,3 +71,4 @@ namespace Squash.DataAccess.Entities
         public Player? Player { get; set; }
     }
 }
+

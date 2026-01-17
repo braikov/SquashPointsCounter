@@ -23,11 +23,11 @@
                             <span asp-validation-for="Name" class="text-danger small"></span>
                         </div>
                         <div class="col-md-3 mb-3">
-                            <label asp-for="NationalityId" class="form-label"></label>
-                            <select asp-for="NationalityId" asp-items="Model.Nationalities" class="form-select">
+                            <label asp-for="CountryId" class="form-label"></label>
+                            <select asp-for="CountryId" asp-items="Model.Countries" class="form-select">
                                 <option value="">-- Select Country --</option>
                             </select>
-                            <span asp-validation-for="NationalityId" class="text-danger small"></span>
+                            <span asp-validation-for="CountryId" class="text-danger small"></span>
                         </div>
                     </div>
 
@@ -141,3 +141,4 @@
         })();
     </script>
 }
+

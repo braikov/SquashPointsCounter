@@ -12,12 +12,13 @@ namespace Squash.Web.Areas.Administration.Models
         [Display(Name = "Name")]
         public string? Name { get; set; }
 
-        [Display(Name = "Nationality")]
-        public int? NationalityId { get; set; }
+        [Display(Name = "Country")]
+        public int? CountryId { get; set; }
 
         [Display(Name = "ESF member id")]
         public string? EsfMemberId { get; set; }
 
-        public List<SelectListItem> AvailableNationalities { get; set; } = new();
+        public List<SelectListItem> AvailableCountries { get; set; } = new();
     }
 }
+

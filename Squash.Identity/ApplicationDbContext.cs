@@ -10,6 +10,8 @@ namespace Squash.Identity
 
         public DbSet<LoginShortCode> LoginShortCodes { get; set; } = null!;
 
+        public DbSet<AccountEvent> AccountEvents { get; set; } = null!;
+
         public override int SaveChanges()
         {
             foreach (var entry in base.ChangeTracker.Entries<EntityBase>()
@@ -37,6 +39,12 @@ namespace Squash.Identity
 
             modelBuilder.Entity<LoginShortCode>()
                 .HasIndex(x => new { x.Email, x.Code });
+
+            modelBuilder.Entity<AccountEvent>()
+                .HasIndex(x => new { x.Email, x.EventType, x.DateCreated });
+
+            modelBuilder.Entity<AccountEvent>()
+                .HasIndex(x => new { x.UserId, x.EventType, x.DateCreated });
         }
     }
 }

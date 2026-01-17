@@ -11,6 +11,8 @@ using Squash.SqlServer;
 using Squash.Web.Localization;
 using Squash.Web.Areas.Public.Services.Routing;
 using Squash.Web.Areas.Public.Services.Sitemap;
+using Squash.Identity.Services.Email;
+using Squash.Web.Services.Email;
 using System.Globalization;
 
 namespace Squash.Web
@@ -72,6 +74,7 @@ namespace Squash.Web
 
                 builder.Logging.AddLog4Net(new Log4NetProviderOptions { ExternalConfigurationSetup = true });
                 builder.Services.AddScoped<IDataContext, DataContext>();
+                builder.Services.AddScoped<IEmailSender, NullEmailSender>();
                 builder.Services.AddScoped<IPublicUrlBuilder, PublicUrlBuilder>();
                 builder.Services.AddScoped<ISitemapEntryStore, DbSitemapEntryStore>();
                 builder.Services.AddScoped<ISitemapEntryProvider, DbSitemapEntryProvider>();
@@ -111,8 +114,8 @@ namespace Squash.Web
                 };
                 localizationOptions.RequestCultureProviders = new List<IRequestCultureProvider>
                 {
-                    new CookieRequestCultureProvider(),
-                    new RouteCultureProvider()
+                    new RouteCultureProvider(),
+                    new CookieRequestCultureProvider()
                 };
                 app.UseRequestLocalization(localizationOptions);
 

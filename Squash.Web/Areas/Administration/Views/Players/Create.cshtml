@@ -29,11 +29,11 @@
 
                     <div class="row gx-3">
                         <div class="col-md-6 mb-3">
-                            <label asp-for="NationalityId" class="form-label"></label>
-                            <select asp-for="NationalityId" class="form-select" asp-items="Model.AvailableNationalities">
+                            <label asp-for="CountryId" class="form-label"></label>
+                            <select asp-for="CountryId" class="form-select" asp-items="Model.AvailableCountries">
                                 <option value="">Select nationality</option>
                             </select>
-                            <span asp-validation-for="NationalityId" class="text-danger small"></span>
+                            <span asp-validation-for="CountryId" class="text-danger small"></span>
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -56,3 +56,4 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+

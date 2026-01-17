@@ -16,7 +16,8 @@ namespace Squash.SqlServer
         public DbSet<Venue> Venues { get; set; }
         public DbSet<TournamentVenue> TournamentVenues { get; set; }
         public DbSet<TournamentCourt> TournamentCourts { get; set; }
-        public DbSet<Nationality> Nationalities { get; set; }
+        public DbSet<Country> Countries { get; set; }
+        public DbSet<Language> Languages { get; set; }
         public DbSet<Player> Players { get; set; }
         public DbSet<TournamentPlayer> TournamentPlayers { get; set; }
         public DbSet<User> Users { get; set; }
@@ -44,8 +45,18 @@ namespace Squash.SqlServer
                 .HasForeignKey<User>(u => u.PlayerId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Language)
+                .WithMany()
+                .HasForeignKey(u => u.PreferredLanguage)
+                .HasPrincipalKey(l => l.Code)
+                .OnDelete(DeleteBehavior.SetNull);
+
 
             modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new CountryConfiguration());
+            modelBuilder.ApplyConfiguration(new LanguageConfiguration());
         }
     }
 }
+

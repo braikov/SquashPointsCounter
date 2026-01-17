@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Required" xml:space="preserve">
+    <value>This field is required.</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>Enter a valid email address.</value>
+  </data>
+  <data name="SelectOption" xml:space="preserve">
+    <value>Please select a value.</value>
+  </data>
+  <data name="PasswordMismatch" xml:space="preserve">
+    <value>The passwords do not match.</value>
+  </data>
+  <data name="InvalidCode" xml:space="preserve">
+    <value>The reset link is invalid or expired.</value>
+  </data>
+  <data name="EmailNotConfirmed" xml:space="preserve">
+    <value>Your email is not confirmed yet.</value>
+  </data>
+  <data name="ConfirmationEmailSent" xml:space="preserve">
+    <value>If the account exists, we have sent a confirmation email.</value>
+  </data>
+  <data name="RateLimitExceeded" xml:space="preserve">
+    <value>Too many requests. Please try again in a few minutes.</value>
+  </data>
+</root>

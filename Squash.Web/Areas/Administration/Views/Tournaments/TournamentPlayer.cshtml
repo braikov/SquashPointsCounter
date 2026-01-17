@@ -42,11 +42,11 @@
             </div>
             <div class="col">
                 <div class="d-flex align-items-center gap-2 mb-1">
-                    @if (Model.Player.Nationality != null)
+                    @if (Model.Player.Country != null)
                     {
-                        <img src="/images/flags/@(Model.Player.Nationality.Code.ToLowerInvariant()).svg" 
-                             alt="@Model.Player.Nationality.Name" 
-                             title="@Model.Player.Nationality.Name"
+                        <img src="/images/flags/@(Model.Player.Country.Code.ToLowerInvariant()).svg" 
+                             alt="@Model.Player.Country.Nationality" 
+                             title="@Model.Player.Country.Nationality"
                              style="width: 24px; height: 16px;" 
                              onerror="this.style.display='none'" />
                     }
@@ -120,11 +120,11 @@
                                     }
                                     
                                     @* Current player *@
-                                    @if (Model.Player.Nationality != null)
+                                    @if (Model.Player.Country != null)
                                     {
-                                        <img src="/images/flags/@(Model.Player.Nationality.Code.ToLowerInvariant()).svg" 
-                                             alt="@Model.Player.Nationality.Name" 
-                                             title="@Model.Player.Nationality.Name"
+                                        <img src="/images/flags/@(Model.Player.Country.Code.ToLowerInvariant()).svg" 
+                                             alt="@Model.Player.Country.Nationality" 
+                                             title="@Model.Player.Country.Nationality"
                                              style="width: 20px; height: 14px;" 
                                              onerror="this.style.display='none'" />
                                     }
@@ -133,11 +133,11 @@
                                     <span class="text-muted">vs</span>
                                     
                                     @* Opponent *@
-                                    @if (opponent?.Nationality != null)
+                                    @if (opponent?.Country != null)
                                     {
-                                        <img src="/images/flags/@(opponent.Nationality.Code.ToLowerInvariant()).svg" 
-                                             alt="@opponent.Nationality.Name" 
-                                             title="@opponent.Nationality.Name"
+                                        <img src="/images/flags/@(opponent.Country.Code.ToLowerInvariant()).svg" 
+                                             alt="@opponent.Country.Nationality" 
+                                             title="@opponent.Country.Nationality"
                                              style="width: 20px; height: 14px;" 
                                              onerror="this.style.display='none'" />
                                     }
@@ -224,3 +224,5 @@
         // Any additional JavaScript for the page
     </script>
 }
+
+

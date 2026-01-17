@@ -29,7 +29,7 @@ namespace Squash.Web.Areas.Administration.Controllers
 
             var baseQuery = _dataContext.Players
                 .AsNoTracking()
-                .Include(p => p.Nationality)
+                .Include(p => p.Country)
                 .AsQueryable();
 
             var totalCount = baseQuery.Count();
@@ -37,9 +37,9 @@ namespace Squash.Web.Areas.Administration.Controllers
             if (!string.IsNullOrWhiteSpace(normalizedCountry))
             {
                 baseQuery = baseQuery.Where(p =>
-                    p.Nationality != null
-                    && p.Nationality.Code != null
-                    && p.Nationality.Code.ToUpper() == normalizedCountry);
+                    p.Country != null
+                    && p.Country.Code != null
+                    && p.Country.Code.ToUpper() == normalizedCountry);
             }
 
             var players = baseQuery
@@ -48,23 +48,23 @@ namespace Squash.Web.Areas.Administration.Controllers
                 {
                     Id = p.Id,
                     Name = p.Name,
-                    CountryCode = p.Nationality != null ? p.Nationality.Code : string.Empty,
-                    CountryName = p.Nationality != null ? (p.Nationality.Name ?? string.Empty) : string.Empty,
-                    FlagUrl = BuildFlagUrl(p.Nationality != null ? p.Nationality.Code : null),
+                    CountryCode = p.Country != null ? p.Country.Code : string.Empty,
+                    CountryName = p.Country != null ? (p.Country.Nationality ?? string.Empty) : string.Empty,
+                    FlagUrl = BuildFlagUrl(p.Country != null ? p.Country.Code : null),
                     EsfMemberId = p.EsfMemberId ?? string.Empty
                 })
                 .ToList();
 
-            var availableCountries = _dataContext.Nationalities
+            var availableCountries = _dataContext.Countries
                 .AsNoTracking()
                 .Where(n => n.Players.Any())
                 .OrderBy(n => n.Code)
                 .Select(n => new FilterOption
                 {
                     Value = n.Code.ToUpperInvariant(),
-                    Text = string.IsNullOrWhiteSpace(n.Name)
+                    Text = string.IsNullOrWhiteSpace(n.Nationality)
                         ? n.Code.ToUpperInvariant()
-                        : $"{n.Code.ToUpperInvariant()} - {n.Name}"
+                        : $"{n.Code.ToUpperInvariant()} - {n.Nationality}"
                 })
                 .ToList();
 
@@ -87,7 +87,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 Name = string.Empty,
                 EsfMemberId = string.Empty,
-                AvailableNationalities = GetNationalityOptions(null)
+                AvailableCountries = GetCountryOptions(null)
             };
 
             return View(model);
@@ -99,14 +99,14 @@ namespace Squash.Web.Areas.Administration.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.AvailableNationalities = GetNationalityOptions(model.NationalityId);
+                model.AvailableCountries = GetCountryOptions(model.CountryId);
                 return View(model);
             }
 
             var player = new Squash.DataAccess.Entities.Player
             {
                 Name = model.Name?.Trim() ?? string.Empty,
-                NationalityId = model.NationalityId,
+                CountryId = model.CountryId,
                 EsfMemberId = string.IsNullOrWhiteSpace(model.EsfMemberId) ? null : model.EsfMemberId.Trim()
             };
 
@@ -132,9 +132,9 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 Id = player.Id,
                 Name = player.Name,
-                NationalityId = player.NationalityId,
+                CountryId = player.CountryId,
                 EsfMemberId = player.EsfMemberId,
-                AvailableNationalities = GetNationalityOptions(player.NationalityId)
+                AvailableCountries = GetCountryOptions(player.CountryId)
             };
 
             return View(model);
@@ -146,7 +146,7 @@ namespace Squash.Web.Areas.Administration.Controllers
         {
             if (!ModelState.IsValid)
             {
-                model.AvailableNationalities = GetNationalityOptions(model.NationalityId);
+                model.AvailableCountries = GetCountryOptions(model.CountryId);
                 return View(model);
             }
 
@@ -159,7 +159,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             }
 
             player.Name = model.Name?.Trim() ?? string.Empty;
-            player.NationalityId = model.NationalityId;
+            player.CountryId = model.CountryId;
             player.EsfMemberId = string.IsNullOrWhiteSpace(model.EsfMemberId) ? null : model.EsfMemberId.Trim();
 
             _dataContext.SaveChanges();
@@ -177,17 +177,17 @@ namespace Squash.Web.Areas.Administration.Controllers
             return $"/images/flags/{nationalityCode.ToLowerInvariant()}.svg";
         }
 
-        private List<SelectListItem> GetNationalityOptions(int? selectedId)
+        private List<SelectListItem> GetCountryOptions(int? selectedId)
         {
-            var items = _dataContext.Nationalities
+            var items = _dataContext.Countries
                 .AsNoTracking()
                 .OrderBy(n => n.Code)
                 .Select(n => new SelectListItem
                 {
                     Value = n.Id.ToString(),
-                    Text = string.IsNullOrWhiteSpace(n.Name)
+                    Text = string.IsNullOrWhiteSpace(n.Nationality)
                         ? n.Code.ToUpperInvariant()
-                        : $"{n.Code.ToUpperInvariant()} - {n.Name}"
+                        : $"{n.Code.ToUpperInvariant()} - {n.Nationality}"
                 })
                 .ToList();
 
@@ -204,3 +204,5 @@ namespace Squash.Web.Areas.Administration.Controllers
         }
     }
 }
+
+

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Title" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="Heading" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="Subtitle" xml:space="preserve">
+    <value>Вход в акаунта</value>
+  </data>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>Достъпът е отказан.</value>
+  </data>
+  <data name="EmailPlaceholder" xml:space="preserve">
+    <value>Имейл</value>
+  </data>
+  <data name="PasswordPlaceholder" xml:space="preserve">
+    <value>Парола</value>
+  </data>
+  <data name="LoginButton" xml:space="preserve">
+    <value>Вход</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>Забравена парола?</value>
+  </data>
+  <data name="RegisterLink" xml:space="preserve">
+    <value>Създай акаунт</value>
+  </data>
+  <data name="ResendConfirmation" xml:space="preserve">
+    <value>Изпрати отново имейл за потвърждение</value>
+  </data>
+  <data name="EmailNotConfirmedHelp" xml:space="preserve">
+    <value>Имейлът ви все още не е потвърден. Проверете пощата си или изпратете линка отново.</value>
+  </data>
+  <data name="EmailNotConfirmedMessage" xml:space="preserve">
+    <value>Имейлът ви все още не е потвърден. Потвърдете го, за да влезете.</value>
+  </data>
+  <data name="ConfirmationEmailSent" xml:space="preserve">
+    <value>Ако съществува акаунт, изпратихме имейл за потвърждение.</value>
+  </data>
+  <data name="EmailConfirmedMessage" xml:space="preserve">
+    <value>Имейлът е потвърден. Вече можете да влезете.</value>
+  </data>
+  <data name="RateLimitExceeded" xml:space="preserve">
+    <value>Твърде много заявки. Опитайте отново след няколко минути.</value>
+  </data>
+</root>

@@ -14,7 +14,8 @@ namespace Squash.DataAccess
         DbSet<Venue> Venues { get; set; }
         DbSet<TournamentVenue> TournamentVenues { get; set; }
         DbSet<TournamentCourt> TournamentCourts { get; set; }
-        DbSet<Nationality> Nationalities { get; set; }
+        DbSet<Country> Countries { get; set; }
+        DbSet<Language> Languages { get; set; }
         DbSet<Player> Players { get; set; }
         DbSet<TournamentPlayer> TournamentPlayers { get; set; }
         DbSet<User> Users { get; set; }
@@ -27,3 +28,4 @@ namespace Squash.DataAccess
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }
+

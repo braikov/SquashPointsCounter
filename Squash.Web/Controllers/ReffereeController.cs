@@ -31,8 +31,8 @@ namespace Squash.Web.Controllers
                 .Include(m => m.Draw)
                 .Include(m => m.Court)
                 .Include(m => m.Games)!.ThenInclude(g => g.EventLogs)
-                .Include(m => m.Player1)!.ThenInclude(p => p.Nationality)
-                .Include(m => m.Player2)!.ThenInclude(p => p.Nationality)
+                .Include(m => m.Player1)!.ThenInclude(p => p.Country)
+                .Include(m => m.Player2)!.ThenInclude(p => p.Country)
                 .FirstOrDefault(m => m.PinCode == normalizedPin);
 
             if (match == null)
@@ -230,15 +230,15 @@ namespace Squash.Web.Controllers
                 return new RefereePlayer();
             }
 
-            var nationalityCode = player.Nationality?.Code ?? string.Empty;
-            var nationalityName = player.Nationality?.Name ?? nationalityCode;
+            var nationalityCode = player.Country?.Code ?? string.Empty;
+            var nationalityName = player.Country?.Nationality ?? nationalityCode;
 
             return new RefereePlayer
             {
                 Name = player.Name ?? string.Empty,
                 PictureUrl = null,
-                Nationality = nationalityName ?? string.Empty,
-                NationalityFlagUrl = string.IsNullOrWhiteSpace(nationalityCode)
+                Country = nationalityName ?? string.Empty,
+                CountryFlagUrl = string.IsNullOrWhiteSpace(nationalityCode)
                     ? string.Empty
                     : $"/images/flags/{nationalityCode.ToLowerInvariant()}.svg"
             };
@@ -326,3 +326,4 @@ namespace Squash.Web.Controllers
         }
     }
 }
+

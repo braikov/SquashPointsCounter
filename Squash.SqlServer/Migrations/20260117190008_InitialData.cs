@@ -3,22 +3,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Squash.SqlServer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Nationalities",
+                name: "Countries",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Nationality = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CountryName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -26,7 +28,39 @@ namespace Squash.SqlServer.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Nationalities", x => x.Id);
+                    table.PrimaryKey("PK_Countries", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Languages",
+                columns: table => new
+                {
+                    Code = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Languages", x => x.Code);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SitemapEntries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Url = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
+                    Culture = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    ChangeFrequency = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    Priority = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    IsEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastOperationUserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SitemapEntries", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,7 +74,7 @@ namespace Squash.SqlServer.Migrations
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EsfMemberId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EntitySourceId = table.Column<int>(type: "int", nullable: false),
-                    NationalityId = table.Column<int>(type: "int", nullable: true),
+                    CountryId = table.Column<int>(type: "int", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastOperationUserId = table.Column<int>(type: "int", nullable: false)
@@ -49,9 +83,9 @@ namespace Squash.SqlServer.Migrations
                 {
                     table.PrimaryKey("PK_Players", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Players_Nationalities_NationalityId",
-                        column: x => x.NationalityId,
-                        principalTable: "Nationalities",
+                        name: "FK_Players_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
                         principalColumn: "Id");
                 });
 
@@ -80,9 +114,9 @@ namespace Squash.SqlServer.Migrations
                 {
                     table.PrimaryKey("PK_Venues", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Venues_Nationalities_CountryId",
+                        name: "FK_Venues_Countries_CountryId",
                         column: x => x.CountryId,
-                        principalTable: "Nationalities",
+                        principalTable: "Countries",
                         principalColumn: "Id");
                 });
 
@@ -94,9 +128,15 @@ namespace Squash.SqlServer.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IdentityUserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
+                    CountryId = table.Column<int>(type: "int", nullable: true),
+                    PreferredSport = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    PreferredLanguage = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     Zip = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
@@ -113,6 +153,17 @@ namespace Squash.SqlServer.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Users_Languages_PreferredLanguage",
+                        column: x => x.PreferredLanguage,
+                        principalTable: "Languages",
+                        principalColumn: "Code",
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Users_Players_PlayerId",
                         column: x => x.PlayerId,
@@ -151,10 +202,12 @@ namespace Squash.SqlServer.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
-                    NationalityId = table.Column<int>(type: "int", nullable: false),
+                    CountryId = table.Column<int>(type: "int", nullable: false),
                     ExternalCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrganizationCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Slug = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    IsPublished = table.Column<bool>(type: "bit", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EntryOpensDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -171,9 +224,9 @@ namespace Squash.SqlServer.Migrations
                 {
                     table.PrimaryKey("PK_Tournaments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Tournaments_Nationalities_NationalityId",
-                        column: x => x.NationalityId,
-                        principalTable: "Nationalities",
+                        name: "FK_Tournaments_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -520,9 +573,96 @@ namespace Squash.SqlServer.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Countries",
+                columns: new[] { "Id", "Code", "CountryName", "DateCreated", "DateUpdated", "LastOperationUserId", "Nationality" },
+                values: new object[,]
+                {
+                    { 1, "CZE", "Чехия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Чехия" },
+                    { 2, "POR", "Португалия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Португалия" },
+                    { 3, "POL", "Полша", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Полша" },
+                    { 4, "DEN", "Дания", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Дания" },
+                    { 5, "SUI", "Швейцария", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Швейцария" },
+                    { 6, "BEL", "Белгия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Белгия" },
+                    { 7, "IRL", "Ирландия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Ирландия" },
+                    { 8, "ENG", "Англия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Англия" },
+                    { 9, "ISR", "Израел", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Израел" },
+                    { 10, "ESP", "Испания", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Испания" },
+                    { 11, "AUT", "Австрия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Австрия" },
+                    { 12, "CRO", "Хърватия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Хърватия" },
+                    { 13, "HUN", "Унгария", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Унгария" },
+                    { 14, "GER", "Германия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Германия" },
+                    { 15, "SVK", "Словакия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Словакия" },
+                    { 16, "ROM", "Румъния", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Румъния" },
+                    { 17, "NED", "Нидерландия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Нидерландия" },
+                    { 18, "UKR", "Украйна", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Украйна" },
+                    { 19, "KSA", "Саудитска Арабия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Саудитска Арабия" },
+                    { 20, "NIR", "Северна Ирландия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Северна Ирландия" },
+                    { 21, "ITA", "Италия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Италия" },
+                    { 22, "JPN", "Япония", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Япония" },
+                    { 23, "FRA", "Франция", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Франция" },
+                    { 24, "MON", "Монако", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Монако" },
+                    { 25, "BRA", "Бразилия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Бразилия" },
+                    { 26, "WAL", "Уелс", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Уелс" },
+                    { 27, "MRI", "Мавриций", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Мавриций" },
+                    { 28, "BUL", "България", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "България" },
+                    { 29, "EST", "Естония", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Естония" },
+                    { 30, "EGY", "Египет", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Египет" },
+                    { 31, "NOR", "Норвегия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Норвегия" },
+                    { 32, "MEX", "Мексико", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Мексико" },
+                    { 33, "PAK", "Пакистан", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Пакистан" },
+                    { 34, "CHN", "Китай", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Китай" },
+                    { 35, "MAC", "Макао", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Макао" },
+                    { 36, "LUX", "Люксембург", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Люксембург" },
+                    { 37, "GRE", "Гърция", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Гърция" },
+                    { 38, "IND", "Индия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Индия" },
+                    { 39, "RSF", "Русия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Русия" },
+                    { 40, "SCO", "Шотландия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Шотландия" },
+                    { 41, "PNG", "Папуа Нова Гвинея", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Папуа Нова Гвинея" },
+                    { 42, "USA", "САЩ", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "САЩ" },
+                    { 43, "MLT", "Малта", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Малта" },
+                    { 44, "PYF", "Френска Полинезия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Френска Полинезия" },
+                    { 45, "TUR", "Турция", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Турция" },
+                    { 46, "FIN", "Финландия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Финландия" },
+                    { 47, "QAT", "Катар", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Катар" },
+                    { 48, "SWE", "Швеция", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Швеция" },
+                    { 49, "MAS", "Малайзия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Малайзия" },
+                    { 50, "KUW", "Кувейт", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Кувейт" },
+                    { 51, "CAN", "Канада", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Канада" },
+                    { 52, "THA", "Тайланд", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Тайланд" },
+                    { 53, "GUY", "Гаяна", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Гаяна" },
+                    { 54, "AUS", "Австралия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Австралия" },
+                    { 55, "ZIM", "Зимбабве", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Зимбабве" },
+                    { 56, "HKG", "Хонконг", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Хонконг" },
+                    { 57, "SIN", "Сингапур", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Сингапур" },
+                    { 58, "KOR", "Южна Корея", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Южна Корея" },
+                    { 59, "GGY", "Гърнси", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Гърнси" },
+                    { 60, "PER", "Перу", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Перу" },
+                    { 61, "IVB", "Британски Вирджински острови", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Британски Вирджински острови" },
+                    { 62, "RSA", "Южна Африка", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Южна Африка" },
+                    { 63, "TPE", "Китайски Тайпей", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Китайски Тайпей" },
+                    { 64, "MAR", "Мароко", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Мароко" },
+                    { 65, "ARG", "Аржентина", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Аржентина" },
+                    { 66, "NZL", "Нова Зеландия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Нова Зеландия" },
+                    { 67, "GBR", "Великобритания", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Великобритания" },
+                    { 68, "COL", "Колумбия", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Колумбия" },
+                    { 69, "KEN", "Кения", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Кения" },
+                    { 70, "SRI", "Шри Ланка", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Шри Ланка" },
+                    { 71, "UAE", "Обединени арабски емирства", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "Обединени арабски емирства" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Languages",
+                columns: new[] { "Code", "Name" },
+                values: new object[,]
+                {
+                    { "bg-BG", "Български" },
+                    { "en-GB", "English" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "Address", "BadgeId", "BirthDate", "City", "DateCreated", "DateUpdated", "Email", "EmailNotificationsEnabled", "IdentityUserId", "LastOperationUserId", "Name", "Phone", "PlayerId", "StripeCustomerId", "VerificationDate", "Verified", "Zip" },
-                values: new object[] { 1, "System", null, new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "System", new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "system@squash.local", false, "SYSTEM", 0, "System", "N/A", null, null, null, true, "0000" });
+                columns: new[] { "Id", "Address", "BadgeId", "BirthDate", "City", "CountryId", "DateCreated", "DateUpdated", "Email", "EmailNotificationsEnabled", "FirstName", "Gender", "IdentityUserId", "LastName", "LastOperationUserId", "Name", "Phone", "PlayerId", "PreferredLanguage", "PreferredSport", "StripeCustomerId", "VerificationDate", "Verified", "Zip" },
+                values: new object[] { 1, "System", null, new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "System", null, new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "system@squash.local", false, null, "Unknown", "SYSTEM", null, 0, "System", "N/A", null, "bg-BG", null, null, null, true, "0000" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Courts_VenueId",
@@ -600,14 +740,24 @@ namespace Squash.SqlServer.Migrations
                 column: "MatchId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Players_NationalityId",
+                name: "IX_Players_CountryId",
                 table: "Players",
-                column: "NationalityId");
+                column: "CountryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rounds_DrawId",
                 table: "Rounds",
                 column: "DrawId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SitemapEntries_Culture",
+                table: "SitemapEntries",
+                column: "Culture");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SitemapEntries_IsEnabled",
+                table: "SitemapEntries",
+                column: "IsEnabled");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TournamentCourts_CourtId",
@@ -635,9 +785,19 @@ namespace Squash.SqlServer.Migrations
                 column: "TournamentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tournaments_NationalityId",
+                name: "IX_Tournaments_CountryId",
                 table: "Tournaments",
-                column: "NationalityId");
+                column: "CountryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tournaments_IsPublished",
+                table: "Tournaments",
+                column: "IsPublished");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tournaments_Slug",
+                table: "Tournaments",
+                column: "Slug");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tournaments_UserId",
@@ -653,6 +813,11 @@ namespace Squash.SqlServer.Migrations
                 name: "IX_TournamentVenues_VenueId",
                 table: "TournamentVenues",
                 column: "VenueId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_CountryId",
+                table: "Users",
+                column: "CountryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
@@ -674,6 +839,11 @@ namespace Squash.SqlServer.Migrations
                 filter: "[PlayerId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_PreferredLanguage",
+                table: "Users",
+                column: "PreferredLanguage");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Venues_CountryId",
                 table: "Venues",
                 column: "CountryId");
@@ -687,6 +857,9 @@ namespace Squash.SqlServer.Migrations
 
             migrationBuilder.DropTable(
                 name: "MatchGameEventLogs");
+
+            migrationBuilder.DropTable(
+                name: "SitemapEntries");
 
             migrationBuilder.DropTable(
                 name: "TournamentCourts");
@@ -728,10 +901,13 @@ namespace Squash.SqlServer.Migrations
                 name: "Users");
 
             migrationBuilder.DropTable(
+                name: "Languages");
+
+            migrationBuilder.DropTable(
                 name: "Players");
 
             migrationBuilder.DropTable(
-                name: "Nationalities");
+                name: "Countries");
         }
     }
 }

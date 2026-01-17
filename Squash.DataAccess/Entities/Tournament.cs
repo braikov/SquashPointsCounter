@@ -9,8 +9,8 @@ namespace Squash.DataAccess.Entities
         public int UserId { get; set; }
         public User User { get; set; } = null!;
 
-        public int NationalityId { get; set; }
-        public Nationality Nationality { get; set; } = null!;
+        public int CountryId { get; set; }
+        public Country Country { get; set; } = null!;
 
         public string ExternalCode { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
@@ -36,3 +36,4 @@ namespace Squash.DataAccess.Entities
         public ICollection<TournamentPlayer> TournamentPlayers { get; set; } = new List<TournamentPlayer>();
     }
 }
+

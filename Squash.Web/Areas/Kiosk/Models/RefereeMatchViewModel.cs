@@ -18,7 +18,8 @@ namespace Squash.Web.Areas.Kiosk.Models
     {
         public string Name { get; set; } = string.Empty;
         public string? PictureUrl { get; set; }
-        public string Nationality { get; set; } = string.Empty;
-        public string NationalityFlagUrl { get; set; } = string.Empty;
+        public string Country { get; set; } = string.Empty;
+        public string CountryFlagUrl { get; set; } = string.Empty;
     }
 }
+

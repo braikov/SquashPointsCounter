@@ -15,4 +15,43 @@
   <data name="Title" xml:space="preserve">
     <value>Регистрация</value>
   </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>Име</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Фамилия</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Имейл</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Парола</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Потвърди парола</value>
+  </data>
+  <data name="BirthDate" xml:space="preserve">
+    <value>Дата на раждане</value>
+  </data>
+  <data name="Gender" xml:space="preserve">
+    <value>Пол</value>
+  </data>
+  <data name="GenderMale" xml:space="preserve">
+    <value>Мъж</value>
+  </data>
+  <data name="GenderFemale" xml:space="preserve">
+    <value>Жена</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Държава</value>
+  </data>
+  <data name="Sport" xml:space="preserve">
+    <value>Спорт</value>
+  </data>
+  <data name="SportSquash" xml:space="preserve">
+    <value>Скуош</value>
+  </data>
+  <data name="RegisterButton" xml:space="preserve">
+    <value>Регистрация</value>
+  </data>
 </root>

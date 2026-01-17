@@ -35,10 +35,11 @@ namespace Squash.Web.Areas.Administration.Models
         public string? Regulations { get; set; }
 
         [Display(Name = "Country")]
-        public int NationalityId { get; set; }
+        public int CountryId { get; set; }
 
         public bool IsPublished { get; set; }
 
-        public IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> Nationalities { get; set; } = new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
+        public IEnumerable<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> Countries { get; set; } = new List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem>();
     }
 }
+

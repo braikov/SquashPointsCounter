@@ -19,6 +19,8 @@ namespace Squash.DataAccess.EntitiesConfiguration
                 Email = "system@squash.local",
                 Phone = "N/A",
                 BirthDate = new DateTime(2000, 1, 1),
+                Gender = "Unknown",
+                PreferredLanguage = "bg-BG",
                 Zip = "0000",
                 City = "System",
                 Address = "System",

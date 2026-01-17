@@ -1,0 +1,23 @@
+@model Squash.Web.Areas.Identity.Models.Account.ConfirmEmailViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["Title"].Value;
+}
+
+<div class="card-group d-block d-md-flex row auth-card">
+    <div class="card col-md-7 auth-left mb-0">
+        <div class="card-body">
+            @if (Model.Success)
+            {
+                <h1>@Localizer["SuccessTitle"]</h1>
+                <p class="text-body-secondary">@Localizer["SuccessMessage"]</p>
+            }
+            else
+            {
+                <h1>@Localizer["FailureTitle"]</h1>
+                <p class="text-body-secondary">@Localizer["FailureMessage"]</p>
+            }
+        </div>
+    </div>
+</div>

@@ -26,7 +26,9 @@
 <html lang="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
     <title>@fullTitle</title>
     @if (!string.IsNullOrWhiteSpace(metaDescription))
     {
@@ -36,8 +38,13 @@
     {
         <link rel="canonical" href="@canonicalUrl" />
     }
+    <link rel="stylesheet" href="~/lib/coreui/dist/css/coreui.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/simplebar/dist/simplebar.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/shared.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    @RenderSection("Head", required: false)
 </head>
-<body>
+<body class="bg-body-tertiary min-vh-100 d-flex flex-column">
     <header>
         <nav class="d-flex align-items-center justify-content-between">
             <div class="d-flex gap-2">
@@ -63,5 +70,9 @@
     <main>
         @RenderBody()
     </main>
+    <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+    <script src="~/lib/coreui/dist/js/coreui.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/lib/simplebar/dist/simplebar.min.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

@@ -47,7 +47,7 @@ namespace Squash.Shared.Parsers.Esf
             var drawsByKey = new Dictionary<string, Draw>(StringComparer.OrdinalIgnoreCase);
             var roundsByKey = new Dictionary<string, Round>(StringComparer.OrdinalIgnoreCase);
             var courtsByKey = new Dictionary<string, Court>(StringComparer.OrdinalIgnoreCase);
-            var nationalitiesByCode = new Dictionary<string, Nationality>(StringComparer.OrdinalIgnoreCase);
+            var nationalitiesByCode = new Dictionary<string, Country>(StringComparer.OrdinalIgnoreCase);
             var playersByKey = new Dictionary<string, Player>(StringComparer.OrdinalIgnoreCase);
 
             var matchNodes = doc.DocumentNode.SelectNodes("//div[contains(concat(' ', normalize-space(@class), ' '), ' match--list ')]");
@@ -404,7 +404,7 @@ namespace Squash.Shared.Parsers.Esf
 
         private static (Player? player1, Player? player2, Player? winner, bool player1Walkover, bool player2Walkover) ExtractPlayers(
             HtmlNode matchNode,
-            Dictionary<string, Nationality> nationalitiesByCode,
+            Dictionary<string, Country> nationalitiesByCode,
             Dictionary<string, Player> playersByKey,
             DayMatchesParseResult result)
         {
@@ -488,14 +488,14 @@ namespace Squash.Shared.Parsers.Esf
                     throw new InvalidOperationException($"Missing nationality code for player '{playerName ?? "unknown"}'.");
                 }
 
-                Nationality? nationality = null;
+                Country? nationality = null;
                 if (!string.IsNullOrWhiteSpace(nationalityCode))
                 {
                     if (!nationalitiesByCode.TryGetValue(nationalityCode, out nationality))
                     {
-                        nationality = new Nationality { Code = nationalityCode };
+                        nationality = new Country { Code = nationalityCode };
                         nationalitiesByCode[nationalityCode] = nationality;
-                        result.Nationalities.Add(nationality);
+                        result.Countries.Add(nationality);
                     }
                 }
 
@@ -508,7 +508,7 @@ namespace Squash.Shared.Parsers.Esf
                         player = new Player
                         {
                             Name = playerName ?? string.Empty,
-                            Nationality = nationality,
+                            Country = nationality,
                             EntitySourceId = EntitySource.Esf
                         };
 
@@ -670,7 +670,7 @@ namespace Squash.Shared.Parsers.Esf
         public List<Draw> Draws { get; } = new();
         public List<Round> Rounds { get; } = new();
         public List<Court> Courts { get; } = new();
-        public List<Nationality> Nationalities { get; } = new();
+        public List<Country> Countries { get; } = new();
         public List<Player> Players { get; } = new();
         public List<Match> Matches { get; } = new();
         public List<MatchGame> Games { get; } = new();
@@ -679,3 +679,4 @@ namespace Squash.Shared.Parsers.Esf
         public Dictionary<Player, int> TournamentPlayerIds { get; } = new();
     }
 }
+

@@ -37,7 +37,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                     City = v.City,
                     Zip = v.Zip,
                     Region = v.Region,
-                    CountryName = v.Country != null ? v.Country.CountryName ?? v.Country.Name : null,
+                    CountryName = v.Country != null ? v.Country.CountryName ?? v.Country.Nationality : null,
                     CountryCode = v.Country != null ? v.Country.Code : null,
                     Longitude = v.Longitude,
                     Latitude = v.Latitude,
@@ -227,16 +227,18 @@ namespace Squash.Web.Areas.Administration.Controllers
 
         private List<SelectListItem> GetCountryOptions(int? selectedId)
         {
-            return _dataContext.Nationalities
+            return _dataContext.Countries
                 .AsNoTracking()
-                .OrderBy(n => n.CountryName ?? n.Name ?? n.Code)
+                .OrderBy(n => n.CountryName ?? n.Nationality ?? n.Code)
                 .Select(n => new SelectListItem
                 {
                     Value = n.Id.ToString(),
-                    Text = n.CountryName ?? n.Name ?? n.Code,
+                    Text = n.CountryName ?? n.Nationality ?? n.Code,
                     Selected = selectedId.HasValue && n.Id == selectedId.Value
                 })
                 .ToList();
         }
     }
 }
+
+

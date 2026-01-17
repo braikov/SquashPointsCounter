@@ -7,7 +7,7 @@ namespace Squash.Web.Areas.Administration.Models
         public int TournamentId { get; set; }
         public string TournamentName { get; set; } = string.Empty;
         public bool IsPublished { get; set; }
-        public int? NationalityId { get; set; }
+        public int? CountryId { get; set; }
 
         public List<TournamentVenueItemViewModel> AssignedVenues { get; set; } = new();
         public List<SelectListItem> AvailableVenues { get; set; } = new();
@@ -30,3 +30,4 @@ namespace Squash.Web.Areas.Administration.Models
         public bool IsAssignedToTournament { get; set; }
     }
 }
+

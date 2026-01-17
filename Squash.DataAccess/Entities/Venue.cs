@@ -20,7 +20,7 @@ namespace Squash.DataAccess.Entities
         public string? Region { get; set; }
 
         public int? CountryId { get; set; }
-        public Nationality? Country { get; set; }
+        public Country? Country { get; set; }
 
         public double? Longitude { get; set; }
         public double? Latitude { get; set; }
@@ -38,3 +38,4 @@ namespace Squash.DataAccess.Entities
         public ICollection<TournamentVenue> TournamentVenues { get; set; } = new List<TournamentVenue>();
     }
 }
+

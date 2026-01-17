@@ -160,7 +160,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 ClosingSigninDate = model.ClosingSigninDate,
                 WithdrawalDeadlineDate = model.WithdrawalDeadlineDate,
                 Regulations = model.Regulations,
-                NationalityId = model.NationalityId,
+                CountryId = model.CountryId,
                 UserId = userId,
                 EntitySourceId = Squash.DataAccess.Entities.EntitySource.Native
             };
@@ -193,7 +193,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 ClosingSigninDate = tournament.ClosingSigninDate,
                 WithdrawalDeadlineDate = tournament.WithdrawalDeadlineDate,
                 Regulations = tournament.Regulations,
-                NationalityId = tournament.NationalityId,
+                CountryId = tournament.CountryId,
                 IsPublished = tournament.IsPublished
             };
             PrepareViewModel(model);
@@ -230,7 +230,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             tournament.ClosingSigninDate = model.ClosingSigninDate;
             tournament.WithdrawalDeadlineDate = model.WithdrawalDeadlineDate;
             tournament.Regulations = model.Regulations;
-            tournament.NationalityId = model.NationalityId;
+            tournament.CountryId = model.CountryId;
 
             _dataContext.SaveChanges();
 
@@ -300,8 +300,8 @@ namespace Squash.Web.Areas.Administration.Controllers
                     .Include(m => m.Draw).ThenInclude(d => d.Event)
                     .Include(m => m.Round)
                     .Include(m => m.Court)
-                    .Include(m => m.Player1)!.ThenInclude(p => p.Nationality)
-                    .Include(m => m.Player2)!.ThenInclude(p => p.Nationality)
+                    .Include(m => m.Player1)!.ThenInclude(p => p.Country)
+                    .Include(m => m.Player2)!.ThenInclude(p => p.Country)
                     .Include(m => m.Games)
                     .OrderBy(m => m.StartTime ?? TimeSpan.MaxValue)
                     .ThenBy(m => m.StartTimeText)
@@ -321,8 +321,8 @@ namespace Squash.Web.Areas.Administration.Controllers
                 if (!string.IsNullOrEmpty(country))
                 {
                     filteredMatches = filteredMatches.Where(m =>
-                        (m.Player1?.Nationality?.Code != null && m.Player1.Nationality.Code.Equals(country, StringComparison.OrdinalIgnoreCase)) ||
-                        (m.Player2?.Nationality?.Code != null && m.Player2.Nationality.Code.Equals(country, StringComparison.OrdinalIgnoreCase)));
+                        (m.Player1?.Country?.Code != null && m.Player1.Country.Code.Equals(country, StringComparison.OrdinalIgnoreCase)) ||
+                        (m.Player2?.Country?.Code != null && m.Player2.Country.Code.Equals(country, StringComparison.OrdinalIgnoreCase)));
                 }
 
                 if (!string.IsNullOrEmpty(draw))
@@ -351,7 +351,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                     .ToList();
 
                 availableCountries = filteredMatchesList
-                    .SelectMany(m => new[] { m.Player1?.Nationality?.Code, m.Player2?.Nationality?.Code })
+                    .SelectMany(m => new[] { m.Player1?.Country?.Code, m.Player2?.Country?.Code })
                     .Where(c => !string.IsNullOrWhiteSpace(c))
                     .Distinct()
                     .OrderBy(c => c)
@@ -407,10 +407,10 @@ namespace Squash.Web.Areas.Administration.Controllers
                         Player2 = m.Player2 == null ? string.Empty : m.Player2.Name,
                         Player1TournamentPlayerId = m.Player1Id.HasValue && tournamentPlayerIds.ContainsKey(m.Player1Id.Value) ? tournamentPlayerIds[m.Player1Id.Value] : null,
                         Player2TournamentPlayerId = m.Player2Id.HasValue && tournamentPlayerIds.ContainsKey(m.Player2Id.Value) ? tournamentPlayerIds[m.Player2Id.Value] : null,
-                        Player1FlagUrl = BuildFlagUrl(m.Player1?.Nationality?.Code),
-                        Player2FlagUrl = BuildFlagUrl(m.Player2?.Nationality?.Code),
-                        Player1CountryCode = m.Player1?.Nationality?.Code ?? string.Empty,
-                        Player2CountryCode = m.Player2?.Nationality?.Code ?? string.Empty,
+                        Player1FlagUrl = BuildFlagUrl(m.Player1?.Country?.Code),
+                        Player2FlagUrl = BuildFlagUrl(m.Player2?.Country?.Code),
+                        Player1CountryCode = m.Player1?.Country?.Code ?? string.Empty,
+                        Player2CountryCode = m.Player2?.Country?.Code ?? string.Empty,
                         Player1IsWinner = m.WinnerPlayerId.HasValue && m.Player1Id.HasValue && m.WinnerPlayerId == m.Player1Id,
                         Player2IsWinner = m.WinnerPlayerId.HasValue && m.Player2Id.HasValue && m.WinnerPlayerId == m.Player2Id,
                         Player1Walkover = m.Player1Walkover,
@@ -486,8 +486,8 @@ namespace Squash.Web.Areas.Administration.Controllers
                 .Include(m => m.Draw).ThenInclude(d => d.Event)
                 .Include(m => m.Round)
                 .Include(m => m.Court)
-                .Include(m => m.Player1)!.ThenInclude(p => p.Nationality)
-                .Include(m => m.Player2)!.ThenInclude(p => p.Nationality)
+                .Include(m => m.Player1)!.ThenInclude(p => p.Country)
+                .Include(m => m.Player2)!.ThenInclude(p => p.Country)
                 .ToList();
 
             var totalPlayersCount = matchEntities
@@ -507,8 +507,8 @@ namespace Squash.Web.Areas.Administration.Controllers
             if (!string.IsNullOrEmpty(country))
             {
                 filteredMatches = filteredMatches.Where(m =>
-                    (m.Player1?.Nationality?.Code != null && m.Player1.Nationality.Code.Equals(country, StringComparison.OrdinalIgnoreCase)) ||
-                    (m.Player2?.Nationality?.Code != null && m.Player2.Nationality.Code.Equals(country, StringComparison.OrdinalIgnoreCase)));
+                    (m.Player1?.Country?.Code != null && m.Player1.Country.Code.Equals(country, StringComparison.OrdinalIgnoreCase)) ||
+                    (m.Player2?.Country?.Code != null && m.Player2.Country.Code.Equals(country, StringComparison.OrdinalIgnoreCase)));
             }
 
             if (!string.IsNullOrEmpty(draw))
@@ -536,7 +536,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 .ToList();
 
             var availableCountries = filteredMatchesList
-                .SelectMany(m => new[] { m.Player1?.Nationality?.Code, m.Player2?.Nationality?.Code })
+                .SelectMany(m => new[] { m.Player1?.Country?.Code, m.Player2?.Country?.Code })
                 .Where(c => !string.IsNullOrWhiteSpace(c))
                 .Distinct()
                 .OrderBy(c => c)
@@ -577,7 +577,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             if (!string.IsNullOrEmpty(country))
             {
                 playersFromMatches = playersFromMatches.Where(p =>
-                    p.Nationality?.Code != null && p.Nationality.Code.Equals(country, StringComparison.OrdinalIgnoreCase));
+                    p.Country?.Code != null && p.Country.Code.Equals(country, StringComparison.OrdinalIgnoreCase));
             }
 
             // Get TournamentPlayer IDs for each player
@@ -593,8 +593,8 @@ namespace Squash.Web.Areas.Administration.Controllers
                 {
                     Id = tournamentPlayers.ContainsKey(p.Id) ? tournamentPlayers[p.Id] : 0,
                     Name = p.Name,
-                    CountryCode = p.Nationality?.Code ?? string.Empty,
-                    FlagUrl = BuildFlagUrl(p.Nationality?.Code)
+                    CountryCode = p.Country?.Code ?? string.Empty,
+                    FlagUrl = BuildFlagUrl(p.Country?.Code)
                 })
                 .Where(p => p.Id > 0) // Only include players that have a TournamentPlayer record
                 .ToList();
@@ -963,7 +963,7 @@ namespace Squash.Web.Areas.Administration.Controllers
 
         private void PrepareViewModel(TournamentEditViewModel model)
         {
-            model.Nationalities = _dataContext.Nationalities
+            model.Countries = _dataContext.Countries
                 .AsNoTracking()
                 .OrderBy(n => n.CountryName)
                 .Select(n => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem
@@ -1037,7 +1037,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 .Select(p => new
                 {
                     Name = p!.Name,
-                    CountryCode = p.Nationality != null ? p.Nationality.Code : null
+                    CountryCode = p.Country != null ? p.Country.Code : null
                 })
                 .Distinct()
                 .OrderBy(entry => entry.Name)
@@ -1201,7 +1201,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 .AsNoTracking()
                 .Include(t => t.TournamentVenues).ThenInclude(tv => tv.Venue).ThenInclude(v => v.Courts)
                 .Include(t => t.TournamentCourts)
-                .Include(t => t.Nationality)
+                .Include(t => t.Country)
                 .FirstOrDefault(t => t.Id == id);
 
             if (tournament == null)
@@ -1214,11 +1214,11 @@ namespace Squash.Web.Areas.Administration.Controllers
             }
 
             var assignedVenueIds = tournament.TournamentVenues.Select(tv => tv.VenueId).ToList();
-            var countryId = tournament.NationalityId;
+            var countryId = tournament.CountryId;
 
             // Available venues: same country (if set), not already assigned
             // Note: If tournament has no nationality? User said "only those that are not already added to tournament in this country"
-            // Assuming tournament.NationalityId determines the country.
+            // Assuming tournament.CountryId determines the country.
             
             var availableVenuesQuery = _dataContext.Venues
                 .AsNoTracking()
@@ -1243,7 +1243,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 TournamentId = tournament.Id,
                 TournamentName = tournament.Name,
                 IsPublished = tournament.IsPublished,
-                NationalityId = tournament.NationalityId,
+                CountryId = tournament.CountryId,
                 AvailableVenues = availableVenues,
                 AssignedVenues = tournament.TournamentVenues
                     .Select(tv => new TournamentVenueItemViewModel
@@ -1400,9 +1400,9 @@ namespace Squash.Web.Areas.Administration.Controllers
                 .Include(m => m.Court)
                 .Include(m => m.Draw)
                 .Include(m => m.Player1)
-                    .ThenInclude(p => p.Nationality)
+                    .ThenInclude(p => p.Country)
                 .Include(m => m.Player2)
-                    .ThenInclude(p => p.Nationality)
+                    .ThenInclude(p => p.Country)
                 .Include(m => m.Games)
                 .Where(m => m.TournamentId == tournamentPlayer.TournamentId &&
                            (m.Player1Id == tournamentPlayer.PlayerId || m.Player2Id == tournamentPlayer.PlayerId))
@@ -1436,3 +1436,4 @@ namespace Squash.Web.Areas.Administration.Controllers
         }
     }
 }
+

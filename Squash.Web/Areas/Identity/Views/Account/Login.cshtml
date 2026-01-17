@@ -1,20 +1,51 @@
 @model Squash.Web.Areas.Identity.Models.Account.LoginViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = Localizer["Title"].Value;
     var accessDeniedMsg = TempData["AccessDeniedMessage"] as string;
+    var cultureSegment = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var registerUrl = Url.Action("Register", "Account", new { area = "Public", culture = cultureSegment, returnUrl = Model.ReturnUrl });
 }
 
 <div class="card-group d-block d-md-flex row auth-card">
     <div class="card col-md-7 auth-left mb-0">
         <div class="card-body">
-            <h1>Login</h1>
-            <p class="text-body-secondary">Sign in to your account</p>
+            <h1>@Localizer["Heading"]</h1>
+            <p class="text-body-secondary">@Localizer["Subtitle"]</p>
+
+            @if (ViewData["EmailNotConfirmed"] is bool emailNotConfirmed && emailNotConfirmed)
+            {
+                <div class="alert alert-warning">
+                    @Localizer["EmailNotConfirmedMessage"]
+                </div>
+            }
+
+            @if (TempData["EmailConfirmedSuccess"] is bool emailConfirmed && emailConfirmed)
+            {
+                <div class="alert alert-success">
+                    @Localizer["EmailConfirmedMessage"]
+                </div>
+            }
+
+            @if (TempData["ResendConfirmationSuccess"] is bool resendSuccess && resendSuccess)
+            {
+                <div class="alert alert-success">
+                    @Localizer["ConfirmationEmailSent"]
+                </div>
+            }
+
+            @if (TempData["ResendConfirmationRateLimited"] is bool resendLimited && resendLimited)
+            {
+                <div class="alert alert-warning">
+                    @Localizer["RateLimitExceeded"]
+                </div>
+            }
 
             @if (!string.IsNullOrEmpty(accessDeniedMsg))
             {
                 <div class="alert alert-warning">
-                    <strong>Access denied.</strong> @accessDeniedMsg
+                    <strong>@Localizer["AccessDenied"]</strong> @accessDeniedMsg
                 </div>
             }
 
@@ -27,7 +58,7 @@
                     <span class="input-group-text">
                         <svg class="icon"><use xlink:href="/images/icons.svg#cil-user"></use></svg>
                     </span>
-                    <input asp-for="Email" class="form-control" placeholder="Email" />
+                    <input asp-for="Email" class="form-control" placeholder="@Localizer["EmailPlaceholder"]" />
                 </div>
                 <span asp-validation-for="Email" class="text-danger small"></span>
 
@@ -35,21 +66,42 @@
                     <span class="input-group-text">
                         <svg class="icon"><use xlink:href="/images/icons.svg#cil-lock-locked"></use></svg>
                     </span>
-                    <input asp-for="Password" class="form-control" placeholder="Password" />
+                    <input asp-for="Password" class="form-control" placeholder="@Localizer["PasswordPlaceholder"]" />
                 </div>
                 <span asp-validation-for="Password" class="text-danger small"></span>
 
                 <div class="row">
                     <div class="col-6">
-                        <button type="submit" class="btn btn-primary px-4">Login</button>
+                        <button type="submit" class="btn btn-primary px-4">@Localizer["LoginButton"]</button>
                     </div>
                     <div class="col-6 text-end">
-                        <a asp-action="ForgotPassword" asp-controller="Account" asp-area="Identity" class="btn btn-link px-0">Forgot password?</a>
+                        <a asp-action="ForgotPassword" asp-controller="Account" asp-area="Identity" class="btn btn-link px-0">@Localizer["ForgotPassword"]</a>
+                    </div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-12 text-end">
+                        <a href="@registerUrl" class="btn btn-link px-0">@Localizer["RegisterLink"]</a>
                     </div>
                 </div>
 
                 <input asp-for="ReturnUrl" type="hidden" />
             </form>
+
+            @if (ViewData["UnconfirmedEmail"] is string unconfirmedEmail)
+            {
+                <div class="alert alert-info mt-3">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                        <span>@Localizer["EmailNotConfirmedHelp"]</span>
+                        <form asp-action="ResendConfirmation" asp-controller="Account" asp-area="Identity" method="post" class="m-0">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="email" value="@unconfirmedEmail" />
+                            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                            <button type="submit" class="btn btn-link px-0">@Localizer["ResendConfirmation"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </div>

@@ -2,13 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Squash.DataAccess.Entities
 {
-    public class Nationality : Squash.DataAccess.Entities.EntityBase
+    public class Country : Squash.DataAccess.Entities.EntityBase
     {
         [MaxLength(10)]
         public string Code { get; set; } = string.Empty;
 
         [MaxLength(100)]
-        public string? Name { get; set; }
+        public string? Nationality { get; set; }
 
         [MaxLength(100)]
         public string? CountryName { get; set; }

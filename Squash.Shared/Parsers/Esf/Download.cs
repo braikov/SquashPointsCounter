@@ -56,25 +56,25 @@ namespace Squash.Shared.Parsers.Esf
 
             if (!string.IsNullOrWhiteSpace(countryName))
             {
-                var country = dbContext.Nationalities
+                var country = dbContext.Countries
                     .FirstOrDefault(n =>
                         n.CountryName == countryName ||
-                        n.Name == countryName);
+                        n.Nationality == countryName);
 
                 if (country == null)
                 {
-                    country = new Nationality
+                    country = new Country
                     {
                         Code = countryName.Length > 3
                             ? countryName.Substring(0, 3).ToUpperInvariant()
                             : countryName.ToUpperInvariant(),
-                        Name = countryName,
+                        Nationality = countryName,
                         CountryName = countryName
                     };
-                    dbContext.Nationalities.Add(country);
+                    dbContext.Countries.Add(country);
                     dbContext.SaveChanges();
                 }
-                result.Tournament.NationalityId = country.Id;
+                result.Tournament.CountryId = country.Id;
             }
 
             CreateOrUpdateTournament(dbContext, result.Tournament, userId);
@@ -176,22 +176,22 @@ namespace Squash.Shared.Parsers.Esf
                 int? countryId = null;
                 if (!string.IsNullOrWhiteSpace(venueData.CountryName))
                 {
-                    var country = dbContext.Nationalities
+                    var country = dbContext.Countries
                         .FirstOrDefault(n =>
                             n.CountryName == venueData.CountryName ||
-                            n.Name == venueData.CountryName);
+                            n.Nationality == venueData.CountryName);
 
                     if (country == null)
                     {
-                        country = new Nationality
+                        country = new Country
                         {
                             Code = venueData.CountryName.Length > 3
                                 ? venueData.CountryName.Substring(0, 3).ToUpperInvariant()
                                 : venueData.CountryName.ToUpperInvariant(),
-                            Name = venueData.CountryName,
+                            Nationality = venueData.CountryName,
                             CountryName = venueData.CountryName
                         };
-                        dbContext.Nationalities.Add(country);
+                        dbContext.Countries.Add(country);
                         dbContext.SaveChanges();
                     }
                     countryId = country.Id;
@@ -256,8 +256,8 @@ namespace Squash.Shared.Parsers.Esf
 
             // Find tournamentDay in database, create if not exists. Update result.TournamentDay.TournamentDayId.
             CreateOrUpdateTournamentDay(dbContext, result.TournamentDay, result.Tournament.Id);
-            // Find nationalities in database, create if not exists. Update result.Nationalities' NationalityId.
-            CreateOrUpdateNationalities(dbContext, result.Nationalities);
+            // Find nationalities in database, create if not exists. Update result.Countries' CountryId.
+            CreateOrUpdateCountries(dbContext, result.Countries);
             // Find courts in database, create if not exists. Update result.Courts' CourtId.
             var venueId = ResolveTournamentVenue(dbContext, result.Tournament);
             CreateOrUpdateCourts(dbContext, result.Courts, venueId);
@@ -301,31 +301,31 @@ namespace Squash.Shared.Parsers.Esf
                 tournamentDay.TournamentId = existingDay.TournamentId;
             }
 
-            static void CreateOrUpdateNationalities(IDataContext dbContext, IEnumerable<Nationality> nationalities)
+            static void CreateOrUpdateCountries(IDataContext dbContext, IEnumerable<Country> nationalities)
             {
                 foreach (var nationality in nationalities)
                 {
                     if (string.IsNullOrWhiteSpace(nationality.Code))
                     {
-                        throw new InvalidOperationException("Nationality.Code cannot be null or empty.");
+                        throw new InvalidOperationException("Country.Code cannot be null or empty.");
                     }
 
-                    var existingNationality = dbContext.Nationalities
+                    var existingCountry = dbContext.Countries
                         .FirstOrDefault(n => n.Code == nationality.Code);
 
-                    if (existingNationality == null)
+                    if (existingCountry == null)
                     {
-                        existingNationality = new Nationality
+                        existingCountry = new Country
                         {
                             Code = nationality.Code
                         };
-                        dbContext.Nationalities.Add(existingNationality);
+                        dbContext.Countries.Add(existingCountry);
                     }
 
-                    existingNationality.Name = nationality.Name;
+                    existingCountry.Nationality = nationality.Nationality;
 
                     dbContext.SaveChanges();
-                    nationality.Id = existingNationality.Id;
+                    nationality.Id = existingCountry.Id;
                 }
             }
 
@@ -525,11 +525,11 @@ namespace Squash.Shared.Parsers.Esf
 
                     existingPlayer.Name = player.Name;
                     existingPlayer.EsfMemberId = player.EsfMemberId;
-                    existingPlayer.NationalityId = player.Nationality?.Id;
+                    existingPlayer.CountryId = player.Country?.Id;
 
                     dbContext.SaveChanges();
                     player.Id = existingPlayer.Id;
-                    player.NationalityId = existingPlayer.NationalityId;
+                    player.CountryId = existingPlayer.CountryId;
 
                     // Get TournamentPlayerId from the dictionary
                     var tournamentPlayerId = tournamentPlayerIds.ContainsKey(player) ? tournamentPlayerIds[player] : (int?)null;
@@ -699,9 +699,9 @@ namespace Squash.Shared.Parsers.Esf
             {
                 existingTournament.Regulations = tournament.Regulations;
             }
-            if (tournament.NationalityId > 0)
+            if (tournament.CountryId > 0)
             {
-                existingTournament.NationalityId = tournament.NationalityId;
+                existingTournament.CountryId = tournament.CountryId;
             }
             existingTournament.EntitySourceId = tournament.EntitySourceId;
 
@@ -821,3 +821,7 @@ namespace Squash.Shared.Parsers.Esf
         }
     }
 }
+
+
+
+
