@@ -10,6 +10,7 @@
         : path;
     var switchUrl = string.IsNullOrEmpty(trimmedPath) ? targetPrefix : targetPrefix + trimmedPath;
     var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var homeUrl = "/" + cultureSegment;
     var loginUrl = Url.Action("Login", "Account", new { area = "Identity", returnUrl });
     var registerUrl = Url.Action("Register", "Account", new { area = "Public", culture = cultureSegment, returnUrl });
     var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
@@ -38,38 +39,117 @@
     {
         <link rel="canonical" href="@canonicalUrl" />
     }
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/coreui/dist/css/coreui.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/simplebar/dist/simplebar.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/shared.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/public.css" asp-append-version="true" />
     @RenderSection("Head", required: false)
 </head>
-<body class="bg-body-tertiary min-vh-100 d-flex flex-column">
-    <header>
-        <nav class="d-flex align-items-center justify-content-between">
-            <div class="d-flex gap-2">
-                <a href="@switchUrl">
-                @(isBg ? Localizer["SwitchToEn"] : Localizer["SwitchToBg"])
-                </a>
+<body class="public-shell min-vh-100 d-flex flex-column">
+    <header class="public-header">
+        <div class="public-topbar">
+            <div class="container d-flex align-items-center justify-content-between gap-3">
+                <div class="d-flex align-items-center gap-3 flex-grow-1">
+                    <a class="public-brand" href="@homeUrl">ima.bg</a>
+                    <div class="public-search input-group">
+                        <span class="input-group-text">
+                            <svg class="icon"><use xlink:href="/images/icons.svg#cil-magnifying-glass"></use></svg>
+                        </span>
+                        <input type="search" class="form-control" placeholder="@Localizer["SearchPlaceholder"]" />
+                    </div>
+                </div>
+                <div class="public-actions d-flex align-items-center gap-2">
+                    @if (isAuthenticated)
+                    {
+                        <button type="button" class="btn btn-ghost-light public-icon-btn" aria-label="@Localizer["Notifications"]">
+                            <svg class="icon"><use xlink:href="/images/icons.svg#cil-bell"></use></svg>
+                        </button>
+                        <button type="button" class="btn btn-ghost-light public-icon-btn" aria-label="@Localizer["Messages"]">
+                            <svg class="icon"><use xlink:href="/images/icons.svg#cil-envelope-open"></use></svg>
+                        </button>
+                        <button type="button" class="btn btn-ghost-light public-icon-btn" aria-label="@Localizer["Calendar"]">
+                            <svg class="icon"><use xlink:href="/images/icons.svg#cil-calendar"></use></svg>
+                        </button>
+                        <form asp-action="Logout" asp-controller="Account" asp-area="Identity" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-light">@Localizer["Logout"]</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a href="@loginUrl" class="btn btn-outline-light">@Localizer["Login"]</a>
+                        <a href="@registerUrl" class="btn btn-light">@Localizer["Register"]</a>
+                    }
+                    <a class="public-lang" href="@switchUrl">
+                        @(isBg ? Localizer["SwitchToEn"] : Localizer["SwitchToBg"])
+                    </a>
+                </div>
             </div>
-            <div class="d-flex gap-3">
-                @if (isAuthenticated)
-                {
-                    <form asp-action="Logout" asp-controller="Account" asp-area="Identity" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-link p-0">@Localizer["Logout"]</button>
-                    </form>
-                }
-                else
-                {
-                    <a href="@loginUrl">@Localizer["Login"]</a>
-                    <a href="@registerUrl">@Localizer["Register"]</a>
-                }
+        </div>
+        @if (isAuthenticated)
+        {
+            <div class="public-subnav">
+                <div class="container">
+                    <nav class="nav nav-pills public-pills">
+                        <a class="nav-link" href="@($"{homeUrl}/dashboard")">@Localizer["Dashboard"]</a>
+                        <a class="nav-link" href="@($"{homeUrl}/matches")">@Localizer["Matches"]</a>
+                        <a class="nav-link" href="@($"{homeUrl}/events")">@Localizer["Events"]</a>
+                        <a class="nav-link" href="@($"{homeUrl}/membership")">@Localizer["Membership"]</a>
+                        <a class="nav-link" href="@($"{homeUrl}/my-tournaments")">@Localizer["MyTournaments"]</a>
+                    </nav>
+                </div>
             </div>
-        </nav>
+        }
     </header>
     <main>
         @RenderBody()
     </main>
+    <footer class="public-footer mt-auto">
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-12 col-lg-4">
+                    <h6 class="footer-title">@Localizer["FooterRankedinTitle"]</h6>
+                    <ul class="footer-list">
+                        <li><a href="#">@Localizer["FooterWhatIsRankedin"]</a></li>
+                        <li><a href="#">@Localizer["FooterRankedinPlayers"]</a></li>
+                        <li><a href="#">@Localizer["FooterRankedinClubs"]</a></li>
+                        <li><a href="#">@Localizer["FooterClubLeague"]</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-4">
+                    <h6 class="footer-title">@Localizer["FooterGeneralTitle"]</h6>
+                    <ul class="footer-list">
+                        <li><a href="#">@Localizer["FooterUserManual"]</a></li>
+                        <li><a href="#">@Localizer["FooterFaq"]</a></li>
+                        <li><a href="#">@Localizer["FooterPricing"]</a></li>
+                        <li><a href="#">@Localizer["FooterTerms"]</a></li>
+                        <li><a href="#">@Localizer["FooterDataProtection"]</a></li>
+                        <li><a href="#">@Localizer["FooterPrivacy"]</a></li>
+                        <li><a href="#">@Localizer["FooterCookie"]</a></li>
+                        <li><a href="#">@Localizer["FooterFederations"]</a></li>
+                        <li><a href="#">@Localizer["FooterChangelog"]</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-4">
+                    <h6 class="footer-title">@Localizer["FooterOfficeTitle"]</h6>
+                    <div class="footer-contact">
+                        <div>Rankedin AS</div>
+                        <div>Lysaker Torg 8</div>
+                        <div>1366 Lysaker</div>
+                        <div>Norway</div>
+                        <div class="mt-2"><a href="mailto:info@rankedin.com">info@rankedin.com</a></div>
+                    </div>
+                    <h6 class="footer-title mt-3">@Localizer["FooterSupportTitle"]</h6>
+                    <div class="footer-contact">
+                        <div><a href="mailto:support@rankedin.com">support@rankedin.com</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
     <script src="~/lib/coreui/dist/js/coreui.bundle.min.js" asp-append-version="true"></script>
     <script src="~/lib/simplebar/dist/simplebar.min.js" asp-append-version="true"></script>

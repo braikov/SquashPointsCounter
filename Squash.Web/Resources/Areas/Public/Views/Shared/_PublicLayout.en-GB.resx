@@ -30,4 +30,82 @@
   <data name="Logout" xml:space="preserve">
     <value>Logout</value>
   </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Search players, events, or clubs</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Calendar</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Matches" xml:space="preserve">
+    <value>Matches</value>
+  </data>
+  <data name="Events" xml:space="preserve">
+    <value>Events</value>
+  </data>
+  <data name="Membership" xml:space="preserve">
+    <value>Membership</value>
+  </data>
+  <data name="MyTournaments" xml:space="preserve">
+    <value>My tournaments</value>
+  </data>
+  <data name="FooterRankedinTitle" xml:space="preserve">
+    <value>Rankedin</value>
+  </data>
+  <data name="FooterWhatIsRankedin" xml:space="preserve">
+    <value>What is Rankedin?</value>
+  </data>
+  <data name="FooterRankedinPlayers" xml:space="preserve">
+    <value>Rankedin for Players</value>
+  </data>
+  <data name="FooterRankedinClubs" xml:space="preserve">
+    <value>Rankedin for Clubs</value>
+  </data>
+  <data name="FooterClubLeague" xml:space="preserve">
+    <value>Club League</value>
+  </data>
+  <data name="FooterGeneralTitle" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="FooterUserManual" xml:space="preserve">
+    <value>User Manual</value>
+  </data>
+  <data name="FooterFaq" xml:space="preserve">
+    <value>FAQ</value>
+  </data>
+  <data name="FooterPricing" xml:space="preserve">
+    <value>Pricing</value>
+  </data>
+  <data name="FooterTerms" xml:space="preserve">
+    <value>Terms and Conditions</value>
+  </data>
+  <data name="FooterDataProtection" xml:space="preserve">
+    <value>Data Protection Statement</value>
+  </data>
+  <data name="FooterPrivacy" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="FooterCookie" xml:space="preserve">
+    <value>Cookie policy</value>
+  </data>
+  <data name="FooterFederations" xml:space="preserve">
+    <value>Info for Federations</value>
+  </data>
+  <data name="FooterChangelog" xml:space="preserve">
+    <value>Changelog</value>
+  </data>
+  <data name="FooterOfficeTitle" xml:space="preserve">
+    <value>Office</value>
+  </data>
+  <data name="FooterSupportTitle" xml:space="preserve">
+    <value>Support</value>
+  </data>
 </root>

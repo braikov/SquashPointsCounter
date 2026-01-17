@@ -70,7 +70,12 @@ namespace Squash.Web.Areas.Identity.Controllers
                     return Redirect(model.ReturnUrl);
                 }
 
-                return RedirectToAction("Index", "Dashboard", new { area = "Administration" });
+                if (user != null && await userManager.IsInRoleAsync(user, "Admin"))
+                {
+                    return RedirectToAction("Index", "Dashboard", new { area = "Administration" });
+                }
+
+                return Redirect("/");
             }
 
             if (result.IsLockedOut)

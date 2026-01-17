@@ -12,6 +12,26 @@ namespace Squash.Identity.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "AccountEvents",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EventType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
+                    UserAgent = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    MetadataJson = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DateUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountEvents", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -191,6 +211,16 @@ namespace Squash.Identity.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AccountEvents_Email_EventType_DateCreated",
+                table: "AccountEvents",
+                columns: new[] { "Email", "EventType", "DateCreated" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AccountEvents_UserId_EventType_DateCreated",
+                table: "AccountEvents",
+                columns: new[] { "UserId", "EventType", "DateCreated" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
@@ -243,6 +273,9 @@ namespace Squash.Identity.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AccountEvents");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

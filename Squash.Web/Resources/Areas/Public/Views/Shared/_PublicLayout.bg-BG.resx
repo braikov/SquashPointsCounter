@@ -19,15 +19,93 @@
     <value>Български</value>
   </data>
   <data name="SwitchToEn" xml:space="preserve">
-    <value>Английски</value>
+    <value>English</value>
   </data>
   <data name="Login" xml:space="preserve">
     <value>Вход</value>
   </data>
   <data name="Register" xml:space="preserve">
-    <value>Регистрация</value>
+    <value>Създай акаунт</value>
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Изход</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Търси играчи, събития или клубове</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Известия</value>
+  </data>
+  <data name="Messages" xml:space="preserve">
+    <value>Съобщения</value>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Календар</value>
+  </data>
+  <data name="Dashboard" xml:space="preserve">
+    <value>Табло</value>
+  </data>
+  <data name="Matches" xml:space="preserve">
+    <value>Мачове</value>
+  </data>
+  <data name="Events" xml:space="preserve">
+    <value>Турнири</value>
+  </data>
+  <data name="Membership" xml:space="preserve">
+    <value>Членства</value>
+  </data>
+  <data name="MyTournaments" xml:space="preserve">
+    <value>Моите турнири</value>
+  </data>
+  <data name="FooterRankedinTitle" xml:space="preserve">
+    <value>Rankedin</value>
+  </data>
+  <data name="FooterWhatIsRankedin" xml:space="preserve">
+    <value>Какво е Rankedin?</value>
+  </data>
+  <data name="FooterRankedinPlayers" xml:space="preserve">
+    <value>Rankedin за играчи</value>
+  </data>
+  <data name="FooterRankedinClubs" xml:space="preserve">
+    <value>Rankedin за клубове</value>
+  </data>
+  <data name="FooterClubLeague" xml:space="preserve">
+    <value>Клубна лига</value>
+  </data>
+  <data name="FooterGeneralTitle" xml:space="preserve">
+    <value>Общи</value>
+  </data>
+  <data name="FooterUserManual" xml:space="preserve">
+    <value>Ръководство за потребители</value>
+  </data>
+  <data name="FooterFaq" xml:space="preserve">
+    <value>Често задавани въпроси</value>
+  </data>
+  <data name="FooterPricing" xml:space="preserve">
+    <value>Цени</value>
+  </data>
+  <data name="FooterTerms" xml:space="preserve">
+    <value>Общи условия</value>
+  </data>
+  <data name="FooterDataProtection" xml:space="preserve">
+    <value>Политика за защита на данните</value>
+  </data>
+  <data name="FooterPrivacy" xml:space="preserve">
+    <value>Политика за поверителност</value>
+  </data>
+  <data name="FooterCookie" xml:space="preserve">
+    <value>Политика за бисквитки</value>
+  </data>
+  <data name="FooterFederations" xml:space="preserve">
+    <value>Информация за федерации</value>
+  </data>
+  <data name="FooterChangelog" xml:space="preserve">
+    <value>Промени</value>
+  </data>
+  <data name="FooterOfficeTitle" xml:space="preserve">
+    <value>Офис</value>
+  </data>
+  <data name="FooterSupportTitle" xml:space="preserve">
+    <value>Поддръжка</value>
   </data>
 </root>
