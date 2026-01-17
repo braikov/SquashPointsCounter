@@ -1,0 +1,21 @@
+{
+    "help": "https://go.microsoft.com/fwlink/?linkid=866610",
+    "dependentFileProviders": {
+        "add": {
+            "fileToFile": {
+                "appsettings.json": [
+                    "appsettings.*.json"
+                ],
+                "log4net.config": [
+                    "log4net.*.config"
+                ],
+                "log4net.Test.config": [
+                    "log4net.Test.*.config"
+                ],
+                "log4net.Development.config": [
+                    "log4net.Development.*.config"
+                ]
+            }
+        }
+    }
+}

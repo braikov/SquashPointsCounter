@@ -9,6 +9,8 @@ using Squash.Identity;
 using Squash.Shared.Logging;
 using Squash.SqlServer;
 using Squash.Web.Localization;
+using Squash.Web.Areas.Public.Services.Routing;
+using Squash.Web.Areas.Public.Services.Sitemap;
 using System.Globalization;
 
 namespace Squash.Web
@@ -47,6 +49,7 @@ namespace Squash.Web
                     .AddDataAnnotationsLocalization();
                 builder.Services.AddRazorPages()
                     .AddViewLocalization();
+                builder.Services.AddHttpContextAccessor();
                 builder.Services.AddDistributedMemoryCache();
                 builder.Services.AddSession(options =>
                 {
@@ -69,6 +72,11 @@ namespace Squash.Web
 
                 builder.Logging.AddLog4Net(new Log4NetProviderOptions { ExternalConfigurationSetup = true });
                 builder.Services.AddScoped<IDataContext, DataContext>();
+                builder.Services.AddScoped<IPublicUrlBuilder, PublicUrlBuilder>();
+                builder.Services.AddScoped<ISitemapEntryStore, DbSitemapEntryStore>();
+                builder.Services.AddScoped<ISitemapEntryProvider, DbSitemapEntryProvider>();
+                builder.Services.AddScoped<ISitemapEntryProvider, TournamentSitemapEntryProvider>();
+                builder.Services.AddScoped<ISitemapBuilder, SitemapBuilder>();
 
                 builder.WebHost.UseStaticWebAssets();
 
@@ -88,6 +96,7 @@ namespace Squash.Web
                 app.UseHttpsRedirection();
                 app.UseStaticFiles();
                 app.UseSession();
+                app.UseRouting();
 
                 var supportedCultures = new[]
                 {
@@ -107,7 +116,25 @@ namespace Squash.Web
                 };
                 app.UseRequestLocalization(localizationOptions);
 
-                app.UseRouting();
+                app.Use(async (context, next) =>
+                {
+                    var routeCulture = context.GetRouteValue("culture") as string;
+                    if (!string.IsNullOrWhiteSpace(routeCulture))
+                    {
+                        var feature = context.Features.Get<IRequestCultureFeature>();
+                        var culture = feature?.RequestCulture.Culture.Name;
+                        if (!string.IsNullOrWhiteSpace(culture))
+                        {
+                            var cookieValue = CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture));
+                            context.Response.Cookies.Append(
+                                CookieRequestCultureProvider.DefaultCookieName,
+                                cookieValue,
+                                new CookieOptions { IsEssential = true, Expires = DateTimeOffset.UtcNow.AddYears(1) });
+                        }
+                    }
+
+                    await next();
+                });
 
                 app.UseAuthentication();
                 app.UseAuthorization();

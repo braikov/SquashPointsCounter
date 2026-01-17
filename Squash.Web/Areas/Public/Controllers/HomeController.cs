@@ -7,7 +7,8 @@ namespace Squash.Web.Areas.Public.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            var model = new Models.PageViewModel();
+            return View(model);
         }
     }
 }

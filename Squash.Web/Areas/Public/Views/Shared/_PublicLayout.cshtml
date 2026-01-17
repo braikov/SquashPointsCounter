@@ -8,6 +8,13 @@
         ? path.Substring(3)
         : path;
     var switchUrl = string.IsNullOrEmpty(trimmedPath) ? targetPrefix : targetPrefix + trimmedPath;
+
+    var baseModel = Model as Squash.Web.Areas.Public.Models.PageViewModel;
+    var pageTitle = baseModel?.Title;
+    var siteTitle = Localizer["SiteTitle"].Value;
+    var fullTitle = string.IsNullOrWhiteSpace(pageTitle) ? siteTitle : $"{pageTitle} | {siteTitle}";
+    var metaDescription = baseModel?.MetaDescription;
+    var canonicalUrl = baseModel?.CanonicalUrl;
 }
 
 <!DOCTYPE html>
@@ -15,7 +22,15 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@Localizer["SiteTitle"]</title>
+    <title>@fullTitle</title>
+    @if (!string.IsNullOrWhiteSpace(metaDescription))
+    {
+        <meta name="description" content="@metaDescription" />
+    }
+    @if (!string.IsNullOrWhiteSpace(canonicalUrl))
+    {
+        <link rel="canonical" href="@canonicalUrl" />
+    }
 </head>
 <body>
     <header>

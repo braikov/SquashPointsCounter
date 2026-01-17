@@ -24,6 +24,7 @@ namespace Squash.SqlServer
         public DbSet<MatchGame> MatchGames { get; set; }
         public DbSet<MatchGameEventLog> MatchGameEventLogs { get; set; }
         public DbSet<GameLog> GameLogs { get; set; }
+        public DbSet<SitemapEntry> SitemapEntries { get; set; }
 
 #if DEBUG
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder

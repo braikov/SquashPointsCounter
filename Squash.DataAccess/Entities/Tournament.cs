@@ -1,5 +1,9 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace Squash.DataAccess.Entities
 {
+    [Index(nameof(Slug))]
+    [Index(nameof(IsPublished))]
     public class Tournament : Squash.DataAccess.Entities.EntityBase
     {
         public int UserId { get; set; }
@@ -11,6 +15,9 @@ namespace Squash.DataAccess.Entities
         public string ExternalCode { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string? OrganizationCode { get; set; }
+        [System.ComponentModel.DataAnnotations.MaxLength(200)]
+        public string? Slug { get; set; }
+        public bool IsPublished { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public DateTime? EntryOpensDate { get; set; }

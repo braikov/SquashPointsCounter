@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Squash.SqlServer;
 
@@ -11,9 +12,11 @@ using Squash.SqlServer;
 namespace Squash.SqlServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260117134345_AddTournamentSlugAndIsPublished")]
+    partial class AddTournamentSlugAndIsPublished
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -427,51 +430,6 @@ namespace Squash.SqlServer.Migrations
                     b.ToTable("Rounds");
                 });
 
-            modelBuilder.Entity("Squash.DataAccess.Entities.SitemapEntry", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ChangeFrequency")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Culture")
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("DateUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("LastOperationUserId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal?>("Priority")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("nvarchar(2048)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Culture");
-
-                    b.HasIndex("IsEnabled");
-
-                    b.ToTable("SitemapEntries");
-                });
-
             modelBuilder.Entity("Squash.DataAccess.Entities.Tournament", b =>
                 {
                     b.Property<int>("Id")
@@ -539,11 +497,7 @@ namespace Squash.SqlServer.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("IsPublished");
-
                     b.HasIndex("NationalityId");
-
-                    b.HasIndex("Slug");
 
                     b.HasIndex("UserId");
 
