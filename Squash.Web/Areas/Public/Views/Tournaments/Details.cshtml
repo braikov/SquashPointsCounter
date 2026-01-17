@@ -1,0 +1,28 @@
+@model Squash.Web.Areas.Public.Models.TournamentDetailsViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    Model.Title = Model.Name;
+    Model.MetaDescription = Localizer["MetaDescription", Model.Name].Value;
+    Model.CanonicalUrl = Url.Action("Details", "Tournaments", new { culture = Model.Culture, id = Model.Id, slug = Model.Slug }, Context.Request.Scheme);
+}
+
+<h1>@Model.Name</h1>
+
+@if (Model.StartDate.HasValue || Model.EndDate.HasValue)
+{
+    <p>
+        @Localizer["Dates"]:
+        @(Model.StartDate?.ToString("yyyy-MM-dd") ?? "?")
+        -
+        @(Model.EndDate?.ToString("yyyy-MM-dd") ?? "?")
+    </p>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.Regulations))
+{
+    <section>
+        <h2>@Localizer["Regulations"]</h2>
+        <p>@Model.Regulations</p>
+    </section>
+}

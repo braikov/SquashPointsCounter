@@ -16,7 +16,7 @@
     letterNav.AddRange(alphabet);
 }
 
-<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.TournamentName, ActiveTab = "Players" }' />
+<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.TournamentName, ActiveTab = "Players", IsPublished = Model.IsPublished }' />
 
 <div class="row mb-4">
     <div class="col">

@@ -15,7 +15,7 @@
         .ToList();
 }
 
-<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.TournamentName, ActiveTab = "Events" }' />
+<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.TournamentName, ActiveTab = "Events", IsPublished = Model.IsPublished }' />
 
 <div class="row g-4">
     <div class="col-lg-7">

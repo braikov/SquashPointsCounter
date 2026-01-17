@@ -11,7 +11,7 @@
     var opponentTournamentPlayers = ViewBag.OpponentTournamentPlayers as Dictionary<int, int> ?? new Dictionary<int, int>();
 }
 
-<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.Tournament.Name, ActiveTab = "Players" }' />
+<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.Tournament.Name, ActiveTab = "Players", IsPublished = Model.Tournament.IsPublished }' />
 
 <div class="card mb-4">
     <div class="card-body">

@@ -4,6 +4,7 @@ namespace Squash.Web.Areas.Administration.Models
     {
         public int TournamentId { get; set; }
         public string TournamentName { get; set; } = string.Empty;
+        public bool IsPublished { get; set; }
         public string? EventName { get; set; }
         public List<TournamentDrawListItemViewModel> Draws { get; set; } = new();
         public List<TournamentEntryListItemViewModel> Entries { get; set; } = new();

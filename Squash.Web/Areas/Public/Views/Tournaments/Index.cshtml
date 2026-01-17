@@ -1,0 +1,33 @@
+@model Squash.Web.Areas.Public.Models.TournamentListViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    Model.Title = Localizer["Title"].Value;
+}
+
+<h1>@Localizer["Title"]</h1>
+
+@if (Model.Items.Count == 0)
+{
+    <p>@Localizer["Empty"]</p>
+}
+else
+{
+    <ul>
+        @foreach (var item in Model.Items)
+        {
+            var url = Url.Action("Details", "Tournaments", new { culture = Model.Culture, id = item.Id, slug = item.Slug });
+            <li>
+                <a href="@url">@item.Name</a>
+                @if (item.StartDate.HasValue || item.EndDate.HasValue)
+                {
+                    <span>
+                        (@(item.StartDate?.ToString("yyyy-MM-dd") ?? "?")
+                        -
+                        @(item.EndDate?.ToString("yyyy-MM-dd") ?? "?"))
+                    </span>
+                }
+            </li>
+        }
+    </ul>
+}

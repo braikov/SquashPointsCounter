@@ -2,47 +2,57 @@
 
 <h2 class="mb-4">@Model.Name</h2>
 
-<ul class="nav nav-tabs mb-4">
-    <li class="nav-item">
-        <a class="nav-link @(Model.ActiveTab == "Details" ? "active" : "")" 
-           asp-area="Administration" 
-           asp-controller="Tournaments" 
-           asp-action="Details" 
-           asp-route-id="@Model.Id">Overview</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(Model.ActiveTab == "Venues" ? "active" : "")" 
-           asp-area="Administration" 
-           asp-controller="Tournaments" 
-           asp-action="Venues" 
-           asp-route-id="@Model.Id">Venue(s) & Courts</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(Model.ActiveTab == "DayMatches" ? "active" : "")" 
-           asp-area="Administration" 
-           asp-controller="Tournaments" 
-           asp-action="DayMatches" 
-           asp-route-id="@Model.Id">Day Matches</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(Model.ActiveTab == "Players" ? "active" : "")"
-           asp-area="Administration"
-           asp-controller="Tournaments"
-           asp-action="Players"
-           asp-route-id="@Model.Id">Players</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(Model.ActiveTab == "Draws" ? "active" : "")"
-           asp-area="Administration"
-           asp-controller="Tournaments"
-           asp-action="Draws"
-           asp-route-id="@Model.Id">Draws</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link @(Model.ActiveTab == "Events" ? "active" : "")"
-           asp-area="Administration"
-           asp-controller="Tournaments"
-           asp-action="Events"
-           asp-route-id="@Model.Id">Events</a>
-    </li>
-</ul>
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+    <ul class="nav nav-tabs mb-0">
+        <li class="nav-item">
+            <a class="nav-link @(Model.ActiveTab == "Details" ? "active" : "")" 
+               asp-area="Administration" 
+               asp-controller="Tournaments" 
+               asp-action="Details" 
+               asp-route-id="@Model.Id">Overview</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(Model.ActiveTab == "Venues" ? "active" : "")" 
+               asp-area="Administration" 
+               asp-controller="Tournaments" 
+               asp-action="Venues" 
+               asp-route-id="@Model.Id">Venue(s) & Courts</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(Model.ActiveTab == "DayMatches" ? "active" : "")" 
+               asp-area="Administration" 
+               asp-controller="Tournaments" 
+               asp-action="DayMatches" 
+               asp-route-id="@Model.Id">Day Matches</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(Model.ActiveTab == "Players" ? "active" : "")"
+               asp-area="Administration"
+               asp-controller="Tournaments"
+               asp-action="Players"
+               asp-route-id="@Model.Id">Players</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(Model.ActiveTab == "Draws" ? "active" : "")"
+               asp-area="Administration"
+               asp-controller="Tournaments"
+               asp-action="Draws"
+               asp-route-id="@Model.Id">Draws</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link @(Model.ActiveTab == "Events" ? "active" : "")"
+               asp-area="Administration"
+               asp-controller="Tournaments"
+               asp-action="Events"
+               asp-route-id="@Model.Id">Events</a>
+        </li>
+    </ul>
+    <form asp-action="SetPublishStatus" asp-controller="Tournaments" asp-area="Administration" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Id" />
+        <input type="hidden" name="publish" value="@(Model.IsPublished ? "false" : "true")" />
+        <button type="submit" class="btn btn-outline-success">
+            @(Model.IsPublished ? "Pause" : "Publish")
+        </button>
+    </form>
+</div>

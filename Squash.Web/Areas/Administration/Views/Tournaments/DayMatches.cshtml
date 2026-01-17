@@ -11,7 +11,7 @@
     var hasFilters = !string.IsNullOrEmpty(Model.FilterEvent) || !string.IsNullOrEmpty(Model.FilterCountry) || !string.IsNullOrEmpty(Model.FilterDraw) || !string.IsNullOrEmpty(Model.FilterRound) || !string.IsNullOrEmpty(Model.FilterCourt);
 }
 
-<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.TournamentName, ActiveTab = "DayMatches" }' />
+<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.TournamentId, Name = Model.TournamentName, ActiveTab = "DayMatches", IsPublished = Model.IsPublished }' />
 
 <div class="row mb-4">
     <div class="col">

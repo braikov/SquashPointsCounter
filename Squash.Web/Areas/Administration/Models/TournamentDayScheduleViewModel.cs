@@ -7,6 +7,7 @@ namespace Squash.Web.Areas.Administration.Models
     {
         public int TournamentId { get; set; }
         public string TournamentName { get; set; } = string.Empty;
+        public bool IsPublished { get; set; }
         public int? SelectedDayId { get; set; }
         public DateTime? SelectedDate { get; set; }
         public List<TournamentDayTabViewModel> Days { get; set; } = new();

@@ -4,7 +4,7 @@
     ViewData["Title"] = Model.Name;
 }
 
-<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.Id, Name = Model.Name, ActiveTab = "Details" }' />
+<partial name="_TournamentTabs" model='new TournamentHeaderViewModel { Id = Model.Id, Name = Model.Name, ActiveTab = "Details", IsPublished = Model.IsPublished }' />
 
 <div class="card mb-4">
     <div class="card-body">

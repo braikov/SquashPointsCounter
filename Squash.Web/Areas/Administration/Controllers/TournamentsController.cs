@@ -182,7 +182,8 @@ namespace Squash.Web.Areas.Administration.Controllers
                 ClosingSigninDate = tournament.ClosingSigninDate,
                 WithdrawalDeadlineDate = tournament.WithdrawalDeadlineDate,
                 Regulations = tournament.Regulations,
-                NationalityId = tournament.NationalityId
+                NationalityId = tournament.NationalityId,
+                IsPublished = tournament.IsPublished
             };
             PrepareViewModel(model);
 
@@ -219,6 +220,25 @@ namespace Squash.Web.Areas.Administration.Controllers
             _dataContext.SaveChanges();
 
             return RedirectToAction(nameof(Details), new { id = model.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SetPublishStatus(int id, bool publish)
+        {
+            var tournament = _dataContext.Tournaments
+                .FirstOrDefault(t => t.Id == id);
+
+            if (tournament == null)
+            {
+                return NotFound();
+            }
+
+            tournament.IsPublished = publish;
+            tournament.DateUpdated = DateTime.UtcNow;
+            _dataContext.SaveChanges();
+
+            return RedirectToAction(nameof(Details), new { id });
         }
 
         [HttpGet]
@@ -394,6 +414,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 TournamentId = tournament.Id,
                 TournamentName = tournament.Name,
+                IsPublished = tournament.IsPublished,
                 SelectedDayId = selectedDay?.Id,
                 SelectedDate = selectedDay?.Date,
                 Days = days.Select(d => new TournamentDayTabViewModel
@@ -565,6 +586,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 TournamentId = tournament.Id,
                 TournamentName = tournament.Name,
+                IsPublished = tournament.IsPublished,
                 PlayerGroups = playerGroups,
                 FilterEvent = eventName,
                 FilterCountry = country,
@@ -626,7 +648,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 }
             }
 
-            var model = BuildEventsViewModel(id, tournament.Name, form);
+            var model = BuildEventsViewModel(id, tournament.Name, tournament.IsPublished, form);
             return View(model);
         }
 
@@ -678,6 +700,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 TournamentId = id,
                 TournamentName = tournament.Name,
+                IsPublished = tournament.IsPublished,
                 EventName = eventName,
                 Draws = draws,
                 Entries = entries
@@ -700,13 +723,13 @@ namespace Squash.Web.Areas.Administration.Controllers
 
             if (!TryResolveAge(model, out var age, out var direction))
             {
-                var invalidModel = BuildEventsViewModel(model.TournamentId, tournament.Name, model);
+                var invalidModel = BuildEventsViewModel(model.TournamentId, tournament.Name, tournament.IsPublished, model);
                 return View("Events", invalidModel);
             }
 
             if (!ModelState.IsValid)
             {
-                var invalidModel = BuildEventsViewModel(model.TournamentId, tournament.Name, model);
+                var invalidModel = BuildEventsViewModel(model.TournamentId, tournament.Name, tournament.IsPublished, model);
                 return View("Events", invalidModel);
             }
 
@@ -900,7 +923,7 @@ namespace Squash.Web.Areas.Administration.Controllers
                 .ToList();
         }
 
-        private TournamentEventsViewModel BuildEventsViewModel(int tournamentId, string tournamentName, TournamentEventEditViewModel form)
+        private TournamentEventsViewModel BuildEventsViewModel(int tournamentId, string tournamentName, bool isPublished, TournamentEventEditViewModel form)
         {
             var events = _dataContext.Events
                 .AsNoTracking()
@@ -922,6 +945,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 TournamentId = tournamentId,
                 TournamentName = tournamentName,
+                IsPublished = isPublished,
                 Events = events,
                 EventForm = form
             };
@@ -1117,6 +1141,7 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 TournamentId = tournament.Id,
                 TournamentName = tournament.Name,
+                IsPublished = tournament.IsPublished,
                 NationalityId = tournament.NationalityId,
                 AvailableVenues = availableVenues,
                 AssignedVenues = tournament.TournamentVenues
