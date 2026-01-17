@@ -1,7 +1,7 @@
-# Spec.md — “RankedIn-like” Monolith (ASP.NET Core Razor + SignalR)
+# Spec.md — “Ima.bg-like” Monolith (ASP.NET Core Razor + SignalR)
 
 ## 1. Purpose
-Build a **single, monolithic web application** that reproduces the **core functionality** of Rankedin-style platform:
+Build a **single, monolithic web application** that reproduces the **core functionality** of Ima.bg-style platform:
 - player accounts & profiles
 - organizations (clubs/federations/groups)
 - rankings (with point levels + approvals)
@@ -12,7 +12,7 @@ Build a **single, monolithic web application** that reproduces the **core functi
 
 This spec focuses on **functional parity** (not UI/branding/text copying).
 
-Primary reference behaviors are from Rankedin public site + their User Manual/FAQ. :contentReference[oaicite:0]{index=0}
+Primary reference behaviors are from Ima.bg public site + their User Manual/FAQ. :contentReference[oaicite:0]{index=0}
 
 ---
 
@@ -180,7 +180,7 @@ Ranking privacy policy options include **Open / Closed / With permission**. :con
 - Step 8: Matches & Video: schedule matches, publish schedule, streaming court integration (parity target). :contentReference[oaicite:38]{index=38}
 
 ### Draw types
-- Implement 4 draw types + stages (as in Rankedin). :contentReference[oaicite:39]{index=39}
+- Implement 4 draw types + stages (as in Ima.bg). :contentReference[oaicite:39]{index=39}
 - Each draw generation creates matches, rounds, bracket metadata.
 - Allow admin manual adjustments before event start.
 
@@ -295,7 +295,7 @@ To support “full clone but pick later”, implement in this order for lowest r
 ---
 
 ## 12. Open items (need UI parity confirmation)
-These exist in Rankedin ecosystem but require closer UI inspection / deeper manual pages to spec precisely:
+These exist in Ima.bg ecosystem but require closer UI inspection / deeper manual pages to spec precisely:
 - exact set of “four draw types” names + all options & stage combinations (we will mirror the manual pages per type)
 - sponsor logo placement rules
 - federation membership/license management (mentioned in changelog)

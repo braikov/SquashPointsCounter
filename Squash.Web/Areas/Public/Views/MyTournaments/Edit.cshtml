@@ -1,0 +1,58 @@
+@model Squash.Web.Areas.Public.Models.MyTournamentEditViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    Model.Title = Localizer["Title"].Value;
+}
+
+<div class="container py-4">
+    <div class="mb-3">
+        <h1 class="h3 mb-1">@Localizer["Title"]</h1>
+        <p class="text-body-secondary mb-0">@Localizer["Subtitle"]</p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="Edit" asp-controller="MyTournaments" asp-area="Public" asp-route-culture="@Model.Culture" asp-route-id="@Model.Id" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Name" class="form-label">@Localizer["Name"]</label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="CountryId" class="form-label">@Localizer["Country"]</label>
+                    <select asp-for="CountryId" asp-items="Model.Countries" class="form-select">
+                        <option value="">--</option>
+                    </select>
+                    <span asp-validation-for="CountryId" class="text-danger small"></span>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="StartDate" class="form-label">@Localizer["StartDate"]</label>
+                        <input asp-for="StartDate" class="form-control" type="date" />
+                        <span asp-validation-for="StartDate" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="EndDate" class="form-label">@Localizer["EndDate"]</label>
+                        <input asp-for="EndDate" class="form-control" type="date" />
+                        <span asp-validation-for="EndDate" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">@Localizer["SaveButton"]</button>
+                    <a class="btn btn-link" href="@Url.Action("Index", "MyTournaments", new { culture = Model.Culture })">@Localizer["Cancel"]</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

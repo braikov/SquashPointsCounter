@@ -57,17 +57,17 @@
   <data name="MyTournaments" xml:space="preserve">
     <value>Моите турнири</value>
   </data>
-  <data name="FooterRankedinTitle" xml:space="preserve">
-    <value>Rankedin</value>
+  <data name="FooterIma.bgTitle" xml:space="preserve">
+    <value>Ima.bg</value>
   </data>
-  <data name="FooterWhatIsRankedin" xml:space="preserve">
-    <value>Какво е Rankedin?</value>
+  <data name="FooterWhatIsIma.bg" xml:space="preserve">
+    <value>Какво е Ima.bg?</value>
   </data>
-  <data name="FooterRankedinPlayers" xml:space="preserve">
-    <value>Rankedin за играчи</value>
+  <data name="FooterIma.bgPlayers" xml:space="preserve">
+    <value>Ima.bg за играчи</value>
   </data>
-  <data name="FooterRankedinClubs" xml:space="preserve">
-    <value>Rankedin за клубове</value>
+  <data name="FooterIma.bgClubs" xml:space="preserve">
+    <value>Ima.bg за клубове</value>
   </data>
   <data name="FooterClubLeague" xml:space="preserve">
     <value>Клубна лига</value>

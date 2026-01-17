@@ -57,17 +57,17 @@
   <data name="MyTournaments" xml:space="preserve">
     <value>My tournaments</value>
   </data>
-  <data name="FooterRankedinTitle" xml:space="preserve">
-    <value>Rankedin</value>
+  <data name="FooterIma.bgTitle" xml:space="preserve">
+    <value>Ima.bg</value>
   </data>
-  <data name="FooterWhatIsRankedin" xml:space="preserve">
-    <value>What is Rankedin?</value>
+  <data name="FooterWhatIsIma.bg" xml:space="preserve">
+    <value>What is Ima.bg?</value>
   </data>
-  <data name="FooterRankedinPlayers" xml:space="preserve">
-    <value>Rankedin for Players</value>
+  <data name="FooterIma.bgPlayers" xml:space="preserve">
+    <value>Ima.bg for Players</value>
   </data>
-  <data name="FooterRankedinClubs" xml:space="preserve">
-    <value>Rankedin for Clubs</value>
+  <data name="FooterIma.bgClubs" xml:space="preserve">
+    <value>Ima.bg for Clubs</value>
   </data>
   <data name="FooterClubLeague" xml:space="preserve">
     <value>Club League</value>

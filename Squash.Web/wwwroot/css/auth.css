@@ -1,4 +1,11 @@
-﻿/* Helpful defaults for auth pages */
+/* Helpful defaults for auth pages */
+:root {
+    --cui-primary: #2b7a5e;
+    --cui-primary-rgb: 43, 122, 94;
+    --cui-link-color: #2b7a5e;
+    --cui-link-hover-color: #246d55;
+}
+
 .auth-card {
     border-radius: .5rem;
 }
@@ -12,6 +19,25 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.btn-primary {
+    --cui-btn-bg: #2b7a5e;
+    --cui-btn-border-color: #2b7a5e;
+    --cui-btn-hover-bg: #246d55;
+    --cui-btn-hover-border-color: #246d55;
+    --cui-btn-active-bg: #1f5f4a;
+    --cui-btn-active-border-color: #1f5f4a;
+}
+
+.btn-link,
+a {
+    color: #2b7a5e;
+}
+
+.btn-link:hover,
+a:hover {
+    color: #246d55;
 }
 
 @media (max-width: 767.98px) {
