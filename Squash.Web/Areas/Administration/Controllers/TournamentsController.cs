@@ -16,6 +16,7 @@ namespace Squash.Web.Areas.Administration.Controllers
     {
         private readonly IDataContext _dataContext = dataContext;
         private readonly UserManager<IdentityUser> _userManager = userManager;
+        private const string AdminRole = "Administrator";
 
         public IActionResult Index(string? status, int page = 1)
         {
@@ -23,6 +24,16 @@ namespace Squash.Web.Areas.Administration.Controllers
             var today = DateTime.Today;
 
             var query = _dataContext.Tournaments.AsQueryable();
+            if (!IsAdminUser())
+            {
+                var currentUserId = GetCurrentAppUserId();
+                if (!currentUserId.HasValue)
+                {
+                    return Forbid();
+                }
+
+                query = query.Where(t => t.UserId == currentUserId.Value);
+            }
 
             // Apply status filter
             if (!string.IsNullOrEmpty(status))
@@ -207,6 +218,10 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 return NotFound();
             }
+            if (!CanAccessTournament(tournament))
+            {
+                return Forbid();
+            }
 
             tournament.Name = model.Name?.Trim() ?? string.Empty;
             tournament.StartDate = model.StartDate;
@@ -233,6 +248,10 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 return NotFound();
             }
+            if (!CanAccessTournament(tournament))
+            {
+                return Forbid();
+            }
 
             tournament.IsPublished = publish;
             tournament.DateUpdated = DateTime.UtcNow;
@@ -251,6 +270,10 @@ namespace Squash.Web.Areas.Administration.Controllers
             if (tournament == null)
             {
                 return NotFound();
+            }
+            if (!CanAccessTournament(tournament))
+            {
+                return Forbid();
             }
 
             var days = _dataContext.TournamentDays
@@ -452,6 +475,10 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 return NotFound();
             }
+            if (!CanAccessTournament(tournament))
+            {
+                return Forbid();
+            }
 
             var matchEntities = _dataContext.Matches
                 .AsNoTracking()
@@ -616,6 +643,10 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 return NotFound();
             }
+            if (!CanAccessTournament(tournament))
+            {
+                return Forbid();
+            }
 
             var form = new TournamentEventEditViewModel
             {
@@ -662,6 +693,10 @@ namespace Squash.Web.Areas.Administration.Controllers
             if (tournament == null)
             {
                 return NotFound();
+            }
+            if (!CanAccessTournament(tournament))
+            {
+                return Forbid();
             }
 
             string? eventName = null;
@@ -720,6 +755,10 @@ namespace Squash.Web.Areas.Administration.Controllers
             {
                 return NotFound();
             }
+            if (!CanAccessTournament(tournament))
+            {
+                return Forbid();
+            }
 
             if (!TryResolveAge(model, out var age, out var direction))
             {
@@ -766,6 +805,18 @@ namespace Squash.Web.Areas.Administration.Controllers
                 .FirstOrDefault(e => e.TournamentId == id && e.Id == eventId);
             if (entity != null)
             {
+                var tournament = _dataContext.Tournaments
+                    .AsNoTracking()
+                    .FirstOrDefault(t => t.Id == id);
+                if (tournament == null)
+                {
+                    return NotFound();
+                }
+                if (!CanAccessTournament(tournament))
+                {
+                    return Forbid();
+                }
+
                 _dataContext.Events.Remove(entity);
                 _dataContext.SaveChanges();
             }
@@ -1097,6 +1148,52 @@ namespace Squash.Web.Areas.Administration.Controllers
 
             return Guid.TryParse(segments[1], out tournamentId);
         }
+
+        private bool IsAdminUser()
+        {
+            return User.IsInRole(AdminRole);
+        }
+
+        private int? GetCurrentAppUserId()
+        {
+            var identityUserId = _userManager.GetUserId(User);
+            if (string.IsNullOrWhiteSpace(identityUserId))
+            {
+                return null;
+            }
+
+            return _dataContext.Users
+                .Where(u => u.IdentityUserId == identityUserId)
+                .Select(u => (int?)u.Id)
+                .FirstOrDefault();
+        }
+
+        private bool CanAccessTournament(Tournament tournament)
+        {
+            if (IsAdminUser())
+            {
+                return true;
+            }
+
+            var currentUserId = GetCurrentAppUserId();
+            return currentUserId.HasValue && tournament.UserId == currentUserId.Value;
+        }
+
+        private bool CanAccessTournament(int tournamentId)
+        {
+            if (IsAdminUser())
+            {
+                return true;
+            }
+
+            var currentUserId = GetCurrentAppUserId();
+            if (!currentUserId.HasValue)
+            {
+                return false;
+            }
+
+            return _dataContext.Tournaments.Any(t => t.Id == tournamentId && t.UserId == currentUserId.Value);
+        }
         [HttpGet]
         public IActionResult Venues(int id)
         {
@@ -1110,6 +1207,10 @@ namespace Squash.Web.Areas.Administration.Controllers
             if (tournament == null)
             {
                 return NotFound();
+            }
+            if (!CanAccessTournament(tournament))
+            {
+                return Forbid();
             }
 
             var assignedVenueIds = tournament.TournamentVenues.Select(tv => tv.VenueId).ToList();
@@ -1168,6 +1269,11 @@ namespace Squash.Web.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddVenue(TournamentVenuesViewModel model)
         {
+            if (!CanAccessTournament(model.TournamentId))
+            {
+                return Forbid();
+            }
+
             if (model.SelectedVenueId.HasValue)
             {
                 var exists = _dataContext.TournamentVenues
@@ -1196,6 +1302,11 @@ namespace Squash.Web.Areas.Administration.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult RemoveVenue(int id, int venueId)
         {
+            if (!CanAccessTournament(id))
+            {
+                return Forbid();
+            }
+
             var tv = _dataContext.TournamentVenues
                 .FirstOrDefault(x => x.TournamentId == id && x.VenueId == venueId);
 
@@ -1219,6 +1330,11 @@ namespace Squash.Web.Areas.Administration.Controllers
         [HttpPost]
         public IActionResult ToggleCourt(int id, int courtId, bool assign)
         {
+            if (!CanAccessTournament(id))
+            {
+                return Forbid();
+            }
+
             var current = _dataContext.TournamentCourts
                 .FirstOrDefault(tc => tc.TournamentId == id && tc.CourtId == courtId);
 
@@ -1271,6 +1387,10 @@ namespace Squash.Web.Areas.Administration.Controllers
             if (tournamentPlayer == null)
             {
                 return NotFound();
+            }
+            if (!CanAccessTournament(tournamentPlayer.Tournament))
+            {
+                return Forbid();
             }
 
             // Get all matches for this player in this tournament

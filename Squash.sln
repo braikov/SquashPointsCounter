@@ -28,6 +28,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PublicSite", "PublicSite", "{AAEEF0BB-2221-4C47-9975-9BFD187793B4}"
 	ProjectSection(SolutionItems) = preProject
 		docs\PublicSite\Phase1.md = docs\PublicSite\Phase1.md
+		docs\PublicSite\Phase2.md = docs\PublicSite\Phase2.md
 	EndProjectSection
 EndProject
 Global

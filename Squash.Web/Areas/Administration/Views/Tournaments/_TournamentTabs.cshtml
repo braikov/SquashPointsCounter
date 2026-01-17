@@ -1,46 +1,57 @@
 @model Squash.Web.Areas.Administration.Models.TournamentHeaderViewModel
 
+@{
+    var detailsClass = Model.ActiveTab == "Details" ? "active" : string.Empty;
+    var venuesClass = Model.ActiveTab == "Venues" ? "active" : string.Empty;
+    var dayMatchesClass = Model.ActiveTab == "DayMatches" ? "active" : string.Empty;
+    var playersClass = Model.ActiveTab == "Players" ? "active" : string.Empty;
+    var drawsClass = Model.ActiveTab == "Draws" ? "active" : string.Empty;
+    var eventsClass = Model.ActiveTab == "Events" ? "active" : string.Empty;
+    var publishLabel = Model.IsPublished ? "Pause" : "Publish";
+    var publishValue = Model.IsPublished ? "false" : "true";
+}
+
 <h2 class="mb-4">@Model.Name</h2>
 
 <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
     <ul class="nav nav-tabs mb-0">
         <li class="nav-item">
-            <a class="nav-link @(Model.ActiveTab == "Details" ? "active" : "")" 
+            <a class="nav-link @detailsClass"
                asp-area="Administration" 
                asp-controller="Tournaments" 
                asp-action="Details" 
                asp-route-id="@Model.Id">Overview</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link @(Model.ActiveTab == "Venues" ? "active" : "")" 
+            <a class="nav-link @venuesClass"
                asp-area="Administration" 
                asp-controller="Tournaments" 
                asp-action="Venues" 
                asp-route-id="@Model.Id">Venue(s) & Courts</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link @(Model.ActiveTab == "DayMatches" ? "active" : "")" 
+            <a class="nav-link @dayMatchesClass"
                asp-area="Administration" 
                asp-controller="Tournaments" 
                asp-action="DayMatches" 
                asp-route-id="@Model.Id">Day Matches</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link @(Model.ActiveTab == "Players" ? "active" : "")"
+            <a class="nav-link @playersClass"
                asp-area="Administration"
                asp-controller="Tournaments"
                asp-action="Players"
                asp-route-id="@Model.Id">Players</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link @(Model.ActiveTab == "Draws" ? "active" : "")"
+            <a class="nav-link @drawsClass"
                asp-area="Administration"
                asp-controller="Tournaments"
                asp-action="Draws"
                asp-route-id="@Model.Id">Draws</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link @(Model.ActiveTab == "Events" ? "active" : "")"
+            <a class="nav-link @eventsClass"
                asp-area="Administration"
                asp-controller="Tournaments"
                asp-action="Events"
@@ -48,11 +59,10 @@
         </li>
     </ul>
     <form asp-action="SetPublishStatus" asp-controller="Tournaments" asp-area="Administration" method="post">
-        @Html.AntiForgeryToken()
         <input type="hidden" name="id" value="@Model.Id" />
-        <input type="hidden" name="publish" value="@(Model.IsPublished ? "false" : "true")" />
+        <input type="hidden" name="publish" value="@publishValue" />
         <button type="submit" class="btn btn-outline-success">
-            @(Model.IsPublished ? "Pause" : "Publish")
+            @publishLabel
         </button>
     </form>
 </div>

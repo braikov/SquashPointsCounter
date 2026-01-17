@@ -3,11 +3,16 @@
 @{
     var path = Context.Request.Path.Value ?? "/";
     var isBg = path.StartsWith("/bg", StringComparison.OrdinalIgnoreCase);
+    var cultureSegment = isBg ? "bg" : "en";
     var targetPrefix = isBg ? "/en" : "/bg";
     var trimmedPath = path.StartsWith("/bg", StringComparison.OrdinalIgnoreCase) || path.StartsWith("/en", StringComparison.OrdinalIgnoreCase)
         ? path.Substring(3)
         : path;
     var switchUrl = string.IsNullOrEmpty(trimmedPath) ? targetPrefix : targetPrefix + trimmedPath;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var loginUrl = Url.Action("Login", "Account", new { area = "Identity", returnUrl });
+    var registerUrl = Url.Action("Register", "Account", new { area = "Public", culture = cultureSegment, returnUrl });
+    var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
 
     var baseModel = Model as Squash.Web.Areas.Public.Models.PageViewModel;
     var pageTitle = baseModel?.Title;
@@ -34,10 +39,25 @@
 </head>
 <body>
     <header>
-        <nav>
-            <a href="@switchUrl">
+        <nav class="d-flex align-items-center justify-content-between">
+            <div class="d-flex gap-2">
+                <a href="@switchUrl">
                 @(isBg ? Localizer["SwitchToEn"] : Localizer["SwitchToBg"])
-            </a>
+                </a>
+            </div>
+            <div class="d-flex gap-3">
+                @if (isAuthenticated)
+                {
+                    <form asp-action="Logout" asp-controller="Account" asp-area="Identity" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-link p-0">@Localizer["Logout"]</button>
+                    </form>
+                }
+                else
+                {
+                    <a href="@loginUrl">@Localizer["Login"]</a>
+                    <a href="@registerUrl">@Localizer["Register"]</a>
+                }
+            </div>
         </nav>
     </header>
     <main>

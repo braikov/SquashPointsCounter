@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Squash.DataAccess;
 using Squash.DataAccess.Entities;
 using Squash.SqlServer;
+using Match = Squash.DataAccess.Entities.Match;
 
 namespace Squash.Shared.Parsers.Esf
 {
@@ -268,7 +270,7 @@ namespace Squash.Shared.Parsers.Esf
             // Find players in database, create if not exists. Update result.Players' PlayerId.
             CreateOrUpdatePlayers(dbContext, result.Players, result.Tournament.Id, result.TournamentPlayerIds);
             // Find matches in database, create if not exists. Update result.Matches' MatchId.
-            CreateOrUpdateMatches(dbContext, result.Matches, result.Tournament.Id, result.TournamentDay.Id);
+            CreateOrUpdateMatches(dbContext, (IEnumerable<Match>)result.Matches, result.Tournament.Id, result.TournamentDay.Id);
             // Find match games in database, create if not exists. Update result.Games' MatchGameId.
             CreateOrUpdateMatchGames(dbContext, result.Games);
 
@@ -577,7 +579,7 @@ namespace Squash.Shared.Parsers.Esf
 
                     if (existingMatch == null)
                     {
-                        existingMatch = new Match
+                        existingMatch = new DataAccess.Entities.Match
                         {
                             TournamentId = tournamentId,
                             TournamentDayId = tournamentDayId
@@ -661,6 +663,10 @@ namespace Squash.Shared.Parsers.Esf
             {
                 existingTournament.Name = tournament.Name;
             }
+            if (string.IsNullOrWhiteSpace(existingTournament.Slug) && !string.IsNullOrWhiteSpace(existingTournament.Name))
+            {
+                existingTournament.Slug = GenerateSlug(existingTournament.Name);
+            }
             if (!string.IsNullOrWhiteSpace(tournament.OrganizationCode))
             {
                 existingTournament.OrganizationCode = tournament.OrganizationCode;
@@ -701,6 +707,15 @@ namespace Squash.Shared.Parsers.Esf
 
             dbContext.SaveChanges();
             tournament.Id = existingTournament.Id;
+        }
+
+        private static string GenerateSlug(string name)
+        {
+            var words = Regex.Matches(name, @"[\p{L}\p{N}]+")
+                .Select(match => match.Value.ToLowerInvariant())
+                .Where(value => !string.IsNullOrWhiteSpace(value));
+
+            return string.Join("-", words);
         }
 
         private static void CreateOrUpdateEvents(IDataContext dbContext, IEnumerable<Event> events, int tournamentId)
