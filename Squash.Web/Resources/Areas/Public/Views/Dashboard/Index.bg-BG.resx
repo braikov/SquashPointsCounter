@@ -13,49 +13,34 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Title" xml:space="preserve">
-    <value>Табло</value>
-  </data>
-  <data name="PlayerName" xml:space="preserve">
-    <value>Мирослав Брайков</value>
+    <value>Дашборд</value>
   </data>
   <data name="ImaIdLabel" xml:space="preserve">
     <value>ima.bg:</value>
   </data>
-  <data name="ImaIdValue" xml:space="preserve">
-    <value>IMA00000042</value>
-  </data>
   <data name="EsfIdLabel" xml:space="preserve">
     <value>ESF:</value>
-  </data>
-  <data name="EsfIdValue" xml:space="preserve">
-    <value>ESF793398940</value>
   </data>
   <data name="RankedinIdLabel" xml:space="preserve">
     <value>Rankedin:</value>
   </data>
-  <data name="RankedinIdValue" xml:space="preserve">
-    <value>RKD001234</value>
+  <data name="CountryLabel" xml:space="preserve">
+    <value>Държава:</value>
   </data>
-  <data name="CountryName" xml:space="preserve">
-    <value>България</value>
-  </data>
-  <data name="AgeValue" xml:space="preserve">
-    <value>Възраст: 33</value>
+  <data name="AgeLabel" xml:space="preserve">
+    <value>Възраст:</value>
   </data>
   <data name="UploadPhoto" xml:space="preserve">
     <value>Качи снимка</value>
   </data>
   <data name="ExternalProfilePending" xml:space="preserve">
-    <value>Линкът към външен профил ще бъде добавен скоро.</value>
+    <value>Външният профил ще бъде добавен скоро.</value>
   </data>
   <data name="EditProfile" xml:space="preserve">
     <value>Редакция на профил</value>
   </data>
-  <data name="SkillLevel" xml:space="preserve">
-    <value>Ниво на умения</value>
-  </data>
-  <data name="SkillSubtitle" xml:space="preserve">
-    <value>На база последните мачове</value>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>Няма</value>
   </data>
   <data name="StatsTitle" xml:space="preserve">
     <value>Статистика</value>
@@ -64,22 +49,25 @@
     <value>Общо</value>
   </data>
   <data name="StatsSingles" xml:space="preserve">
-    <value>Сингли</value>
+    <value>Сингъл</value>
   </data>
   <data name="StatsDoubles" xml:space="preserve">
-    <value>Двойки</value>
+    <value>Дубъл</value>
   </data>
   <data name="StatsMixed" xml:space="preserve">
-    <value>Микс</value>
+    <value>Смесени</value>
   </data>
   <data name="WinLossCareer" xml:space="preserve">
-    <value>Победи–Загуби (Кариера)</value>
+    <value>Победи/Загуби (Кариера)</value>
   </data>
   <data name="WinLossYear" xml:space="preserve">
-    <value>Победи–Загуби (Тази година)</value>
+    <value>Победи/Загуби (Тази година)</value>
   </data>
   <data name="FormLabel" xml:space="preserve">
     <value>Форма</value>
+  </data>
+  <data name="FormEmpty" xml:space="preserve">
+    <value>Няма резултати.</value>
   </data>
   <data name="RecentMatches" xml:space="preserve">
     <value>Последни мачове</value>
@@ -89,5 +77,8 @@
   </data>
   <data name="ViewAll" xml:space="preserve">
     <value>Виж всички</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Резултат:</value>
   </data>
 </root>

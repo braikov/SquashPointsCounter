@@ -22,11 +22,13 @@ namespace Squash.Web.Areas.Identity.Controllers
         UserManager<IdentityUser> userManager,
         ApplicationDbContext identityContext,
         IEmailSender emailSender,
-        IStringLocalizer<Validation> validationLocalizer,
+        IStringLocalizerFactory localizerFactory,
         ILogger<AccountController> logger) : Controller
     {
         private const int EmailSendWindowMinutes = 15;
         private const int EmailSendMaxCount = 3;
+        private readonly IStringLocalizer _validationLocalizer =
+            localizerFactory.Create("Shared.Validation", "Squash.Web");
 
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
@@ -162,7 +164,7 @@ namespace Squash.Web.Areas.Identity.Controllers
 
             if (IsEmailRateLimited(model.Email, AccountEventType.PasswordResetSent))
             {
-                ModelState.AddModelError(string.Empty, validationLocalizer["RateLimitExceeded"]);
+                ModelState.AddModelError(string.Empty, _validationLocalizer["RateLimitExceeded"]);
                 return View(model);
             }
 
@@ -208,7 +210,7 @@ namespace Squash.Web.Areas.Identity.Controllers
 
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(code))
             {
-                ModelState.AddModelError(string.Empty, validationLocalizer["InvalidCode"]);
+                ModelState.AddModelError(string.Empty, _validationLocalizer["InvalidCode"]);
             }
 
             return View(model);
@@ -267,14 +269,14 @@ namespace Squash.Web.Areas.Identity.Controllers
                 .FirstOrDefault(x => x.Email == model.Email && x.Code == model.Code);
             if (entry == null)
             {
-                ModelState.AddModelError(string.Empty, validationLocalizer["InvalidCode"]);
+                ModelState.AddModelError(string.Empty, _validationLocalizer["InvalidCode"]);
                 return View(model);
             }
 
             var user = await userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, validationLocalizer["InvalidCode"]);
+                ModelState.AddModelError(string.Empty, _validationLocalizer["InvalidCode"]);
                 return View(model);
             }
 

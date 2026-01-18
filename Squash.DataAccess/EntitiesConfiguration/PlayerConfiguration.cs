@@ -19,7 +19,8 @@ namespace Squash.DataAccess.EntitiesConfiguration
                 EsfMemberId = "ES793398940",
                 DateCreated = new DateTime(2025, 1, 1),
                 DateUpdated = new DateTime(2025, 1, 1),
-                LastOperationUserId = 0
+                LastOperationUserId = 0, 
+                PictureUrl = "/uploads/avatars/player-1-d324714cd7844b81b92dcc694464ccbb.jpg"
             });
         }
     }

@@ -25,15 +25,30 @@
     <value>Паролите не съвпадат.</value>
   </data>
   <data name="InvalidCode" xml:space="preserve">
-    <value>Линкът за смяна е невалиден или изтекъл.</value>
+    <value>Линкът за ресет е невалиден или изтекъл.</value>
   </data>
   <data name="EmailNotConfirmed" xml:space="preserve">
-    <value>Имейлът все още не е потвърден.</value>
+    <value>Имейлът ви все още не е потвърден.</value>
   </data>
   <data name="ConfirmationEmailSent" xml:space="preserve">
-    <value>Ако съществува акаунт, изпратихме имейл за потвърждение.</value>
+    <value>Ако акаунтът съществува, изпратихме имейл за потвърждение.</value>
   </data>
   <data name="RateLimitExceeded" xml:space="preserve">
     <value>Твърде много заявки. Опитайте отново след няколко минути.</value>
+  </data>
+  <data name="FileTooLarge" xml:space="preserve">
+    <value>Файлът е твърде голям. Максимум 1.5 MB.</value>
+  </data>
+  <data name="InvalidImageType" xml:space="preserve">
+    <value>Невалиден тип файл. Използвайте JPG или PNG.</value>
+  </data>
+  <data name="ImageTooSmall" xml:space="preserve">
+    <value>Снимката е твърде малка. Минимум 256x256.</value>
+  </data>
+  <data name="ImageTooLarge" xml:space="preserve">
+    <value>Снимката е твърде голяма. Максимум 2048x2048.</value>
+  </data>
+  <data name="InvalidImageFile" xml:space="preserve">
+    <value>Невалиден файл със снимка.</value>
   </data>
 </root>

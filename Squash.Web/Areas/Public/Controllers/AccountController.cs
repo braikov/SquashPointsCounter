@@ -19,13 +19,14 @@ namespace Squash.Web.Areas.Public.Controllers
         ApplicationDbContext identityContext,
         UserManager<IdentityUser> userManager,
         IEmailSender emailSender,
-        IStringLocalizer<Validation> validationLocalizer) : Controller
+        IStringLocalizerFactory localizerFactory) : Controller
     {
         private readonly IDataContext _dataContext = dataContext;
         private readonly ApplicationDbContext _identityContext = identityContext;
         private readonly UserManager<IdentityUser> _userManager = userManager;
         private readonly IEmailSender _emailSender = emailSender;
-        private readonly IStringLocalizer<Validation> _validationLocalizer = validationLocalizer;
+        private readonly IStringLocalizer _validationLocalizer =
+            localizerFactory.Create("Shared.Validation", "Squash.Web");
 
         private const int EmailSendWindowMinutes = 15;
         private const int EmailSendMaxCount = 3;

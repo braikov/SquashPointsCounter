@@ -57,4 +57,13 @@
   <data name="SaveButton" xml:space="preserve">
     <value>Запази</value>
   </data>
+  <data name="SaveSuccess" xml:space="preserve">
+    <value>Профилът е обновен успешно.</value>
+  </data>
+  <data name="ProfilePhoto" xml:space="preserve">
+    <value>Профилна снимка</value>
+  </data>
+  <data name="ProfilePhotoHint" xml:space="preserve">
+    <value>JPG или PNG, минимум 256x256, максимум 2048x2048, до 1.5 MB. Ресайз до 512x512.</value>
+  </data>
 </root>

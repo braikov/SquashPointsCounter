@@ -1,4 +1,4 @@
-@model Squash.Web.Areas.Public.Models.PageViewModel
+@model Squash.Web.Areas.Public.Models.DashboardViewModel
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
@@ -10,39 +10,42 @@
         <div class="card-body d-flex flex-column flex-lg-row gap-4 align-items-start align-items-lg-center">
             <div class="position-relative">
                 <div class="dashboard-avatar">
-                    <span>MB</span>
+                    @if (!string.IsNullOrWhiteSpace(Model.PictureUrl))
+                    {
+                        <img src="@Model.PictureUrl" alt="@Model.PlayerName" class="dashboard-avatar-image" />
+                    }
+                    else
+                    {
+                        <span>@Model.Initials</span>
+                    }
                 </div>
-                <button type="button" class="btn btn-light btn-sm dashboard-avatar-btn" aria-label="@Localizer["UploadPhoto"]">
+                <a class="btn btn-light btn-sm dashboard-avatar-btn" href="@Url.Action("Index", "Profile", new { culture = (string?)Context.Request.RouteValues["culture"] ?? "en" })" aria-label="@Localizer["UploadPhoto"]">
                     <svg class="icon"><use xlink:href="/images/icons.svg#cil-camera"></use></svg>
-                </button>
+                </a>
             </div>
             <div class="flex-grow-1">
                 <div class="d-flex align-items-center gap-2 flex-wrap">
-                    <h1 class="h3 mb-0">@Localizer["PlayerName"]</h1>
+                    <h1 class="h3 mb-0">@Model.PlayerName</h1>
                     <a class="btn btn-sm btn-outline-secondary dashboard-edit" href="@Url.Action("Index", "Profile", new { culture = (string?)Context.Request.RouteValues["culture"] ?? "en" })" aria-label="@Localizer["EditProfile"]">
                         <svg class="icon"><use xlink:href="/images/icons.svg#cil-pen"></use></svg>
                     </a>
                 </div>
                 <div class="text-body-secondary mt-2 d-flex flex-wrap gap-3 align-items-center">
-                    <span>@Localizer["ImaIdLabel"] <strong>@Localizer["ImaIdValue"]</strong></span>
+                    <span>@Localizer["ImaIdLabel"] <strong>@(Model.ImaId ?? Localizer["NotAvailable"].Value)</strong></span>
                     <a href="#" class="text-decoration-none" onclick="alert('@Localizer["ExternalProfilePending"]'); return false;">
-                        @Localizer["EsfIdLabel"] <strong>@Localizer["EsfIdValue"]</strong>
+                        @Localizer["EsfIdLabel"] <strong>@(Model.EsfId ?? Localizer["NotAvailable"].Value)</strong>
                     </a>
                     <a href="#" class="text-decoration-none" onclick="alert('@Localizer["ExternalProfilePending"]'); return false;">
-                        @Localizer["RankedinIdLabel"] <strong>@Localizer["RankedinIdValue"]</strong>
+                        @Localizer["RankedinIdLabel"] <strong>@(Model.RankedinId ?? Localizer["NotAvailable"].Value)</strong>
                     </a>
                     <span class="d-flex align-items-center gap-2">
-                        <img src="~/images/flags/bul.svg" alt="@Localizer["CountryName"]" class="dashboard-flag" />
-                        @Localizer["CountryName"]
+                        @if (!string.IsNullOrWhiteSpace(Model.CountryFlagUrl))
+                        {
+                            <img src="@Model.CountryFlagUrl" alt="@Model.CountryName" class="dashboard-flag" />
+                        }
+                        @Localizer["CountryLabel"] @(Model.CountryName ?? Localizer["NotAvailable"].Value)
                     </span>
-                    <span>@Localizer["AgeValue"]</span>
-                </div>
-            </div>
-            <div class="dashboard-score card">
-                <div class="card-body">
-                    <div class="small text-uppercase text-body-secondary mb-1">@Localizer["SkillLevel"]</div>
-                    <div class="dashboard-score-value">4.2</div>
-                    <div class="small text-body-secondary">@Localizer["SkillSubtitle"]</div>
+                    <span>@Localizer["AgeLabel"] @(Model.Age?.ToString() ?? Localizer["NotAvailable"].Value)</span>
                 </div>
             </div>
         </div>
@@ -64,32 +67,33 @@
                 <div class="dashboard-stat-row">
                     <div>
                         <div class="fw-semibold">@Localizer["WinLossCareer"]</div>
-                        <div class="text-body-secondary">57 / 43</div>
+                        <div class="text-body-secondary">@Model.Stats.CareerWins / @Model.Stats.CareerLosses</div>
                     </div>
                     <div class="dashboard-bar">
-                        <span style="width:56%"></span>
+                        <span style="width:@Model.Stats.CareerWinPercent%"></span>
                     </div>
-                    <div class="text-body-secondary">100</div>
+                    <div class="text-body-secondary">@Model.Stats.CareerTotal</div>
                 </div>
                 <div class="dashboard-stat-row">
                     <div>
                         <div class="fw-semibold">@Localizer["WinLossYear"]</div>
-                        <div class="text-body-secondary">3 / 2</div>
+                        <div class="text-body-secondary">@Model.Stats.YearWins / @Model.Stats.YearLosses</div>
                     </div>
                     <div class="dashboard-bar">
-                        <span style="width:60%"></span>
+                        <span style="width:@Model.Stats.YearWinPercent%"></span>
                     </div>
-                    <div class="text-body-secondary">5</div>
+                    <div class="text-body-secondary">@Model.Stats.YearTotal</div>
                 </div>
                 <div class="dashboard-form">
                     <span>@Localizer["FormLabel"]</span>
-                    <div class="dashboard-form-badges">
-                        <span class="badge rounded-circle bg-success">W</span>
-                        <span class="badge rounded-circle bg-success">W</span>
-                        <span class="badge rounded-circle bg-danger">L</span>
-                        <span class="badge rounded-circle bg-success">W</span>
-                        <span class="badge rounded-circle bg-success">W</span>
-                    </div>
+                    @if (Model.Stats.FormResults.Count > 0)
+                    {
+                        <span class="text-body-secondary">@string.Join(" ", Model.Stats.FormResults)</span>
+                    }
+                    else
+                    {
+                        <span class="text-body-secondary">@Localizer["FormEmpty"]</span>
+                    }
                 </div>
             </div>
         </div>
@@ -99,9 +103,40 @@
         <div class="card-body">
             <div class="d-flex align-items-center justify-content-between">
                 <h2 class="h5 mb-0">@Localizer["RecentMatches"]</h2>
-                <a href="#" class="btn btn-link px-0">@Localizer["ViewAll"]</a>
+                @if (Model.RecentMatches.Count > 0)
+                {
+                    <a href="#" class="btn btn-link px-0">@Localizer["ViewAll"]</a>
+                }
             </div>
-            <div class="dashboard-empty mt-3">@Localizer["RecentMatchesEmpty"]</div>
+            @if (Model.RecentMatches.Count == 0)
+            {
+                <div class="dashboard-empty mt-3">@Localizer["RecentMatchesEmpty"]</div>
+            }
+            else
+            {
+                <div class="mt-3 d-grid gap-3">
+                    @foreach (var match in Model.RecentMatches)
+                    {
+                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 border rounded-3 p-3">
+                            <div>
+                                <div class="fw-semibold">@match.OpponentName</div>
+                                <div class="text-body-secondary">
+                                    @match.TournamentName
+                                    @if (match.MatchDate.HasValue)
+                                    {
+                                        <span>· @match.MatchDate.Value.ToString("d")</span>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(match.Score))
+                                    {
+                                        <span>· @Localizer["ScoreLabel"] @match.Score</span>
+                                    }
+                                </div>
+                            </div>
+                            <span class="badge bg-secondary">@match.ResultLabel</span>
+                        </div>
+                    }
+                </div>
+            }
         </div>
     </div>
 </div>

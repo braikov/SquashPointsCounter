@@ -13,11 +13,35 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <form asp-action="Index" asp-controller="Profile" asp-area="Public" asp-route-culture="@Model.Culture" method="post">
+            <form asp-action="Index" asp-controller="Profile" asp-area="Public" asp-route-culture="@Model.Culture" method="post" enctype="multipart/form-data">
                 @Html.AntiForgeryToken()
+                @if (Model.SaveSucceeded)
+                {
+                    <div class="alert alert-success" role="alert">@Localizer["SaveSuccess"]</div>
+                }
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
                 <div class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">@Localizer["ProfilePhoto"]</label>
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <div class="dashboard-avatar">
+                                @if (!string.IsNullOrWhiteSpace(Model.CurrentAvatarUrl))
+                                {
+                                    <img src="@Model.CurrentAvatarUrl" alt="@Localizer["ProfilePhoto"]" class="dashboard-avatar-image" />
+                                }
+                                else
+                                {
+                                    <span>@Model.AvatarInitials</span>
+                                }
+                            </div>
+                            <div>
+                                <input asp-for="AvatarFile" class="form-control" type="file" accept="image/png,image/jpeg" />
+                                <div class="form-text">@Localizer["ProfilePhotoHint"]</div>
+                                <span asp-validation-for="AvatarFile" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <label asp-for="FirstName" class="form-label">@Localizer["FirstName"]</label>
                         <input asp-for="FirstName" class="form-control" />

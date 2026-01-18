@@ -15,32 +15,20 @@
   <data name="Title" xml:space="preserve">
     <value>Dashboard</value>
   </data>
-  <data name="PlayerName" xml:space="preserve">
-    <value>Miroslav Braykov</value>
-  </data>
   <data name="ImaIdLabel" xml:space="preserve">
     <value>ima.bg:</value>
-  </data>
-  <data name="ImaIdValue" xml:space="preserve">
-    <value>IMA00000042</value>
   </data>
   <data name="EsfIdLabel" xml:space="preserve">
     <value>ESF:</value>
   </data>
-  <data name="EsfIdValue" xml:space="preserve">
-    <value>ESF793398940</value>
-  </data>
   <data name="RankedinIdLabel" xml:space="preserve">
     <value>Rankedin:</value>
   </data>
-  <data name="RankedinIdValue" xml:space="preserve">
-    <value>RKD001234</value>
+  <data name="CountryLabel" xml:space="preserve">
+    <value>Country:</value>
   </data>
-  <data name="CountryName" xml:space="preserve">
-    <value>Bulgaria</value>
-  </data>
-  <data name="AgeValue" xml:space="preserve">
-    <value>Age: 33</value>
+  <data name="AgeLabel" xml:space="preserve">
+    <value>Age:</value>
   </data>
   <data name="UploadPhoto" xml:space="preserve">
     <value>Upload photo</value>
@@ -51,11 +39,8 @@
   <data name="EditProfile" xml:space="preserve">
     <value>Edit profile</value>
   </data>
-  <data name="SkillLevel" xml:space="preserve">
-    <value>Skill level</value>
-  </data>
-  <data name="SkillSubtitle" xml:space="preserve">
-    <value>Based on latest matches</value>
+  <data name="NotAvailable" xml:space="preserve">
+    <value>N/A</value>
   </data>
   <data name="StatsTitle" xml:space="preserve">
     <value>Statistics</value>
@@ -73,13 +58,16 @@
     <value>Mixed</value>
   </data>
   <data name="WinLossCareer" xml:space="preserve">
-    <value>Win–Loss (Career)</value>
+    <value>Win/Loss (Career)</value>
   </data>
   <data name="WinLossYear" xml:space="preserve">
-    <value>Win–Loss (This year)</value>
+    <value>Win/Loss (This year)</value>
   </data>
   <data name="FormLabel" xml:space="preserve">
     <value>Form</value>
+  </data>
+  <data name="FormEmpty" xml:space="preserve">
+    <value>No results yet.</value>
   </data>
   <data name="RecentMatches" xml:space="preserve">
     <value>Recent matches</value>
@@ -89,5 +77,8 @@
   </data>
   <data name="ViewAll" xml:space="preserve">
     <value>View all</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Score:</value>
   </data>
 </root>

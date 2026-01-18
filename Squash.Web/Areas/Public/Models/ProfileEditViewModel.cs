@@ -15,12 +15,12 @@ namespace Squash.Web.Areas.Public.Models
 
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
-        public string Password { get; set; } = string.Empty;
+        public string? Password { get; set; }
 
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessageResourceType = typeof(Validation), ErrorMessageResourceName = "PasswordMismatch")]
         [Display(Name = "Confirm password")]
-        public string ConfirmPassword { get; set; } = string.Empty;
+        public string? ConfirmPassword { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(Validation), ErrorMessageResourceName = "Required")]
         [Display(Name = "First name")]
@@ -51,5 +51,11 @@ namespace Squash.Web.Areas.Public.Models
         public List<SelectListItem> Countries { get; set; } = new();
         public List<SelectListItem> Genders { get; set; } = new();
         public List<SelectListItem> Sports { get; set; } = new();
+
+        public bool SaveSucceeded { get; set; }
+
+        public string? CurrentAvatarUrl { get; set; }
+        public string AvatarInitials { get; set; } = "??";
+        public Microsoft.AspNetCore.Http.IFormFile? AvatarFile { get; set; }
     }
 }

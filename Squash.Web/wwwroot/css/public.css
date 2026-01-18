@@ -150,6 +150,13 @@ body.public-shell {
   color: var(--public-green-900);
 }
 
+.dashboard-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 .dashboard-avatar-btn {
   position: absolute;
   bottom: 6px;
