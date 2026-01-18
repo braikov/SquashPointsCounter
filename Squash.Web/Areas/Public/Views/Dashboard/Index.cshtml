@@ -1,0 +1,105 @@
+@model Squash.Web.Areas.Public.Models.PageViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    Model.Title = Localizer["Title"].Value;
+}
+
+<div class="container py-4 dashboard-page">
+    <div class="card shadow-sm dashboard-hero">
+        <div class="card-body d-flex flex-column flex-lg-row gap-4 align-items-start align-items-lg-center">
+            <div class="position-relative">
+                <div class="dashboard-avatar">
+                    <span>MB</span>
+                </div>
+                <button type="button" class="btn btn-light btn-sm dashboard-avatar-btn" aria-label="@Localizer["UploadPhoto"]">
+                    <svg class="icon"><use xlink:href="/images/icons.svg#cil-camera"></use></svg>
+                </button>
+            </div>
+            <div class="flex-grow-1">
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <h1 class="h3 mb-0">@Localizer["PlayerName"]</h1>
+                    <span class="badge rounded-pill text-bg-success">@Localizer["ProTag"]</span>
+                </div>
+                <div class="text-body-secondary mt-2 d-flex flex-wrap gap-3 align-items-center">
+                    <span>@Localizer["ImaIdLabel"] <strong>@Localizer["ImaIdValue"]</strong></span>
+                    <a href="#" class="text-decoration-none" onclick="alert('@Localizer["ExternalProfilePending"]'); return false;">
+                        @Localizer["EsfIdLabel"] <strong>@Localizer["EsfIdValue"]</strong>
+                    </a>
+                    <a href="#" class="text-decoration-none" onclick="alert('@Localizer["ExternalProfilePending"]'); return false;">
+                        @Localizer["RankedinIdLabel"] <strong>@Localizer["RankedinIdValue"]</strong>
+                    </a>
+                    <span class="d-flex align-items-center gap-2">
+                        <img src="~/images/flags/bul.svg" alt="@Localizer["CountryName"]" class="dashboard-flag" />
+                        @Localizer["CountryName"]
+                    </span>
+                    <span>@Localizer["AgeValue"]</span>
+                </div>
+            </div>
+            <div class="dashboard-score card">
+                <div class="card-body">
+                    <div class="small text-uppercase text-body-secondary mb-1">@Localizer["SkillLevel"]</div>
+                    <div class="dashboard-score-value">4.2</div>
+                    <div class="small text-body-secondary">@Localizer["SkillSubtitle"]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                <h2 class="h5 mb-0">@Localizer["StatsTitle"]</h2>
+                <div class="dashboard-tabs nav nav-pills">
+                    <button type="button" class="nav-link active">@Localizer["StatsTotal"]</button>
+                    <button type="button" class="nav-link">@Localizer["StatsSingles"]</button>
+                    <button type="button" class="nav-link">@Localizer["StatsDoubles"]</button>
+                    <button type="button" class="nav-link">@Localizer["StatsMixed"]</button>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <div class="dashboard-stat-row">
+                    <div>
+                        <div class="fw-semibold">@Localizer["WinLossCareer"]</div>
+                        <div class="text-body-secondary">57 / 43</div>
+                    </div>
+                    <div class="dashboard-bar">
+                        <span style="width:56%"></span>
+                    </div>
+                    <div class="text-body-secondary">100</div>
+                </div>
+                <div class="dashboard-stat-row">
+                    <div>
+                        <div class="fw-semibold">@Localizer["WinLossYear"]</div>
+                        <div class="text-body-secondary">3 / 2</div>
+                    </div>
+                    <div class="dashboard-bar">
+                        <span style="width:60%"></span>
+                    </div>
+                    <div class="text-body-secondary">5</div>
+                </div>
+                <div class="dashboard-form">
+                    <span>@Localizer["FormLabel"]</span>
+                    <div class="dashboard-form-badges">
+                        <span class="badge rounded-circle bg-success">W</span>
+                        <span class="badge rounded-circle bg-success">W</span>
+                        <span class="badge rounded-circle bg-danger">L</span>
+                        <span class="badge rounded-circle bg-success">W</span>
+                        <span class="badge rounded-circle bg-success">W</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between">
+                <h2 class="h5 mb-0">@Localizer["RecentMatches"]</h2>
+                <a href="#" class="btn btn-link px-0">@Localizer["ViewAll"]</a>
+            </div>
+            <div class="dashboard-empty mt-3">@Localizer["RecentMatchesEmpty"]</div>
+        </div>
+    </div>
+</div>

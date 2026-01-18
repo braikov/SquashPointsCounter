@@ -1116,6 +1116,9 @@ namespace Squash.SqlServer.Migrations
                     b.Property<string>("EsfMemberId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImaId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("LastOperationUserId")
                         .HasColumnType("int");
 
@@ -1124,6 +1127,9 @@ namespace Squash.SqlServer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PictureUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RankedinId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("UserId")

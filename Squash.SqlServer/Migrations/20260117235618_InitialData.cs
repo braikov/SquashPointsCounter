@@ -73,6 +73,8 @@ namespace Squash.SqlServer.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EsfMemberId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RankedinId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImaId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EntitySourceId = table.Column<int>(type: "int", nullable: false),
                     CountryId = table.Column<int>(type: "int", nullable: true),
                     DateCreated = table.Column<DateTime>(type: "datetime2", nullable: false),

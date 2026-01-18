@@ -113,6 +113,12 @@ namespace Squash.Web.Areas.Administration.Controllers
             _dataContext.Players.Add(player);
             _dataContext.SaveChanges();
 
+            if (string.IsNullOrWhiteSpace(player.ImaId))
+            {
+                player.ImaId = Squash.Shared.Utils.ImaIdGenerator.GenerateForPlayerId(player.Id);
+                _dataContext.SaveChanges();
+            }
+
             return RedirectToAction(nameof(Index));
         }
 

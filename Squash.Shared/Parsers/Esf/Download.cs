@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Squash.DataAccess;
 using Squash.DataAccess.Entities;
+using Squash.Shared.Utils;
 using Squash.SqlServer;
 using Match = Squash.DataAccess.Entities.Match;
 
@@ -528,6 +529,11 @@ namespace Squash.Shared.Parsers.Esf
                     existingPlayer.CountryId = player.Country?.Id;
 
                     dbContext.SaveChanges();
+                    if (string.IsNullOrWhiteSpace(existingPlayer.ImaId))
+                    {
+                        existingPlayer.ImaId = ImaIdGenerator.GenerateForPlayerId(existingPlayer.Id);
+                        dbContext.SaveChanges();
+                    }
                     player.Id = existingPlayer.Id;
                     player.CountryId = existingPlayer.CountryId;
 

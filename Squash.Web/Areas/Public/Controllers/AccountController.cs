@@ -110,6 +110,12 @@ namespace Squash.Web.Areas.Public.Controllers
             appUser.PlayerId = player.Id;
             _dataContext.SaveChanges();
 
+            if (string.IsNullOrWhiteSpace(player.ImaId))
+            {
+                player.ImaId = ImaIdGenerator.GenerateForPlayerId(player.Id);
+                _dataContext.SaveChanges();
+            }
+
             var code = RandomCodeGenerator.GenerateSixCharCode();
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(identityUser);
             _identityContext.ShortCodeToTokens.Add(new ShortCodeToToken

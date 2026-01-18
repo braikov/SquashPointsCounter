@@ -75,7 +75,8 @@ namespace Squash.Web.Areas.Identity.Controllers
                     return RedirectToAction("Index", "Dashboard", new { area = "Administration" });
                 }
 
-                return Redirect("/");
+                var cultureSegment = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+                return Redirect($"/{cultureSegment}/dashboard");
             }
 
             if (result.IsLockedOut)

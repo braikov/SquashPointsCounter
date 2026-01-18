@@ -8,6 +8,8 @@ namespace Squash.DataAccess.Entities
         public string Name { get; set; } = string.Empty;
         public string? PictureUrl { get; set; }
         public string? EsfMemberId { get; set; }
+        public string? RankedinId { get; set; }
+        public string? ImaId { get; set; }
         public EntitySource EntitySourceId { get; set; } = EntitySource.Native;
 
         public int? CountryId { get; set; }

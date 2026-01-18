@@ -12,7 +12,7 @@ using Squash.SqlServer;
 namespace Squash.SqlServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260117190008_InitialData")]
+    [Migration("20260117235618_InitialData")]
     partial class InitialData
     {
         /// <inheritdoc />
@@ -1119,6 +1119,9 @@ namespace Squash.SqlServer.Migrations
                     b.Property<string>("EsfMemberId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("ImaId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("LastOperationUserId")
                         .HasColumnType("int");
 
@@ -1127,6 +1130,9 @@ namespace Squash.SqlServer.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PictureUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RankedinId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("UserId")
