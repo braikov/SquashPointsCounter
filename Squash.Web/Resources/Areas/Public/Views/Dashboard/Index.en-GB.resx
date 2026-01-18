@@ -48,8 +48,8 @@
   <data name="ExternalProfilePending" xml:space="preserve">
     <value>External profile link will be added soon.</value>
   </data>
-  <data name="ProTag" xml:space="preserve">
-    <value>PRO</value>
+  <data name="EditProfile" xml:space="preserve">
+    <value>Edit profile</value>
   </data>
   <data name="SkillLevel" xml:space="preserve">
     <value>Skill level</value>

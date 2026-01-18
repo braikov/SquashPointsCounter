@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Squash.Identity.Migrations
 {
     /// <inheritdoc />
@@ -209,6 +211,26 @@ namespace Squash.Identity.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[] { "80959087-0131-4131-995f-3d1203597890", null, "Administrator", "ADMINISTRATOR" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { "ae0b7d5a-8264-42f2-8c10-53472f8820c7", 0, "67905d45-5623-4537-814e-abc98234de12", "miro@ima.bg", true, true, null, "MIRO@IMA.BG", "MIRO@IMA.BG", "AQAAAAIAAYagAAAAENyErHdueV460gFcQ08NgDmVnQoAxT5ZX84MVPBVNTPkfQBc1RcVFYU8nOcWWDczgw==", null, false, "550E8400-E29B-41D4-A716-446655440000", false, "miro@ima.bg" },
+                    { "b1802c6b-6b27-466d-932b-319520866380", 0, "a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c6", "miroslav.braikov@gmail.com", true, true, null, "MIROSLAV.BRAIKOV@GMAIL.COM", "MIROSLAV.BRAIKOV@GMAIL.COM", "AQAAAAIAAYagAAAAELZTRZjB2vpyrauOI9VEz124fOQUchLqZJ/RNdc+b4S84pqYA6V1epsM4+q07SQ9ww==", null, false, "B23E4567-E89B-12D3-A456-426614174000", false, "miroslav.braikov@gmail.com" },
+                    { "c340d87e-9f37-4d7c-8e21-65483f9931d8", 0, "b2c3d4e5-f6a7-58b9-c0d1-e2f3a4b5c6d7", "boris.braikov@gmail.com", true, true, null, "BORIS.BRAIKOV@GMAIL.COM", "BORIS.BRAIKOV@GMAIL.COM", "AQAAAAIAAYagAAAAEKAOlFahSZHqnOh08wRNaY2cSufSUzUqc+8a77Tqloj6q6XBk0bTH/QboopjDfv4hA==", null, false, "C34F5678-F90C-23E4-B567-537725285000", false, "boris.braikov@gmail.com" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[] { "80959087-0131-4131-995f-3d1203597890", "b1802c6b-6b27-466d-932b-319520866380" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AccountEvents_Email_EventType_DateCreated",

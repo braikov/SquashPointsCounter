@@ -47,6 +47,14 @@ namespace Squash.Identity.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "80959087-0131-4131-995f-3d1203597890",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -137,6 +145,56 @@ namespace Squash.Identity.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "ae0b7d5a-8264-42f2-8c10-53472f8820c7",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "67905d45-5623-4537-814e-abc98234de12",
+                            Email = "miro@ima.bg",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "MIRO@IMA.BG",
+                            NormalizedUserName = "MIRO@IMA.BG",
+                            PasswordHash = "AQAAAAIAAYagAAAAENyErHdueV460gFcQ08NgDmVnQoAxT5ZX84MVPBVNTPkfQBc1RcVFYU8nOcWWDczgw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "550E8400-E29B-41D4-A716-446655440000",
+                            TwoFactorEnabled = false,
+                            UserName = "miro@ima.bg"
+                        },
+                        new
+                        {
+                            Id = "b1802c6b-6b27-466d-932b-319520866380",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "a1b2c3d4-e5f6-47a8-b9c0-d1e2f3a4b5c6",
+                            Email = "miroslav.braikov@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "MIROSLAV.BRAIKOV@GMAIL.COM",
+                            NormalizedUserName = "MIROSLAV.BRAIKOV@GMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAELZTRZjB2vpyrauOI9VEz124fOQUchLqZJ/RNdc+b4S84pqYA6V1epsM4+q07SQ9ww==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "B23E4567-E89B-12D3-A456-426614174000",
+                            TwoFactorEnabled = false,
+                            UserName = "miroslav.braikov@gmail.com"
+                        },
+                        new
+                        {
+                            Id = "c340d87e-9f37-4d7c-8e21-65483f9931d8",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "b2c3d4e5-f6a7-58b9-c0d1-e2f3a4b5c6d7",
+                            Email = "boris.braikov@gmail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "BORIS.BRAIKOV@GMAIL.COM",
+                            NormalizedUserName = "BORIS.BRAIKOV@GMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKAOlFahSZHqnOh08wRNaY2cSufSUzUqc+8a77Tqloj6q6XBk0bTH/QboopjDfv4hA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "C34F5678-F90C-23E4-B567-537725285000",
+                            TwoFactorEnabled = false,
+                            UserName = "boris.braikov@gmail.com"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -199,6 +257,13 @@ namespace Squash.Identity.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "b1802c6b-6b27-466d-932b-319520866380",
+                            RoleId = "80959087-0131-4131-995f-3d1203597890"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

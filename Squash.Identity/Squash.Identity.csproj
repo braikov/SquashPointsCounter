@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Squash.Shared\Squash.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

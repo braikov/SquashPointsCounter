@@ -48,8 +48,8 @@
   <data name="ExternalProfilePending" xml:space="preserve">
     <value>Линкът към външен профил ще бъде добавен скоро.</value>
   </data>
-  <data name="ProTag" xml:space="preserve">
-    <value>PRO</value>
+  <data name="EditProfile" xml:space="preserve">
+    <value>Редакция на профил</value>
   </data>
   <data name="SkillLevel" xml:space="preserve">
     <value>Ниво на умения</value>

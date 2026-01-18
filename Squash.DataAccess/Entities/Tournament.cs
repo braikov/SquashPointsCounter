@@ -34,6 +34,10 @@ namespace Squash.DataAccess.Entities
         public ICollection<TournamentVenue> TournamentVenues { get; set; } = new List<TournamentVenue>();
         public ICollection<TournamentCourt> TournamentCourts { get; set; } = new List<TournamentCourt>();
         public ICollection<TournamentPlayer> TournamentPlayers { get; set; } = new List<TournamentPlayer>();
+
+        public int? TimeZoneId { get; set; }
+        public TimeZone? TimeZone { get; set; }
     }
 }
+
 

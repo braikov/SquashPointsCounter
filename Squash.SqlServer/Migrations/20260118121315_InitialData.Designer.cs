@@ -12,7 +12,7 @@ using Squash.SqlServer;
 namespace Squash.SqlServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260117235618_InitialData")]
+    [Migration("20260118121315_InitialData")]
     partial class InitialData
     {
         /// <inheritdoc />
@@ -1221,6 +1221,1453 @@ namespace Squash.SqlServer.Migrations
                     b.ToTable("SitemapEntries");
                 });
 
+            modelBuilder.Entity("Squash.DataAccess.Entities.TimeZone", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("LastOperationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Offset")
+                        .HasColumnType("float");
+
+                    b.Property<string>("StandardName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TimeZones");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-12:00) International Date Line West",
+                            LastOperationUserId = 0,
+                            Offset = -12.0,
+                            StandardName = "Dateline Standard Time"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-11:00) Coordinated Universal Time-11",
+                            LastOperationUserId = 0,
+                            Offset = -11.0,
+                            StandardName = "UTC-11"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-10:00) Hawaii",
+                            LastOperationUserId = 0,
+                            Offset = -10.0,
+                            StandardName = "Hawaiian Standard Time"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-10:00) Aleutian Islands",
+                            LastOperationUserId = 0,
+                            Offset = -10.0,
+                            StandardName = "Aleutian Standard Time"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-09:30) Marquesas Islands",
+                            LastOperationUserId = 0,
+                            Offset = -9.5,
+                            StandardName = "Marquesas Standard Time"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-09:00) Coordinated Universal Time-09",
+                            LastOperationUserId = 0,
+                            Offset = -9.0,
+                            StandardName = "UTC-09"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-09:00) Alaska",
+                            LastOperationUserId = 0,
+                            Offset = -9.0,
+                            StandardName = "Alaskan Standard Time"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-08:00) Pacific Time (US & Canada)",
+                            LastOperationUserId = 0,
+                            Offset = -8.0,
+                            StandardName = "Pacific Standard Time"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-08:00) Coordinated Universal Time-08",
+                            LastOperationUserId = 0,
+                            Offset = -8.0,
+                            StandardName = "UTC-08"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-08:00) Baja California",
+                            LastOperationUserId = 0,
+                            Offset = -8.0,
+                            StandardName = "Pacific Standard Time (Mexico)"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-07:00) Mountain Time (US & Canada)",
+                            LastOperationUserId = 0,
+                            Offset = -7.0,
+                            StandardName = "Mountain Standard Time"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-07:00) Yukon",
+                            LastOperationUserId = 0,
+                            Offset = -7.0,
+                            StandardName = "Yukon Standard Time"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-07:00) Arizona",
+                            LastOperationUserId = 0,
+                            Offset = -7.0,
+                            StandardName = "US Mountain Standard Time"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-07:00) La Paz, Mazatlan",
+                            LastOperationUserId = 0,
+                            Offset = -7.0,
+                            StandardName = "Mountain Standard Time (Mexico)"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-06:00) Guadalajara, Mexico City, Monterrey",
+                            LastOperationUserId = 0,
+                            Offset = -6.0,
+                            StandardName = "Central Standard Time (Mexico)"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-06:00) Saskatchewan",
+                            LastOperationUserId = 0,
+                            Offset = -6.0,
+                            StandardName = "Canada Central Standard Time"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-06:00) Easter Island",
+                            LastOperationUserId = 0,
+                            Offset = -6.0,
+                            StandardName = "Easter Island Standard Time"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-06:00) Central America",
+                            LastOperationUserId = 0,
+                            Offset = -6.0,
+                            StandardName = "Central America Standard Time"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-06:00) Central Time (US & Canada)",
+                            LastOperationUserId = 0,
+                            Offset = -6.0,
+                            StandardName = "Central Standard Time"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-05:00) Havana",
+                            LastOperationUserId = 0,
+                            Offset = -5.0,
+                            StandardName = "Cuba Standard Time"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-05:00) Indiana (East)",
+                            LastOperationUserId = 0,
+                            Offset = -5.0,
+                            StandardName = "US Eastern Standard Time"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-05:00) Turks and Caicos",
+                            LastOperationUserId = 0,
+                            Offset = -5.0,
+                            StandardName = "Turks And Caicos Standard Time"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-05:00) Haiti",
+                            LastOperationUserId = 0,
+                            Offset = -5.0,
+                            StandardName = "Haiti Standard Time"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-05:00) Bogota, Lima, Quito, Rio Branco",
+                            LastOperationUserId = 0,
+                            Offset = -5.0,
+                            StandardName = "SA Pacific Standard Time"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-05:00) Chetumal",
+                            LastOperationUserId = 0,
+                            Offset = -5.0,
+                            StandardName = "Eastern Standard Time (Mexico)"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-05:00) Eastern Time (US & Canada)",
+                            LastOperationUserId = 0,
+                            Offset = -5.0,
+                            StandardName = "Eastern Standard Time"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan",
+                            LastOperationUserId = 0,
+                            Offset = -4.0,
+                            StandardName = "SA Western Standard Time"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-04:00) Santiago",
+                            LastOperationUserId = 0,
+                            Offset = -4.0,
+                            StandardName = "Pacific SA Standard Time"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-04:00) Cuiaba",
+                            LastOperationUserId = 0,
+                            Offset = -4.0,
+                            StandardName = "Central Brazilian Standard Time"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-04:00) Atlantic Time (Canada)",
+                            LastOperationUserId = 0,
+                            Offset = -4.0,
+                            StandardName = "Atlantic Standard Time"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-04:00) Caracas",
+                            LastOperationUserId = 0,
+                            Offset = -4.0,
+                            StandardName = "Venezuela Standard Time"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-03:30) Newfoundland",
+                            LastOperationUserId = 0,
+                            Offset = -3.5,
+                            StandardName = "Newfoundland Standard Time"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-03:00) Punta Arenas",
+                            LastOperationUserId = 0,
+                            Offset = -3.0,
+                            StandardName = "Magallanes Standard Time"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-03:00) Montevideo",
+                            LastOperationUserId = 0,
+                            Offset = -3.0,
+                            StandardName = "Montevideo Standard Time"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-03:00) Salvador",
+                            LastOperationUserId = 0,
+                            Offset = -3.0,
+                            StandardName = "Bahia Standard Time"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-03:00) Saint Pierre and Miquelon",
+                            LastOperationUserId = 0,
+                            Offset = -3.0,
+                            StandardName = "Saint Pierre Standard Time"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-03:00) City of Buenos Aires",
+                            LastOperationUserId = 0,
+                            Offset = -3.0,
+                            StandardName = "Argentina Standard Time"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-03:00) Asuncion",
+                            LastOperationUserId = 0,
+                            Offset = -3.0,
+                            StandardName = "Paraguay Standard Time"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-03:00) Araguaina",
+                            LastOperationUserId = 0,
+                            Offset = -3.0,
+                            StandardName = "Tocantins Standard Time"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-03:00) Cayenne, Fortaleza",
+                            LastOperationUserId = 0,
+                            Offset = -3.0,
+                            StandardName = "SA Eastern Standard Time"
+                        },
+                        new
+                        {
+                            Id = 41,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-03:00) Brasilia",
+                            LastOperationUserId = 0,
+                            Offset = -3.0,
+                            StandardName = "E. South America Standard Time"
+                        },
+                        new
+                        {
+                            Id = 42,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-02:00) Mid-Atlantic - Old",
+                            LastOperationUserId = 0,
+                            Offset = -2.0,
+                            StandardName = "Mid-Atlantic Standard Time"
+                        },
+                        new
+                        {
+                            Id = 43,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-02:00) Greenland",
+                            LastOperationUserId = 0,
+                            Offset = -2.0,
+                            StandardName = "Greenland Standard Time"
+                        },
+                        new
+                        {
+                            Id = 44,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-02:00) Coordinated Universal Time-02",
+                            LastOperationUserId = 0,
+                            Offset = -2.0,
+                            StandardName = "UTC-02"
+                        },
+                        new
+                        {
+                            Id = 45,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-01:00) Cabo Verde Is.",
+                            LastOperationUserId = 0,
+                            Offset = -1.0,
+                            StandardName = "Cape Verde Standard Time"
+                        },
+                        new
+                        {
+                            Id = 46,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC-01:00) Azores",
+                            LastOperationUserId = 0,
+                            Offset = -1.0,
+                            StandardName = "Azores Standard Time"
+                        },
+                        new
+                        {
+                            Id = 47,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+00:00) Sao Tome",
+                            LastOperationUserId = 0,
+                            Offset = 0.0,
+                            StandardName = "Sao Tome Standard Time"
+                        },
+                        new
+                        {
+                            Id = 48,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+01:00) Casablanca",
+                            LastOperationUserId = 0,
+                            Offset = 0.0,
+                            StandardName = "Morocco Standard Time"
+                        },
+                        new
+                        {
+                            Id = 49,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+00:00) Monrovia, Reykjavik",
+                            LastOperationUserId = 0,
+                            Offset = 0.0,
+                            StandardName = "Greenwich Standard Time"
+                        },
+                        new
+                        {
+                            Id = 50,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC) Coordinated Universal Time",
+                            LastOperationUserId = 0,
+                            Offset = 0.0,
+                            StandardName = "UTC"
+                        },
+                        new
+                        {
+                            Id = 51,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+00:00) Dublin, Edinburgh, Lisbon, London",
+                            LastOperationUserId = 0,
+                            Offset = 0.0,
+                            StandardName = "GMT Standard Time"
+                        },
+                        new
+                        {
+                            Id = 52,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb",
+                            LastOperationUserId = 0,
+                            Offset = 1.0,
+                            StandardName = "Central European Standard Time"
+                        },
+                        new
+                        {
+                            Id = 53,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+01:00) West Central Africa",
+                            LastOperationUserId = 0,
+                            Offset = 1.0,
+                            StandardName = "W. Central Africa Standard Time"
+                        },
+                        new
+                        {
+                            Id = 54,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris",
+                            LastOperationUserId = 0,
+                            Offset = 1.0,
+                            StandardName = "Romance Standard Time"
+                        },
+                        new
+                        {
+                            Id = 55,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna",
+                            LastOperationUserId = 0,
+                            Offset = 1.0,
+                            StandardName = "W. Europe Standard Time"
+                        },
+                        new
+                        {
+                            Id = 56,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague",
+                            LastOperationUserId = 0,
+                            Offset = 1.0,
+                            StandardName = "Central Europe Standard Time"
+                        },
+                        new
+                        {
+                            Id = 57,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Kaliningrad",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "Kaliningrad Standard Time"
+                        },
+                        new
+                        {
+                            Id = 58,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Juba",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "South Sudan Standard Time"
+                        },
+                        new
+                        {
+                            Id = 59,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Jerusalem",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "Israel Standard Time"
+                        },
+                        new
+                        {
+                            Id = 60,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Windhoek",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "Namibia Standard Time"
+                        },
+                        new
+                        {
+                            Id = 61,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Tripoli",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "Libya Standard Time"
+                        },
+                        new
+                        {
+                            Id = 62,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Khartoum",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "Sudan Standard Time"
+                        },
+                        new
+                        {
+                            Id = 63,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "FLE Standard Time"
+                        },
+                        new
+                        {
+                            Id = 64,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Cairo",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "Egypt Standard Time"
+                        },
+                        new
+                        {
+                            Id = 65,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Beirut",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "Middle East Standard Time"
+                        },
+                        new
+                        {
+                            Id = 66,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Athens, Bucharest",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "GTB Standard Time"
+                        },
+                        new
+                        {
+                            Id = 67,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Harare, Pretoria",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "South Africa Standard Time"
+                        },
+                        new
+                        {
+                            Id = 68,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Gaza, Hebron",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "West Bank Standard Time"
+                        },
+                        new
+                        {
+                            Id = 69,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+02:00) Chisinau",
+                            LastOperationUserId = 0,
+                            Offset = 2.0,
+                            StandardName = "E. Europe Standard Time"
+                        },
+                        new
+                        {
+                            Id = 70,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+03:00) Moscow, St. Petersburg",
+                            LastOperationUserId = 0,
+                            Offset = 3.0,
+                            StandardName = "Russian Standard Time"
+                        },
+                        new
+                        {
+                            Id = 71,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+03:00) Minsk",
+                            LastOperationUserId = 0,
+                            Offset = 3.0,
+                            StandardName = "Belarus Standard Time"
+                        },
+                        new
+                        {
+                            Id = 72,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+03:00) Volgograd",
+                            LastOperationUserId = 0,
+                            Offset = 3.0,
+                            StandardName = "Volgograd Standard Time"
+                        },
+                        new
+                        {
+                            Id = 73,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+03:00) Nairobi",
+                            LastOperationUserId = 0,
+                            Offset = 3.0,
+                            StandardName = "E. Africa Standard Time"
+                        },
+                        new
+                        {
+                            Id = 74,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+03:00) Kuwait, Riyadh",
+                            LastOperationUserId = 0,
+                            Offset = 3.0,
+                            StandardName = "Arab Standard Time"
+                        },
+                        new
+                        {
+                            Id = 75,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+03:00) Baghdad",
+                            LastOperationUserId = 0,
+                            Offset = 3.0,
+                            StandardName = "Arabic Standard Time"
+                        },
+                        new
+                        {
+                            Id = 76,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+03:00) Amman",
+                            LastOperationUserId = 0,
+                            Offset = 3.0,
+                            StandardName = "Jordan Standard Time"
+                        },
+                        new
+                        {
+                            Id = 77,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+03:00) Istanbul",
+                            LastOperationUserId = 0,
+                            Offset = 3.0,
+                            StandardName = "Turkey Standard Time"
+                        },
+                        new
+                        {
+                            Id = 78,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+03:00) Damascus",
+                            LastOperationUserId = 0,
+                            Offset = 3.0,
+                            StandardName = "Syria Standard Time"
+                        },
+                        new
+                        {
+                            Id = 79,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+03:30) Tehran",
+                            LastOperationUserId = 0,
+                            Offset = 3.5,
+                            StandardName = "Iran Standard Time"
+                        },
+                        new
+                        {
+                            Id = 80,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+04:00) Saratov",
+                            LastOperationUserId = 0,
+                            Offset = 4.0,
+                            StandardName = "Saratov Standard Time"
+                        },
+                        new
+                        {
+                            Id = 81,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+04:00) Port Louis",
+                            LastOperationUserId = 0,
+                            Offset = 4.0,
+                            StandardName = "Mauritius Standard Time"
+                        },
+                        new
+                        {
+                            Id = 82,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+04:00) Yerevan",
+                            LastOperationUserId = 0,
+                            Offset = 4.0,
+                            StandardName = "Caucasus Standard Time"
+                        },
+                        new
+                        {
+                            Id = 83,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+04:00) Tbilisi",
+                            LastOperationUserId = 0,
+                            Offset = 4.0,
+                            StandardName = "Georgian Standard Time"
+                        },
+                        new
+                        {
+                            Id = 84,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+04:00) Astrakhan, Ulyanovsk",
+                            LastOperationUserId = 0,
+                            Offset = 4.0,
+                            StandardName = "Astrakhan Standard Time"
+                        },
+                        new
+                        {
+                            Id = 85,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+04:00) Abu Dhabi, Muscat",
+                            LastOperationUserId = 0,
+                            Offset = 4.0,
+                            StandardName = "Arabian Standard Time"
+                        },
+                        new
+                        {
+                            Id = 86,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+04:00) Izhevsk, Samara",
+                            LastOperationUserId = 0,
+                            Offset = 4.0,
+                            StandardName = "Russia Time Zone 3"
+                        },
+                        new
+                        {
+                            Id = 87,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+04:00) Baku",
+                            LastOperationUserId = 0,
+                            Offset = 4.0,
+                            StandardName = "Azerbaijan Standard Time"
+                        },
+                        new
+                        {
+                            Id = 88,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+04:30) Kabul",
+                            LastOperationUserId = 0,
+                            Offset = 4.5,
+                            StandardName = "Afghanistan Standard Time"
+                        },
+                        new
+                        {
+                            Id = 89,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+05:00) Ekaterinburg",
+                            LastOperationUserId = 0,
+                            Offset = 5.0,
+                            StandardName = "Ekaterinburg Standard Time"
+                        },
+                        new
+                        {
+                            Id = 90,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+05:00) Islamabad, Karachi",
+                            LastOperationUserId = 0,
+                            Offset = 5.0,
+                            StandardName = "Pakistan Standard Time"
+                        },
+                        new
+                        {
+                            Id = 91,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+05:00) Ashgabat, Tashkent",
+                            LastOperationUserId = 0,
+                            Offset = 5.0,
+                            StandardName = "West Asia Standard Time"
+                        },
+                        new
+                        {
+                            Id = 92,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+05:00) Astana",
+                            LastOperationUserId = 0,
+                            Offset = 5.0,
+                            StandardName = "Qyzylorda Standard Time"
+                        },
+                        new
+                        {
+                            Id = 93,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+05:30) Sri Jayawardenepura",
+                            LastOperationUserId = 0,
+                            Offset = 5.5,
+                            StandardName = "Sri Lanka Standard Time"
+                        },
+                        new
+                        {
+                            Id = 94,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi",
+                            LastOperationUserId = 0,
+                            Offset = 5.5,
+                            StandardName = "India Standard Time"
+                        },
+                        new
+                        {
+                            Id = 95,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+05:45) Kathmandu",
+                            LastOperationUserId = 0,
+                            Offset = 5.75,
+                            StandardName = "Nepal Standard Time"
+                        },
+                        new
+                        {
+                            Id = 96,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+06:00) Omsk",
+                            LastOperationUserId = 0,
+                            Offset = 6.0,
+                            StandardName = "Omsk Standard Time"
+                        },
+                        new
+                        {
+                            Id = 97,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+06:00) Dhaka",
+                            LastOperationUserId = 0,
+                            Offset = 6.0,
+                            StandardName = "Bangladesh Standard Time"
+                        },
+                        new
+                        {
+                            Id = 98,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+06:00) Bishkek",
+                            LastOperationUserId = 0,
+                            Offset = 6.0,
+                            StandardName = "Central Asia Standard Time"
+                        },
+                        new
+                        {
+                            Id = 99,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+06:30) Yangon (Rangoon)",
+                            LastOperationUserId = 0,
+                            Offset = 6.5,
+                            StandardName = "Myanmar Standard Time"
+                        },
+                        new
+                        {
+                            Id = 100,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+07:00) Krasnoyarsk",
+                            LastOperationUserId = 0,
+                            Offset = 7.0,
+                            StandardName = "North Asia Standard Time"
+                        },
+                        new
+                        {
+                            Id = 101,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+07:00) Novosibirsk",
+                            LastOperationUserId = 0,
+                            Offset = 7.0,
+                            StandardName = "N. Central Asia Standard Time"
+                        },
+                        new
+                        {
+                            Id = 102,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+07:00) Tomsk",
+                            LastOperationUserId = 0,
+                            Offset = 7.0,
+                            StandardName = "Tomsk Standard Time"
+                        },
+                        new
+                        {
+                            Id = 103,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+07:00) Bangkok, Hanoi, Jakarta",
+                            LastOperationUserId = 0,
+                            Offset = 7.0,
+                            StandardName = "SE Asia Standard Time"
+                        },
+                        new
+                        {
+                            Id = 104,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+07:00) Barnaul, Gorno-Altaysk",
+                            LastOperationUserId = 0,
+                            Offset = 7.0,
+                            StandardName = "Altai Standard Time"
+                        },
+                        new
+                        {
+                            Id = 105,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+07:00) Hovd",
+                            LastOperationUserId = 0,
+                            Offset = 7.0,
+                            StandardName = "W. Mongolia Standard Time"
+                        },
+                        new
+                        {
+                            Id = 106,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+08:00) Perth",
+                            LastOperationUserId = 0,
+                            Offset = 8.0,
+                            StandardName = "W. Australia Standard Time"
+                        },
+                        new
+                        {
+                            Id = 107,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+08:00) Taipei",
+                            LastOperationUserId = 0,
+                            Offset = 8.0,
+                            StandardName = "Taipei Standard Time"
+                        },
+                        new
+                        {
+                            Id = 108,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+08:00) Ulaanbaatar",
+                            LastOperationUserId = 0,
+                            Offset = 8.0,
+                            StandardName = "Ulaanbaatar Standard Time"
+                        },
+                        new
+                        {
+                            Id = 109,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi",
+                            LastOperationUserId = 0,
+                            Offset = 8.0,
+                            StandardName = "China Standard Time"
+                        },
+                        new
+                        {
+                            Id = 110,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+08:00) Irkutsk",
+                            LastOperationUserId = 0,
+                            Offset = 8.0,
+                            StandardName = "North Asia East Standard Time"
+                        },
+                        new
+                        {
+                            Id = 111,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+08:00) Kuala Lumpur, Singapore",
+                            LastOperationUserId = 0,
+                            Offset = 8.0,
+                            StandardName = "Singapore Standard Time"
+                        },
+                        new
+                        {
+                            Id = 112,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+08:45) Eucla",
+                            LastOperationUserId = 0,
+                            Offset = 8.75,
+                            StandardName = "Aus Central W. Standard Time"
+                        },
+                        new
+                        {
+                            Id = 113,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+09:00) Seoul",
+                            LastOperationUserId = 0,
+                            Offset = 9.0,
+                            StandardName = "Korea Standard Time"
+                        },
+                        new
+                        {
+                            Id = 114,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+09:00) Yakutsk",
+                            LastOperationUserId = 0,
+                            Offset = 9.0,
+                            StandardName = "Yakutsk Standard Time"
+                        },
+                        new
+                        {
+                            Id = 115,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+09:00) Pyongyang",
+                            LastOperationUserId = 0,
+                            Offset = 9.0,
+                            StandardName = "North Korea Standard Time"
+                        },
+                        new
+                        {
+                            Id = 116,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+09:00) Chita",
+                            LastOperationUserId = 0,
+                            Offset = 9.0,
+                            StandardName = "Transbaikal Standard Time"
+                        },
+                        new
+                        {
+                            Id = 117,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+09:00) Osaka, Sapporo, Tokyo",
+                            LastOperationUserId = 0,
+                            Offset = 9.0,
+                            StandardName = "Tokyo Standard Time"
+                        },
+                        new
+                        {
+                            Id = 118,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+09:30) Darwin",
+                            LastOperationUserId = 0,
+                            Offset = 9.5,
+                            StandardName = "AUS Central Standard Time"
+                        },
+                        new
+                        {
+                            Id = 119,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+09:30) Adelaide",
+                            LastOperationUserId = 0,
+                            Offset = 9.5,
+                            StandardName = "Cen. Australia Standard Time"
+                        },
+                        new
+                        {
+                            Id = 120,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+10:00) Hobart",
+                            LastOperationUserId = 0,
+                            Offset = 10.0,
+                            StandardName = "Tasmania Standard Time"
+                        },
+                        new
+                        {
+                            Id = 121,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+10:00) Vladivostok",
+                            LastOperationUserId = 0,
+                            Offset = 10.0,
+                            StandardName = "Vladivostok Standard Time"
+                        },
+                        new
+                        {
+                            Id = 122,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+10:00) Guam, Port Moresby",
+                            LastOperationUserId = 0,
+                            Offset = 10.0,
+                            StandardName = "West Pacific Standard Time"
+                        },
+                        new
+                        {
+                            Id = 123,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+10:00) Brisbane",
+                            LastOperationUserId = 0,
+                            Offset = 10.0,
+                            StandardName = "E. Australia Standard Time"
+                        },
+                        new
+                        {
+                            Id = 124,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+10:00) Canberra, Melbourne, Sydney",
+                            LastOperationUserId = 0,
+                            Offset = 10.0,
+                            StandardName = "AUS Eastern Standard Time"
+                        },
+                        new
+                        {
+                            Id = 125,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+10:30) Lord Howe Island",
+                            LastOperationUserId = 0,
+                            Offset = 10.5,
+                            StandardName = "Lord Howe Standard Time"
+                        },
+                        new
+                        {
+                            Id = 126,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+11:00) Norfolk Island",
+                            LastOperationUserId = 0,
+                            Offset = 11.0,
+                            StandardName = "Norfolk Standard Time"
+                        },
+                        new
+                        {
+                            Id = 127,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+11:00) Sakhalin",
+                            LastOperationUserId = 0,
+                            Offset = 11.0,
+                            StandardName = "Sakhalin Standard Time"
+                        },
+                        new
+                        {
+                            Id = 128,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+11:00) Solomon Is., New Caledonia",
+                            LastOperationUserId = 0,
+                            Offset = 11.0,
+                            StandardName = "Central Pacific Standard Time"
+                        },
+                        new
+                        {
+                            Id = 129,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+11:00) Bougainville Island",
+                            LastOperationUserId = 0,
+                            Offset = 11.0,
+                            StandardName = "Bougainville Standard Time"
+                        },
+                        new
+                        {
+                            Id = 130,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+11:00) Chokurdakh",
+                            LastOperationUserId = 0,
+                            Offset = 11.0,
+                            StandardName = "Russia Time Zone 10"
+                        },
+                        new
+                        {
+                            Id = 131,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+11:00) Magadan",
+                            LastOperationUserId = 0,
+                            Offset = 11.0,
+                            StandardName = "Magadan Standard Time"
+                        },
+                        new
+                        {
+                            Id = 132,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+12:00) Fiji",
+                            LastOperationUserId = 0,
+                            Offset = 12.0,
+                            StandardName = "Fiji Standard Time"
+                        },
+                        new
+                        {
+                            Id = 133,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+12:00) Petropavlovsk-Kamchatsky - Old",
+                            LastOperationUserId = 0,
+                            Offset = 12.0,
+                            StandardName = "Kamchatka Standard Time"
+                        },
+                        new
+                        {
+                            Id = 134,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+12:00) Coordinated Universal Time+12",
+                            LastOperationUserId = 0,
+                            Offset = 12.0,
+                            StandardName = "UTC+12"
+                        },
+                        new
+                        {
+                            Id = 135,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky",
+                            LastOperationUserId = 0,
+                            Offset = 12.0,
+                            StandardName = "Russia Time Zone 11"
+                        },
+                        new
+                        {
+                            Id = 136,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+12:00) Auckland, Wellington",
+                            LastOperationUserId = 0,
+                            Offset = 12.0,
+                            StandardName = "New Zealand Standard Time"
+                        },
+                        new
+                        {
+                            Id = 137,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+12:45) Chatham Islands",
+                            LastOperationUserId = 0,
+                            Offset = 12.75,
+                            StandardName = "Chatham Islands Standard Time"
+                        },
+                        new
+                        {
+                            Id = 138,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+13:00) Samoa",
+                            LastOperationUserId = 0,
+                            Offset = 13.0,
+                            StandardName = "Samoa Standard Time"
+                        },
+                        new
+                        {
+                            Id = 139,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+13:00) Nuku'alofa",
+                            LastOperationUserId = 0,
+                            Offset = 13.0,
+                            StandardName = "Tonga Standard Time"
+                        },
+                        new
+                        {
+                            Id = 140,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+13:00) Coordinated Universal Time+13",
+                            LastOperationUserId = 0,
+                            Offset = 13.0,
+                            StandardName = "UTC+13"
+                        },
+                        new
+                        {
+                            Id = 141,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DisplayName = "(UTC+14:00) Kiritimati Island",
+                            LastOperationUserId = 0,
+                            Offset = 14.0,
+                            StandardName = "Line Islands Standard Time"
+                        });
+                });
+
             modelBuilder.Entity("Squash.DataAccess.Entities.Tournament", b =>
                 {
                     b.Property<int>("Id")
@@ -1280,6 +2727,9 @@ namespace Squash.SqlServer.Migrations
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("TimeZoneId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -1293,6 +2743,8 @@ namespace Squash.SqlServer.Migrations
                     b.HasIndex("IsPublished");
 
                     b.HasIndex("Slug");
+
+                    b.HasIndex("TimeZoneId");
 
                     b.HasIndex("UserId");
 
@@ -1518,6 +2970,9 @@ namespace Squash.SqlServer.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
+                    b.Property<int?>("TimeZoneId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("VerificationDate")
                         .HasColumnType("datetime2");
 
@@ -1545,6 +3000,8 @@ namespace Squash.SqlServer.Migrations
 
                     b.HasIndex("PreferredLanguage");
 
+                    b.HasIndex("TimeZoneId");
+
                     b.ToTable("Users");
 
                     b.HasData(
@@ -1566,6 +3023,48 @@ namespace Squash.SqlServer.Migrations
                             PreferredLanguage = "bg-BG",
                             Verified = true,
                             Zip = "0000"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Address = "Test Street 1",
+                            BirthDate = new DateTime(1980, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            City = "Sofia",
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "miro@ima.bg",
+                            EmailNotificationsEnabled = true,
+                            FirstName = "Miro",
+                            Gender = "Male",
+                            IdentityUserId = "ae0b7d5a-8264-42f2-8c10-53472f8820c7",
+                            LastName = "Ima",
+                            LastOperationUserId = 0,
+                            Name = "Miro",
+                            Phone = "1234567890",
+                            PreferredLanguage = "bg-BG",
+                            Verified = true,
+                            Zip = "1000"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Address = "Admin Address",
+                            BirthDate = new DateTime(1980, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            City = "Sofia",
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "miroslav.braikov@gmail.com",
+                            EmailNotificationsEnabled = true,
+                            FirstName = "Miroslav",
+                            Gender = "Male",
+                            IdentityUserId = "b1802c6b-6b27-466d-932b-319520866380",
+                            LastName = "Braikov",
+                            LastOperationUserId = 0,
+                            Name = "Miroslav Braikov",
+                            Phone = "1234567890",
+                            PreferredLanguage = "en-GB",
+                            Verified = true,
+                            Zip = "1000"
                         });
                 });
 
@@ -1788,6 +3287,10 @@ namespace Squash.SqlServer.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Squash.DataAccess.Entities.TimeZone", "TimeZone")
+                        .WithMany()
+                        .HasForeignKey("TimeZoneId");
+
                     b.HasOne("Squash.DataAccess.Entities.User", "User")
                         .WithMany("Tournaments")
                         .HasForeignKey("UserId")
@@ -1795,6 +3298,8 @@ namespace Squash.SqlServer.Migrations
                         .IsRequired();
 
                     b.Navigation("Country");
+
+                    b.Navigation("TimeZone");
 
                     b.Navigation("User");
                 });
@@ -1883,11 +3388,17 @@ namespace Squash.SqlServer.Migrations
                         .HasForeignKey("PreferredLanguage")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("Squash.DataAccess.Entities.TimeZone", "TimeZone")
+                        .WithMany()
+                        .HasForeignKey("TimeZoneId");
+
                     b.Navigation("Country");
 
                     b.Navigation("Language");
 
                     b.Navigation("Player");
+
+                    b.Navigation("TimeZone");
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Venue", b =>

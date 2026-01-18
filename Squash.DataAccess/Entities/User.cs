@@ -69,6 +69,9 @@ namespace Squash.DataAccess.Entities
         public ICollection<Tournament> Tournaments { get; set; } = new List<Tournament>();
         public int? PlayerId { get; set; }
         public Player? Player { get; set; }
+
+        public int? TimeZoneId { get; set; }
+        public TimeZone? TimeZone { get; set; }
     }
 }
 

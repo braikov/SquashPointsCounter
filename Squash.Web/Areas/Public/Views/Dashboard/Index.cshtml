@@ -19,7 +19,9 @@
             <div class="flex-grow-1">
                 <div class="d-flex align-items-center gap-2 flex-wrap">
                     <h1 class="h3 mb-0">@Localizer["PlayerName"]</h1>
-                    <span class="badge rounded-pill text-bg-success">@Localizer["ProTag"]</span>
+                    <a class="btn btn-sm btn-outline-secondary dashboard-edit" href="@Url.Action("Index", "Profile", new { culture = (string?)Context.Request.RouteValues["culture"] ?? "en" })" aria-label="@Localizer["EditProfile"]">
+                        <svg class="icon"><use xlink:href="/images/icons.svg#cil-pen"></use></svg>
+                    </a>
                 </div>
                 <div class="text-body-secondary mt-2 d-flex flex-wrap gap-3 align-items-center">
                     <span>@Localizer["ImaIdLabel"] <strong>@Localizer["ImaIdValue"]</strong></span>

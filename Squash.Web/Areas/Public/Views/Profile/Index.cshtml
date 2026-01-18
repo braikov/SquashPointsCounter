@@ -1,0 +1,86 @@
+@model Squash.Web.Areas.Public.Models.ProfileEditViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    Model.Title = Localizer["Title"].Value;
+}
+
+<div class="container py-4">
+    <div class="mb-3">
+        <h1 class="h3 mb-1">@Localizer["Title"]</h1>
+        <p class="text-body-secondary mb-0">@Localizer["Subtitle"]</p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form asp-action="Index" asp-controller="Profile" asp-area="Public" asp-route-culture="@Model.Culture" method="post">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="FirstName" class="form-label">@Localizer["FirstName"]</label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="LastName" class="form-label">@Localizer["LastName"]</label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Email" class="form-label">@Localizer["Email"]</label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="BirthDate" class="form-label">@Localizer["BirthDate"]</label>
+                        <input asp-for="BirthDate" class="form-control" type="date" />
+                        <span asp-validation-for="BirthDate" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Gender" class="form-label">@Localizer["Gender"]</label>
+                        <select asp-for="Gender" class="form-select">
+                            <option value="">--</option>
+                            <option value="Male">@Localizer["GenderMale"]</option>
+                            <option value="Female">@Localizer["GenderFemale"]</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="CountryId" class="form-label">@Localizer["Country"]</label>
+                        <select asp-for="CountryId" asp-items="Model.Countries" class="form-select">
+                            <option value="">--</option>
+                        </select>
+                        <span asp-validation-for="CountryId" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Password" class="form-label">@Localizer["Password"]</label>
+                        <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="Password" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="ConfirmPassword" class="form-label">@Localizer["ConfirmPassword"]</label>
+                        <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                    </div>
+                    <div class="col-12">
+                        <label asp-for="Sport" class="form-label">@Localizer["Sport"]</label>
+                        <select asp-for="Sport" class="form-select">
+                            <option value="Squash">@Localizer["SportSquash"]</option>
+                        </select>
+                        <span asp-validation-for="Sport" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">@Localizer["SaveButton"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -45,6 +45,8 @@ namespace Squash.Identity
 
             modelBuilder.Entity<AccountEvent>()
                 .HasIndex(x => new { x.UserId, x.EventType, x.DateCreated });
+
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         }
     }
 }

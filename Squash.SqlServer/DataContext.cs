@@ -21,6 +21,7 @@ namespace Squash.SqlServer
         public DbSet<Player> Players { get; set; }
         public DbSet<TournamentPlayer> TournamentPlayers { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Squash.DataAccess.Entities.TimeZone> TimeZones { get; set; }
         public DbSet<Match> Matches { get; set; }
         public DbSet<MatchGame> MatchGames { get; set; }
         public DbSet<MatchGameEventLog> MatchGameEventLogs { get; set; }
@@ -54,9 +55,12 @@ namespace Squash.SqlServer
 
 
             modelBuilder.ApplyConfiguration(new UserConfiguration());
+            modelBuilder.ApplyConfiguration(new PlayerConfiguration());
             modelBuilder.ApplyConfiguration(new CountryConfiguration());
             modelBuilder.ApplyConfiguration(new LanguageConfiguration());
+            modelBuilder.ApplyConfiguration(new TimeZoneConfiguration());
         }
     }
 }
+
 

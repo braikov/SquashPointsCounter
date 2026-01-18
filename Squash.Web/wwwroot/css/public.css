@@ -171,6 +171,17 @@ body.public-shell {
   border: 1px solid rgba(43, 122, 94, 0.15);
 }
 
+.dashboard-edit {
+  border-radius: 999px;
+  border-color: rgba(43, 122, 94, 0.4);
+  color: var(--public-green-900);
+}
+
+.dashboard-edit:hover {
+  background: rgba(43, 122, 94, 0.1);
+  color: var(--public-green-900);
+}
+
 .dashboard-score-value {
   font-size: 2rem;
   font-weight: 700;
