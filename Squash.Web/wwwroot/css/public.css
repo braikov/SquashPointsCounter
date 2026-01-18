@@ -208,6 +208,14 @@ body.public-shell {
   color: #fff;
 }
 
+.dashboard-stats-panel {
+  display: none;
+}
+
+.dashboard-stats-panel.is-active {
+  display: block;
+}
+
 .dashboard-stat-row {
   display: grid;
   grid-template-columns: 160px 1fr 48px;
@@ -259,6 +267,104 @@ body.public-shell {
   border-radius: 0.75rem;
 }
 
+.dashboard-match {
+  border: 1px solid rgba(43, 122, 94, 0.15);
+  border-radius: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: #fff;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.dashboard-match-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.dashboard-match-players {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.dashboard-match-player {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.dashboard-match-name {
+  white-space: nowrap;
+}
+
+.dashboard-match-sep {
+  color: rgba(15, 28, 23, 0.45);
+  font-weight: 600;
+}
+
+.dashboard-match-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--public-green-500);
+  box-shadow: 0 0 0 2px rgba(58, 143, 109, 0.18);
+}
+
+.dashboard-match-score {
+  font-weight: 600;
+  color: var(--public-green-900);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.dashboard-match-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: rgba(15, 28, 23, 0.6);
+  font-size: 0.9rem;
+}
+
+.dashboard-match-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.dashboard-match-result {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--public-green-900);
+  background: rgba(43, 122, 94, 0.12);
+}
+
+.dashboard-match-result.is-win {
+  color: #1f5f4a;
+  background: rgba(58, 143, 109, 0.18);
+}
+
+.dashboard-match-result.is-loss {
+  color: #b42318;
+  background: rgba(180, 35, 24, 0.12);
+}
+
+.dashboard-match-result.is-neutral {
+  color: rgba(15, 28, 23, 0.6);
+  background: rgba(15, 28, 23, 0.08);
+}
+
 @media (max-width: 767px) {
   .dashboard-stat-row {
     grid-template-columns: 1fr;
@@ -267,6 +373,20 @@ body.public-shell {
 
   .dashboard-score {
     width: 100%;
+  }
+
+  .dashboard-match-top,
+  .dashboard-match-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dashboard-match-score {
+    width: 100%;
+  }
+
+  .dashboard-match-result {
+    align-self: flex-start;
   }
 }
 

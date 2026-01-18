@@ -12,6 +12,9 @@ namespace Squash.Web.Areas.Public.Models
         public int? Age { get; set; }
         public string? PictureUrl { get; set; }
         public DashboardStatsViewModel Stats { get; set; } = new();
+        public DashboardStatsViewModel StatsSingles { get; set; } = new();
+        public DashboardStatsViewModel StatsDoubles { get; set; } = new();
+        public DashboardStatsViewModel StatsMixed { get; set; } = new();
         public List<DashboardMatchViewModel> RecentMatches { get; set; } = new();
     }
 
@@ -31,10 +34,16 @@ namespace Squash.Web.Areas.Public.Models
 
     public class DashboardMatchViewModel
     {
-        public string OpponentName { get; set; } = string.Empty;
+        public string Player1Name { get; set; } = string.Empty;
+        public string? Player1FlagUrl { get; set; }
+        public string Player2Name { get; set; } = string.Empty;
+        public string? Player2FlagUrl { get; set; }
+        public bool Player1IsWinner { get; set; }
+        public bool Player2IsWinner { get; set; }
         public string TournamentName { get; set; } = string.Empty;
+        public string? TournamentFlagUrl { get; set; }
         public DateTime? MatchDate { get; set; }
         public string ResultLabel { get; set; } = string.Empty;
-        public string? Score { get; set; }
+        public string? ScoreLine { get; set; }
     }
 }

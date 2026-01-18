@@ -55,45 +55,146 @@
         <div class="card-body">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
                 <h2 class="h5 mb-0">@Localizer["StatsTitle"]</h2>
-                <div class="dashboard-tabs nav nav-pills">
-                    <button type="button" class="nav-link active">@Localizer["StatsTotal"]</button>
-                    <button type="button" class="nav-link">@Localizer["StatsSingles"]</button>
-                    <button type="button" class="nav-link">@Localizer["StatsDoubles"]</button>
-                    <button type="button" class="nav-link">@Localizer["StatsMixed"]</button>
+                <div class="dashboard-tabs nav nav-pills" data-dashboard-tabs>
+                    <button type="button" class="nav-link active" data-tab="total">@Localizer["StatsTotal"]</button>
+                    <button type="button" class="nav-link" data-tab="singles">@Localizer["StatsSingles"]</button>
+                    <button type="button" class="nav-link" data-tab="doubles">@Localizer["StatsDoubles"]</button>
+                    <button type="button" class="nav-link" data-tab="mixed">@Localizer["StatsMixed"]</button>
                 </div>
             </div>
 
             <div class="mt-4">
-                <div class="dashboard-stat-row">
-                    <div>
-                        <div class="fw-semibold">@Localizer["WinLossCareer"]</div>
-                        <div class="text-body-secondary">@Model.Stats.CareerWins / @Model.Stats.CareerLosses</div>
+                <div class="dashboard-stats-panel is-active" data-tab-panel="total">
+                    <div class="dashboard-stat-row">
+                        <div>
+                            <div class="fw-semibold">@Localizer["WinLossCareer"]</div>
+                            <div class="text-body-secondary">@Model.Stats.CareerWins / @Model.Stats.CareerLosses</div>
+                        </div>
+                        <div class="dashboard-bar">
+                            <span style="width:@Model.Stats.CareerWinPercent%"></span>
+                        </div>
+                        <div class="text-body-secondary">@Model.Stats.CareerTotal</div>
                     </div>
-                    <div class="dashboard-bar">
-                        <span style="width:@Model.Stats.CareerWinPercent%"></span>
+                    <div class="dashboard-stat-row">
+                        <div>
+                            <div class="fw-semibold">@Localizer["WinLossYear"]</div>
+                            <div class="text-body-secondary">@Model.Stats.YearWins / @Model.Stats.YearLosses</div>
+                        </div>
+                        <div class="dashboard-bar">
+                            <span style="width:@Model.Stats.YearWinPercent%"></span>
+                        </div>
+                        <div class="text-body-secondary">@Model.Stats.YearTotal</div>
                     </div>
-                    <div class="text-body-secondary">@Model.Stats.CareerTotal</div>
+                    <div class="dashboard-form">
+                        <span>@Localizer["FormLabel"]</span>
+                        @if (Model.Stats.FormResults.Count > 0)
+                        {
+                            <span class="text-body-secondary">@string.Join(" ", Model.Stats.FormResults)</span>
+                        }
+                        else
+                        {
+                            <span class="text-body-secondary">@Localizer["FormEmpty"]</span>
+                        }
+                    </div>
                 </div>
-                <div class="dashboard-stat-row">
-                    <div>
-                        <div class="fw-semibold">@Localizer["WinLossYear"]</div>
-                        <div class="text-body-secondary">@Model.Stats.YearWins / @Model.Stats.YearLosses</div>
+                <div class="dashboard-stats-panel" data-tab-panel="singles">
+                    <div class="dashboard-stat-row">
+                        <div>
+                            <div class="fw-semibold">@Localizer["WinLossCareer"]</div>
+                            <div class="text-body-secondary">@Model.StatsSingles.CareerWins / @Model.StatsSingles.CareerLosses</div>
+                        </div>
+                        <div class="dashboard-bar">
+                            <span style="width:@Model.StatsSingles.CareerWinPercent%"></span>
+                        </div>
+                        <div class="text-body-secondary">@Model.StatsSingles.CareerTotal</div>
                     </div>
-                    <div class="dashboard-bar">
-                        <span style="width:@Model.Stats.YearWinPercent%"></span>
+                    <div class="dashboard-stat-row">
+                        <div>
+                            <div class="fw-semibold">@Localizer["WinLossYear"]</div>
+                            <div class="text-body-secondary">@Model.StatsSingles.YearWins / @Model.StatsSingles.YearLosses</div>
+                        </div>
+                        <div class="dashboard-bar">
+                            <span style="width:@Model.StatsSingles.YearWinPercent%"></span>
+                        </div>
+                        <div class="text-body-secondary">@Model.StatsSingles.YearTotal</div>
                     </div>
-                    <div class="text-body-secondary">@Model.Stats.YearTotal</div>
+                    <div class="dashboard-form">
+                        <span>@Localizer["FormLabel"]</span>
+                        @if (Model.StatsSingles.FormResults.Count > 0)
+                        {
+                            <span class="text-body-secondary">@string.Join(" ", Model.StatsSingles.FormResults)</span>
+                        }
+                        else
+                        {
+                            <span class="text-body-secondary">@Localizer["FormEmpty"]</span>
+                        }
+                    </div>
                 </div>
-                <div class="dashboard-form">
-                    <span>@Localizer["FormLabel"]</span>
-                    @if (Model.Stats.FormResults.Count > 0)
-                    {
-                        <span class="text-body-secondary">@string.Join(" ", Model.Stats.FormResults)</span>
-                    }
-                    else
-                    {
-                        <span class="text-body-secondary">@Localizer["FormEmpty"]</span>
-                    }
+                <div class="dashboard-stats-panel" data-tab-panel="doubles">
+                    <div class="dashboard-stat-row">
+                        <div>
+                            <div class="fw-semibold">@Localizer["WinLossCareer"]</div>
+                            <div class="text-body-secondary">@Model.StatsDoubles.CareerWins / @Model.StatsDoubles.CareerLosses</div>
+                        </div>
+                        <div class="dashboard-bar">
+                            <span style="width:@Model.StatsDoubles.CareerWinPercent%"></span>
+                        </div>
+                        <div class="text-body-secondary">@Model.StatsDoubles.CareerTotal</div>
+                    </div>
+                    <div class="dashboard-stat-row">
+                        <div>
+                            <div class="fw-semibold">@Localizer["WinLossYear"]</div>
+                            <div class="text-body-secondary">@Model.StatsDoubles.YearWins / @Model.StatsDoubles.YearLosses</div>
+                        </div>
+                        <div class="dashboard-bar">
+                            <span style="width:@Model.StatsDoubles.YearWinPercent%"></span>
+                        </div>
+                        <div class="text-body-secondary">@Model.StatsDoubles.YearTotal</div>
+                    </div>
+                    <div class="dashboard-form">
+                        <span>@Localizer["FormLabel"]</span>
+                        @if (Model.StatsDoubles.FormResults.Count > 0)
+                        {
+                            <span class="text-body-secondary">@string.Join(" ", Model.StatsDoubles.FormResults)</span>
+                        }
+                        else
+                        {
+                            <span class="text-body-secondary">@Localizer["FormEmpty"]</span>
+                        }
+                    </div>
+                </div>
+                <div class="dashboard-stats-panel" data-tab-panel="mixed">
+                    <div class="dashboard-stat-row">
+                        <div>
+                            <div class="fw-semibold">@Localizer["WinLossCareer"]</div>
+                            <div class="text-body-secondary">@Model.StatsMixed.CareerWins / @Model.StatsMixed.CareerLosses</div>
+                        </div>
+                        <div class="dashboard-bar">
+                            <span style="width:@Model.StatsMixed.CareerWinPercent%"></span>
+                        </div>
+                        <div class="text-body-secondary">@Model.StatsMixed.CareerTotal</div>
+                    </div>
+                    <div class="dashboard-stat-row">
+                        <div>
+                            <div class="fw-semibold">@Localizer["WinLossYear"]</div>
+                            <div class="text-body-secondary">@Model.StatsMixed.YearWins / @Model.StatsMixed.YearLosses</div>
+                        </div>
+                        <div class="dashboard-bar">
+                            <span style="width:@Model.StatsMixed.YearWinPercent%"></span>
+                        </div>
+                        <div class="text-body-secondary">@Model.StatsMixed.YearTotal</div>
+                    </div>
+                    <div class="dashboard-form">
+                        <span>@Localizer["FormLabel"]</span>
+                        @if (Model.StatsMixed.FormResults.Count > 0)
+                        {
+                            <span class="text-body-secondary">@string.Join(" ", Model.StatsMixed.FormResults)</span>
+                        }
+                        else
+                        {
+                            <span class="text-body-secondary">@Localizer["FormEmpty"]</span>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
@@ -117,22 +218,51 @@
                 <div class="mt-3 d-grid gap-3">
                     @foreach (var match in Model.RecentMatches)
                     {
-                        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 border rounded-3 p-3">
-                            <div>
-                                <div class="fw-semibold">@match.OpponentName</div>
-                                <div class="text-body-secondary">
-                                    @match.TournamentName
-                                    @if (match.MatchDate.HasValue)
-                                    {
-                                        <span>· @match.MatchDate.Value.ToString("d")</span>
-                                    }
-                                    @if (!string.IsNullOrWhiteSpace(match.Score))
-                                    {
-                                        <span>· @Localizer["ScoreLabel"] @match.Score</span>
-                                    }
+                        <div class="dashboard-match">
+                            <div class="dashboard-match-top">
+                                <div class="dashboard-match-players">
+                                    <div class="dashboard-match-player">
+                                        @if (match.Player1IsWinner)
+                                        {
+                                            <span class="dashboard-match-dot" aria-hidden="true"></span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
+                                        {
+                                            <img src="@match.Player1FlagUrl" alt="@match.Player1Name" class="dashboard-flag" />
+                                        }
+                                        <span class="dashboard-match-name">@match.Player1Name</span>
+                                    </div>
+                                    <span class="dashboard-match-sep">-</span>
+                                    <div class="dashboard-match-player">
+                                        @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
+                                        {
+                                            <img src="@match.Player2FlagUrl" alt="@match.Player2Name" class="dashboard-flag" />
+                                        }
+                                        <span class="dashboard-match-name">@match.Player2Name</span>
+                                        @if (match.Player2IsWinner)
+                                        {
+                                            <span class="dashboard-match-dot" aria-hidden="true"></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="dashboard-match-score">
+                                    @(string.IsNullOrWhiteSpace(match.ScoreLine) ? "-" : match.ScoreLine)
                                 </div>
                             </div>
-                            <span class="badge bg-secondary">@match.ResultLabel</span>
+                            <div class="dashboard-match-bottom">
+                                <div class="dashboard-match-meta">
+                                    @if (!string.IsNullOrWhiteSpace(match.TournamentFlagUrl))
+                                    {
+                                        <img src="@match.TournamentFlagUrl" alt="@match.TournamentName" class="dashboard-flag" />
+                                    }
+                                    <span class="dashboard-match-tournament">@match.TournamentName</span>
+                                    @if (match.MatchDate.HasValue)
+                                    {
+                                        <span class="dashboard-match-date">@match.MatchDate.Value.ToString("d")</span>
+                                    }
+                                </div>
+                                <span class="dashboard-match-result @(match.ResultLabel == "W" ? "is-win" : match.ResultLabel == "L" ? "is-loss" : "is-neutral")">@match.ResultLabel</span>
+                            </div>
                         </div>
                     }
                 </div>
@@ -140,3 +270,26 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var tabs = document.querySelectorAll("[data-dashboard-tabs] .nav-link");
+        var panels = document.querySelectorAll("[data-tab-panel]");
+        if (!tabs.length || !panels.length) {
+            return;
+        }
+
+        tabs.forEach(function (tab) {
+            tab.addEventListener("click", function () {
+                var target = tab.getAttribute("data-tab");
+                tabs.forEach(function (item) { item.classList.remove("active"); });
+                panels.forEach(function (panel) { panel.classList.remove("is-active"); });
+                tab.classList.add("active");
+                var panel = document.querySelector('[data-tab-panel="' + target + '"]');
+                if (panel) {
+                    panel.classList.add("is-active");
+                }
+            });
+        });
+    });
+</script>

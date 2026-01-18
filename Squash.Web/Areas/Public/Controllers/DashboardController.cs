@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Squash.DataAccess;
 using Squash.DataAccess.Entities;
 using Squash.Web.Areas.Public.Models;
+using MatchType = Squash.DataAccess.Entities.MatchType;
 
 namespace Squash.Web.Areas.Public.Controllers
 {
@@ -37,6 +38,9 @@ namespace Squash.Web.Areas.Public.Controllers
 
             var matches = GetPlayerMatches(player?.Id);
             var stats = BuildStats(player?.Id, matches);
+            var singlesStats = BuildStats(player?.Id, matches.Where(IsSinglesMatch).ToList());
+            var doublesStats = BuildStats(player?.Id, matches.Where(IsDoublesMatch).ToList());
+            var mixedStats = BuildStats(player?.Id, matches.Where(IsMixedMatch).ToList());
 
             var model = new DashboardViewModel
             {
@@ -53,6 +57,9 @@ namespace Squash.Web.Areas.Public.Controllers
                 Age = CalculateAge(appUser.BirthDate),
                 PictureUrl = player?.PictureUrl,
                 Stats = stats,
+                StatsSingles = singlesStats,
+                StatsDoubles = doublesStats,
+                StatsMixed = mixedStats,
                 RecentMatches = BuildRecentMatches(player?.Id, matches)
             };
             return View(model);
@@ -146,8 +153,13 @@ namespace Squash.Web.Areas.Public.Controllers
             return _dataContext.Matches
                 .AsNoTracking()
                 .Include(m => m.Player1)
+                    .ThenInclude(p => p!.Country)
                 .Include(m => m.Player2)
+                    .ThenInclude(p => p!.Country)
                 .Include(m => m.Tournament)
+                    .ThenInclude(t => t.Country)
+                .Include(m => m.Draw)
+                    .ThenInclude(d => d!.Event)
                 .Include(m => m.TournamentDay)
                 .Include(m => m.Games)
                 .Where(m => m.Player1Id == playerId.Value || m.Player2Id == playerId.Value)
@@ -186,7 +198,7 @@ namespace Squash.Web.Areas.Public.Controllers
             };
         }
 
-        private static List<DashboardMatchViewModel> BuildRecentMatches(int? playerId, List<Match> matches)
+        private List<DashboardMatchViewModel> BuildRecentMatches(int? playerId, List<Match> matches)
         {
             if (!playerId.HasValue)
             {
@@ -198,28 +210,24 @@ namespace Squash.Web.Areas.Public.Controllers
                 .Take(3)
                 .Select(m => new DashboardMatchViewModel
                 {
-                    OpponentName = GetOpponentName(m, playerId.Value),
+                    Player1Name = GetPlayerName(m.Player1),
+                    Player1FlagUrl = ResolveFlagUrl(m.Player1?.Country?.Code),
+                    Player2Name = GetPlayerName(m.Player2),
+                    Player2FlagUrl = ResolveFlagUrl(m.Player2?.Country?.Code),
+                    Player1IsWinner = m.WinnerPlayerId.HasValue && m.WinnerPlayerId == m.Player1Id,
+                    Player2IsWinner = m.WinnerPlayerId.HasValue && m.WinnerPlayerId == m.Player2Id,
                     TournamentName = m.Tournament?.Name ?? string.Empty,
+                    TournamentFlagUrl = ResolveFlagUrl(m.Tournament?.Country?.Code),
                     MatchDate = GetMatchDate(m),
                     ResultLabel = GetResultLabel(m, playerId.Value),
-                    Score = GetMatchScore(m, playerId.Value)
+                    ScoreLine = GetMatchScoreLine(m)
                 })
                 .ToList();
         }
 
-        private static string GetOpponentName(Match match, int playerId)
+        private static string GetPlayerName(Player? player)
         {
-            if (match.Player1Id == playerId)
-            {
-                return match.Player2?.Name ?? "TBD";
-            }
-
-            if (match.Player2Id == playerId)
-            {
-                return match.Player1?.Name ?? "TBD";
-            }
-
-            return "TBD";
+            return string.IsNullOrWhiteSpace(player?.Name) ? "TBD" : player!.Name;
         }
 
         private static string GetResultLabel(Match match, int playerId)
@@ -232,24 +240,25 @@ namespace Squash.Web.Areas.Public.Controllers
             return match.WinnerPlayerId == playerId ? "W" : "L";
         }
 
-        private static string? GetMatchScore(Match match, int playerId)
+        private static string? GetMatchScoreLine(Match match)
         {
             if (match.Games == null || match.Games.Count == 0)
             {
                 return null;
             }
 
-            var mySide = match.Player1Id == playerId ? 1 : 2;
-            var opponentSide = mySide == 1 ? 2 : 1;
-            var myGames = match.Games.Count(g => g.WinnerSide == mySide);
-            var opponentGames = match.Games.Count(g => g.WinnerSide == opponentSide);
+            var games = match.Games
+                .OrderBy(g => g.GameNumber)
+                .Where(g => g.Side1Points.HasValue && g.Side2Points.HasValue)
+                .Select(g => $"{g.Side1Points}-{g.Side2Points}")
+                .ToList();
 
-            if (myGames == 0 && opponentGames == 0)
+            if (games.Count == 0)
             {
                 return null;
             }
 
-            return $"{myGames}-{opponentGames}";
+            return string.Join(" ", games);
         }
 
         private static DateTime? GetMatchDate(Match match)
@@ -265,6 +274,21 @@ namespace Squash.Web.Areas.Public.Controllers
             }
 
             return match.DateCreated.Date;
+        }
+
+        private static bool IsSinglesMatch(Match match)
+        {
+            return match.Draw?.Event?.MatchType is MatchType.MenSingles or MatchType.WomenSingles;
+        }
+
+        private static bool IsDoublesMatch(Match match)
+        {
+            return match.Draw?.Event?.MatchType is MatchType.MenDoubles or MatchType.WomenDoubles;
+        }
+
+        private static bool IsMixedMatch(Match match)
+        {
+            return match.Draw?.Event?.MatchType == MatchType.MixedDoubles;
         }
     }
 }
