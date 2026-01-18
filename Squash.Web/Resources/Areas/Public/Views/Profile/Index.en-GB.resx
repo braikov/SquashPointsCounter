@@ -64,6 +64,6 @@
     <value>Profile photo</value>
   </data>
   <data name="ProfilePhotoHint" xml:space="preserve">
-    <value>JPG or PNG, min 256x256, max 2048x2048, up to 1.5 MB. Resized to 512x512.</value>
+    <value>JPG or PNG, min 128x128, max 2048x2048, up to 1.5 MB. Resized to 512x512.</value>
   </data>
 </root>

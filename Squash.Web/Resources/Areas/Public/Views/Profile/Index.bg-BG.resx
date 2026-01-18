@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -64,6 +64,7 @@
     <value>Профилна снимка</value>
   </data>
   <data name="ProfilePhotoHint" xml:space="preserve">
-    <value>JPG или PNG, минимум 256x256, максимум 2048x2048, до 1.5 MB. Ресайз до 512x512.</value>
+    <value>JPG или PNG, минимум 128x128, максимум 2048x2048, до 1.5 MB. Ресайз до 512x512.</value>
   </data>
 </root>
+

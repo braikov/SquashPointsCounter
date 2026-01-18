@@ -43,7 +43,7 @@
     <value>Invalid file type. Use JPG or PNG.</value>
   </data>
   <data name="ImageTooSmall" xml:space="preserve">
-    <value>The image is too small. Minimum size is 256x256.</value>
+    <value>The image is too small. Minimum size is 128x128.</value>
   </data>
   <data name="ImageTooLarge" xml:space="preserve">
     <value>The image is too large. Maximum size is 2048x2048.</value>

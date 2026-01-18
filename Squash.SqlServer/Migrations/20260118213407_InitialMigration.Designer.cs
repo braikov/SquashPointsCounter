@@ -12,8 +12,8 @@ using Squash.SqlServer;
 namespace Squash.SqlServer.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260118121315_InitialData")]
-    partial class InitialData
+    [Migration("20260118213407_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1143,6 +1143,21 @@ namespace Squash.SqlServer.Migrations
                     b.HasIndex("CountryId");
 
                     b.ToTable("Players");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CountryId = 28,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EntitySourceId = 0,
+                            EsfMemberId = "ES793398940",
+                            LastOperationUserId = 0,
+                            Name = "Boris Braykov",
+                            PictureUrl = "/uploads/avatars/player-1-ab458bd4da8b4d52a8dc118324e31e4d.jpg",
+                            UserId = 4
+                        });
                 });
 
             modelBuilder.Entity("Squash.DataAccess.Entities.Round", b =>
@@ -3063,6 +3078,29 @@ namespace Squash.SqlServer.Migrations
                             Name = "Miroslav Braikov",
                             Phone = "1234567890",
                             PreferredLanguage = "en-GB",
+                            Verified = true,
+                            Zip = "1000"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Address = "Not Provided",
+                            BirthDate = new DateTime(2012, 12, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            City = "Sofia",
+                            CountryId = 28,
+                            DateCreated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DateUpdated = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "boris.braikov@gmail.com",
+                            EmailNotificationsEnabled = true,
+                            FirstName = "Boris",
+                            Gender = "Male",
+                            IdentityUserId = "c340d87e-9f37-4d7c-8e21-65483f9931d8",
+                            LastName = "Braykov",
+                            LastOperationUserId = 0,
+                            Name = "Boris Braykov",
+                            Phone = "+359885038308",
+                            PlayerId = 1,
+                            PreferredLanguage = "bg-BG",
                             Verified = true,
                             Zip = "1000"
                         });

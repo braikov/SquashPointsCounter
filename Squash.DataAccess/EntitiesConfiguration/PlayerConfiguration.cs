@@ -20,7 +20,7 @@ namespace Squash.DataAccess.EntitiesConfiguration
                 DateCreated = new DateTime(2025, 1, 1),
                 DateUpdated = new DateTime(2025, 1, 1),
                 LastOperationUserId = 0, 
-                PictureUrl = "/uploads/avatars/player-1-d324714cd7844b81b92dcc694464ccbb.jpg"
+                PictureUrl = "/uploads/avatars/player-1-ab458bd4da8b4d52a8dc118324e31e4d.jpg"
             });
         }
     }

@@ -12,8 +12,8 @@ using Squash.Identity;
 namespace Squash.Identity.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260118130511_InitialIdentity")]
-    partial class InitialIdentity
+    [Migration("20260118211511_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

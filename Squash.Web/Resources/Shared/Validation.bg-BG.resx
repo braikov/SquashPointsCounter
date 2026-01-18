@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -43,7 +43,7 @@
     <value>Невалиден тип файл. Използвайте JPG или PNG.</value>
   </data>
   <data name="ImageTooSmall" xml:space="preserve">
-    <value>Снимката е твърде малка. Минимум 256x256.</value>
+    <value>Снимката е твърде малка. Минимум 128x128.</value>
   </data>
   <data name="ImageTooLarge" xml:space="preserve">
     <value>Снимката е твърде голяма. Максимум 2048x2048.</value>
@@ -52,3 +52,4 @@
     <value>Невалиден файл със снимка.</value>
   </data>
 </root>
+

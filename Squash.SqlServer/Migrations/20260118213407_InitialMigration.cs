@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Squash.SqlServer.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialData : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -840,13 +840,19 @@ namespace Squash.SqlServer.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Players",
+                columns: new[] { "Id", "CountryId", "DateCreated", "DateUpdated", "EntitySourceId", "EsfMemberId", "ImaId", "LastOperationUserId", "Name", "PictureUrl", "RankedinId", "UserId" },
+                values: new object[] { 1, 28, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0, "ES793398940", null, 0, "Boris Braykov", "/uploads/avatars/player-1-ab458bd4da8b4d52a8dc118324e31e4d.jpg", null, 4 });
+
+            migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Address", "BadgeId", "BirthDate", "City", "CountryId", "DateCreated", "DateUpdated", "Email", "EmailNotificationsEnabled", "FirstName", "Gender", "IdentityUserId", "LastName", "LastOperationUserId", "Name", "Phone", "PlayerId", "PreferredLanguage", "PreferredSport", "StripeCustomerId", "TimeZoneId", "VerificationDate", "Verified", "Zip" },
                 values: new object[,]
                 {
                     { 1, "System", null, new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "System", null, new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "system@squash.local", false, null, "Unknown", "SYSTEM", null, 0, "System", "N/A", null, "bg-BG", null, null, null, null, true, "0000" },
                     { 2, "Test Street 1", null, new DateTime(1980, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sofia", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "miro@ima.bg", true, "Miro", "Male", "ae0b7d5a-8264-42f2-8c10-53472f8820c7", "Ima", 0, "Miro", "1234567890", null, "bg-BG", null, null, null, null, true, "1000" },
-                    { 3, "Admin Address", null, new DateTime(1980, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sofia", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "miroslav.braikov@gmail.com", true, "Miroslav", "Male", "b1802c6b-6b27-466d-932b-319520866380", "Braikov", 0, "Miroslav Braikov", "1234567890", null, "en-GB", null, null, null, null, true, "1000" }
+                    { 3, "Admin Address", null, new DateTime(1980, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sofia", null, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "miroslav.braikov@gmail.com", true, "Miroslav", "Male", "b1802c6b-6b27-466d-932b-319520866380", "Braikov", 0, "Miroslav Braikov", "1234567890", null, "en-GB", null, null, null, null, true, "1000" },
+                    { 4, "Not Provided", null, new DateTime(2012, 12, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), "Sofia", 28, new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "boris.braikov@gmail.com", true, "Boris", "Male", "c340d87e-9f37-4d7c-8e21-65483f9931d8", "Braykov", 0, "Boris Braykov", "+359885038308", 1, "bg-BG", null, null, null, null, true, "1000" }
                 });
 
             migrationBuilder.CreateIndex(

@@ -23,7 +23,7 @@ namespace Squash.Web.Areas.Public.Controllers
         IWebHostEnvironment webHostEnvironment) : Controller
     {
         private const long MaxAvatarBytes = 1572864; // 1.5 MB
-        private const int MinAvatarSize = 256;
+        private const int MinAvatarSize = 128;
         private const int MaxAvatarSize = 2048;
         private const int TargetAvatarSize = 512;
         private const int AvatarJpegQuality = 85;
