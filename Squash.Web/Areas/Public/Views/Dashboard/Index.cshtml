@@ -89,7 +89,12 @@
                         <span>@Localizer["FormLabel"]</span>
                         @if (Model.Stats.FormResults.Count > 0)
                         {
-                            <span class="text-body-secondary">@string.Join(" ", Model.Stats.FormResults)</span>
+                            <span class="text-body-secondary">
+                                @foreach (var result in Model.Stats.FormResults)
+                                {
+                                    <span class="@(result == "W" ? "text-success fw-bold" : (result == "L" ? "text-danger fw-bold" : ""))">@result</span>
+                                }
+                            </span>
                         }
                         else
                         {
@@ -122,7 +127,12 @@
                         <span>@Localizer["FormLabel"]</span>
                         @if (Model.StatsSingles.FormResults.Count > 0)
                         {
-                            <span class="text-body-secondary">@string.Join(" ", Model.StatsSingles.FormResults)</span>
+                            <span class="text-body-secondary">
+                                @foreach (var result in Model.StatsSingles.FormResults)
+                                {
+                                    <span class="@(result == "W" ? "text-success fw-bold" : (result == "L" ? "text-danger fw-bold" : ""))">@result</span>
+                                }
+                            </span>
                         }
                         else
                         {
@@ -155,7 +165,12 @@
                         <span>@Localizer["FormLabel"]</span>
                         @if (Model.StatsDoubles.FormResults.Count > 0)
                         {
-                            <span class="text-body-secondary">@string.Join(" ", Model.StatsDoubles.FormResults)</span>
+                            <span class="text-body-secondary">
+                                @foreach (var result in Model.StatsDoubles.FormResults)
+                                {
+                                    <span class="@(result == "W" ? "text-success fw-bold" : (result == "L" ? "text-danger fw-bold" : ""))">@result</span>
+                                }
+                            </span>
                         }
                         else
                         {
@@ -188,7 +203,12 @@
                         <span>@Localizer["FormLabel"]</span>
                         @if (Model.StatsMixed.FormResults.Count > 0)
                         {
-                            <span class="text-body-secondary">@string.Join(" ", Model.StatsMixed.FormResults)</span>
+                            <span class="text-body-secondary">
+                                @foreach (var result in Model.StatsMixed.FormResults)
+                                {
+                                    <span class="@(result == "W" ? "text-success fw-bold" : (result == "L" ? "text-danger fw-bold" : ""))">@result</span>
+                                }
+                            </span>
                         }
                         else
                         {
@@ -206,7 +226,7 @@
                 <h2 class="h5 mb-0">@Localizer["RecentMatches"]</h2>
                 @if (Model.RecentMatches.Count > 0)
                 {
-                    <a href="#" class="btn btn-link px-0">@Localizer["ViewAll"]</a>
+                    <a href="@Url.Action("Index", "Matches", new { culture = (string?)Context.Request.RouteValues["culture"] ?? "en" })" class="btn btn-link px-0">@Localizer["ViewAll"]</a>
                 }
             </div>
             @if (Model.RecentMatches.Count == 0)
@@ -273,7 +293,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var tabs = document.querySelectorAll("[data-dashboard-tabs] .nav-link");
+        var tabs = document.querySelectorAll("[data-dashboard_tabs] .nav-link");
         var panels = document.querySelectorAll("[data-tab-panel]");
         if (!tabs.length || !panels.length) {
             return;

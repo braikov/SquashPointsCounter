@@ -1,0 +1,201 @@
+@model Squash.Web.Areas.Public.Models.MatchesIndexViewModel
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    Model.Title = Localizer["Title"].Value;
+}
+
+<div class="container py-4 matches-page">
+    <h1 class="h3 mb-4">@Localizer["Title"]</h1>
+
+    <!-- Upcoming Matches -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h2 class="h5 mb-0">@Localizer["UpcomingMatches"] (@Model.UpcomingMatchesCount)</h2>
+            </div>
+            @if (Model.UpcomingMatches.Count == 0)
+            {
+                <div class="dashboard-empty">@Localizer["NoUpcomingMatches"]</div>
+            }
+            else
+            {
+                <div class="d-grid gap-3">
+                    @foreach (var match in Model.UpcomingMatches)
+                    {
+                        <div class="dashboard-match">
+                            <div class="dashboard-match-top">
+                                <div class="dashboard-match-players">
+                                    <div class="dashboard-match-player">
+                                        @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
+                                        {
+                                            <img src="@match.Player1FlagUrl" alt="@match.Player1Name" class="dashboard-flag" />
+                                        }
+                                        <span class="dashboard-match-name">@match.Player1Name</span>
+                                    </div>
+                                    <span class="dashboard-match-sep">-</span>
+                                    <div class="dashboard-match-player">
+                                        @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
+                                        {
+                                            <img src="@match.Player2FlagUrl" alt="@match.Player2Name" class="dashboard-flag" />
+                                        }
+                                        <span class="dashboard-match-name">@match.Player2Name</span>
+                                    </div>
+                                </div>
+                                <div class="dashboard-match-score">
+                                    @if (match.MatchDate.HasValue && match.StartTime.HasValue)
+                                    {
+                                        <span class="text-muted">@match.StartTime.Value.ToString(@"hh\:mm")</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">-</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="dashboard-match-bottom">
+                                <div class="dashboard-match-meta">
+                                    @if (!string.IsNullOrWhiteSpace(match.TournamentFlagUrl))
+                                    {
+                                        <img src="@match.TournamentFlagUrl" alt="@match.TournamentName" class="dashboard-flag" />
+                                    }
+                                    <span class="dashboard-match-tournament">@match.TournamentName</span>
+                                    @if (!string.IsNullOrWhiteSpace(match.DrawName))
+                                    {
+                                        <span class="text-muted">• @match.DrawName</span>
+                                    }
+                                    @if (match.MatchDate.HasValue)
+                                    {
+                                        <span class="dashboard-match-date">@match.MatchDate.Value.ToString("d")</span>
+                                    }
+                                </div>
+                                @if (!string.IsNullOrWhiteSpace(match.CourtName))
+                                {
+                                    <span class="badge bg-secondary">@match.CourtName</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if (Model.UpcomingTotalPages > 1)
+                {
+                    <nav class="mt-4" aria-label="@Localizer["UpcomingPagination"]">
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item @(Model.UpcomingCurrentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { culture = Model.Culture, upcomingPage = Model.UpcomingCurrentPage - 1, pastPage = Model.PastCurrentPage })">
+                                    @Localizer["Previous"]
+                                </a>
+                            </li>
+                            @for (int i = 1; i <= Model.UpcomingTotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.UpcomingCurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", new { culture = Model.Culture, upcomingPage = i, pastPage = Model.PastCurrentPage })">@i</a>
+                                </li>
+                            }
+                            <li class="page-item @(Model.UpcomingCurrentPage == Model.UpcomingTotalPages ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { culture = Model.Culture, upcomingPage = Model.UpcomingCurrentPage + 1, pastPage = Model.PastCurrentPage })">
+                                    @Localizer["Next"]
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Past Matches -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h2 class="h5 mb-0">@Localizer["PastMatches"] (@Model.PastMatchesCount)</h2>
+            </div>
+            @if (Model.PastMatches.Count == 0)
+            {
+                <div class="dashboard-empty">@Localizer["NoPastMatches"]</div>
+            }
+            else
+            {
+                <div class="d-grid gap-3">
+                    @foreach (var match in Model.PastMatches)
+                    {
+                        <div class="dashboard-match">
+                            <div class="dashboard-match-top">
+                                <div class="dashboard-match-players">
+                                    <div class="dashboard-match-player">
+                                        @if (match.Player1IsWinner)
+                                        {
+                                            <span class="dashboard-match-dot" aria-hidden="true"></span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
+                                        {
+                                            <img src="@match.Player1FlagUrl" alt="@match.Player1Name" class="dashboard-flag" />
+                                        }
+                                        <span class="dashboard-match-name">@match.Player1Name</span>
+                                    </div>
+                                    <span class="dashboard-match-sep">-</span>
+                                    <div class="dashboard-match-player">
+                                        @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
+                                        {
+                                            <img src="@match.Player2FlagUrl" alt="@match.Player2Name" class="dashboard-flag" />
+                                        }
+                                        <span class="dashboard-match-name">@match.Player2Name</span>
+                                        @if (match.Player2IsWinner)
+                                        {
+                                            <span class="dashboard-match-dot" aria-hidden="true"></span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="dashboard-match-score">
+                                    @(string.IsNullOrWhiteSpace(match.ScoreLine) ? "-" : match.ScoreLine)
+                                </div>
+                            </div>
+                            <div class="dashboard-match-bottom">
+                                <div class="dashboard-match-meta">
+                                    @if (!string.IsNullOrWhiteSpace(match.TournamentFlagUrl))
+                                    {
+                                        <img src="@match.TournamentFlagUrl" alt="@match.TournamentName" class="dashboard-flag" />
+                                    }
+                                    <span class="dashboard-match-tournament">@match.TournamentName</span>
+                                    @if (!string.IsNullOrWhiteSpace(match.DrawName))
+                                    {
+                                        <span class="text-muted">• @match.DrawName</span>
+                                    }
+                                    @if (match.MatchDate.HasValue)
+                                    {
+                                        <span class="dashboard-match-date">@match.MatchDate.Value.ToString("d")</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if (Model.PastTotalPages > 1)
+                {
+                    <nav class="mt-4" aria-label="@Localizer["PastPagination"]">
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item @(Model.PastCurrentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { culture = Model.Culture, upcomingPage = Model.UpcomingCurrentPage, pastPage = Model.PastCurrentPage - 1 })">
+                                    @Localizer["Previous"]
+                                </a>
+                            </li>
+                            @for (int i = 1; i <= Model.PastTotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.PastCurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("Index", new { culture = Model.Culture, upcomingPage = Model.UpcomingCurrentPage, pastPage = i })">@i</a>
+                                </li>
+                            }
+                            <li class="page-item @(Model.PastCurrentPage == Model.PastTotalPages ? "disabled" : "")">
+                                <a class="page-link" href="@Url.Action("Index", new { culture = Model.Culture, upcomingPage = Model.UpcomingCurrentPage, pastPage = Model.PastCurrentPage + 1 })">
+                                    @Localizer["Next"]
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            }
+        </div>
+    </div>
+</div>
