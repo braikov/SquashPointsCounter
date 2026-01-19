@@ -92,7 +92,7 @@
                             <span class="text-body-secondary">
                                 @foreach (var result in Model.Stats.FormResults)
                                 {
-                                    <span class="@(result == "W" ? "text-success fw-bold" : (result == "L" ? "text-danger fw-bold" : ""))">@result</span>
+                                    <span class="dashboard-form-badge @(result == "W" ? "is-win" : (result == "L" ? "is-loss" : "is-neutral"))">@result</span>
                                 }
                             </span>
                         }
@@ -130,7 +130,7 @@
                             <span class="text-body-secondary">
                                 @foreach (var result in Model.StatsSingles.FormResults)
                                 {
-                                    <span class="@(result == "W" ? "text-success fw-bold" : (result == "L" ? "text-danger fw-bold" : ""))">@result</span>
+                                    <span class="dashboard-form-badge @(result == "W" ? "is-win" : (result == "L" ? "is-loss" : "is-neutral"))">@result</span>
                                 }
                             </span>
                         }
@@ -168,7 +168,7 @@
                             <span class="text-body-secondary">
                                 @foreach (var result in Model.StatsDoubles.FormResults)
                                 {
-                                    <span class="@(result == "W" ? "text-success fw-bold" : (result == "L" ? "text-danger fw-bold" : ""))">@result</span>
+                                    <span class="dashboard-form-badge @(result == "W" ? "is-win" : (result == "L" ? "is-loss" : "is-neutral"))">@result</span>
                                 }
                             </span>
                         }
@@ -206,7 +206,7 @@
                             <span class="text-body-secondary">
                                 @foreach (var result in Model.StatsMixed.FormResults)
                                 {
-                                    <span class="@(result == "W" ? "text-success fw-bold" : (result == "L" ? "text-danger fw-bold" : ""))">@result</span>
+                                    <span class="dashboard-form-badge @(result == "W" ? "is-win" : (result == "L" ? "is-loss" : "is-neutral"))">@result</span>
                                 }
                             </span>
                         }
@@ -226,7 +226,7 @@
                 <h2 class="h5 mb-0">@Localizer["RecentMatches"]</h2>
                 @if (Model.RecentMatches.Count > 0)
                 {
-                    <a href="@Url.Action("Index", "Matches", new { culture = (string?)Context.Request.RouteValues["culture"] ?? "en" })" class="btn btn-link px-0">@Localizer["ViewAll"]</a>
+                    <a href="@Url.Action("Index", "Matches", new { culture = (string?)Context.Request.RouteValues["culture"] ?? "en" })" class="btn btn-link px-0">@Localizer["ViewAllWithCount", Model.TotalMatchesCount]</a>
                 }
             </div>
             @if (Model.RecentMatches.Count == 0)
@@ -238,35 +238,59 @@
                 <div class="mt-3 d-grid gap-3">
                     @foreach (var match in Model.RecentMatches)
                     {
-                        <div class="dashboard-match">
+                        <div class="dashboard-match @(match.ResultLabel == "W" ? "is-win" : match.ResultLabel == "L" ? "is-loss" : "is-neutral")">
+                            @{
+                                var parsedGames = new List<(string P1, string P2)>();
+                                var scoreLine = match.ScoreLine ?? string.Empty;
+                                if (!string.IsNullOrWhiteSpace(scoreLine))
+                                {
+                                    var games = scoreLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                                    foreach (var game in games)
+                                    {
+                                        var parts = game.Split('-', StringSplitOptions.RemoveEmptyEntries);
+                                        if (parts.Length == 2)
+                                        {
+                                            parsedGames.Add((parts[0], parts[1]));
+                                        }
+                                    }
+                                }
+                                if (parsedGames.Count == 0)
+                                {
+                                    parsedGames.Add(("-", "-"));
+                                }
+                            }
                             <div class="dashboard-match-top">
-                                <div class="dashboard-match-players">
-                                    <div class="dashboard-match-player">
-                                        @if (match.Player1IsWinner)
-                                        {
-                                            <span class="dashboard-match-dot" aria-hidden="true"></span>
-                                        }
-                                        @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
-                                        {
-                                            <img src="@match.Player1FlagUrl" alt="@match.Player1Name" class="dashboard-flag" />
-                                        }
-                                        <span class="dashboard-match-name">@match.Player1Name</span>
+                                <div class="dashboard-match-grid">
+                                    <div class="dashboard-match-row">
+                                        <div class="dashboard-match-player">
+                                            @if (!string.IsNullOrWhiteSpace(match.Player1FlagUrl))
+                                            {
+                                                <img src="@match.Player1FlagUrl" alt="@match.Player1Name" class="dashboard-flag" />
+                                            }
+                                            <span class="dashboard-match-name">@match.Player1Name</span>
+                                        </div>
+                                        <div class="dashboard-match-scores">
+                                            @foreach (var game in parsedGames)
+                                            {
+                                                <span class="dashboard-match-score-cell">@game.P1</span>
+                                            }
+                                        </div>
                                     </div>
-                                    <span class="dashboard-match-sep">-</span>
-                                    <div class="dashboard-match-player">
-                                        @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
-                                        {
-                                            <img src="@match.Player2FlagUrl" alt="@match.Player2Name" class="dashboard-flag" />
-                                        }
-                                        <span class="dashboard-match-name">@match.Player2Name</span>
-                                        @if (match.Player2IsWinner)
-                                        {
-                                            <span class="dashboard-match-dot" aria-hidden="true"></span>
-                                        }
+                                    <div class="dashboard-match-row">
+                                        <div class="dashboard-match-player">
+                                            @if (!string.IsNullOrWhiteSpace(match.Player2FlagUrl))
+                                            {
+                                                <img src="@match.Player2FlagUrl" alt="@match.Player2Name" class="dashboard-flag" />
+                                            }
+                                            <span class="dashboard-match-name">@match.Player2Name</span>
+                                        </div>
+                                        <div class="dashboard-match-scores">
+                                            @foreach (var game in parsedGames)
+                                            {
+                                                <span class="dashboard-match-score-cell">@game.P2</span>
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="dashboard-match-score">
-                                    @(string.IsNullOrWhiteSpace(match.ScoreLine) ? "-" : match.ScoreLine)
                                 </div>
                             </div>
                             <div class="dashboard-match-bottom">

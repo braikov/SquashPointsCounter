@@ -75,8 +75,8 @@
   <data name="RecentMatchesEmpty" xml:space="preserve">
     <value>No matches yet.</value>
   </data>
-  <data name="ViewAll" xml:space="preserve">
-    <value>View all</value>
+  <data name="ViewAllWithCount" xml:space="preserve">
+    <value>View all {0} matches</value>
   </data>
   <data name="ScoreLabel" xml:space="preserve">
     <value>Score:</value>

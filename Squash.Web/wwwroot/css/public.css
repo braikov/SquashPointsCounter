@@ -251,13 +251,36 @@ body.public-shell {
   font-weight: 600;
 }
 
-.dashboard-form-badges .badge {
+.dashboard-form-badge {
   width: 28px;
   height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  font-size: 0.8rem;
+  border-radius: 50%;
+  color: var(--public-green-900);
+  background: rgba(43, 122, 94, 0.12);
+}
+
+.dashboard-form-badge + .dashboard-form-badge {
+  margin-left: 0.35rem;
+}
+
+.dashboard-form-badge.is-win {
+  color: #1f5f4a;
+  background: rgba(58, 143, 109, 0.18);
+}
+
+.dashboard-form-badge.is-loss {
+  color: #b42318;
+  background: rgba(180, 35, 24, 0.12);
+}
+
+.dashboard-form-badge.is-neutral {
+  color: rgba(15, 28, 23, 0.6);
+  background: rgba(15, 28, 23, 0.08);
 }
 
 .dashboard-empty {
@@ -276,48 +299,53 @@ body.public-shell {
   gap: 0.35rem;
 }
 
-.dashboard-match-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+.dashboard-match.is-win {
+  background: rgba(58, 143, 109, 0.06);
 }
 
-.dashboard-match-players {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  font-weight: 600;
+.dashboard-match.is-loss {
+  background: rgba(180, 35, 24, 0.06);
+}
+
+.dashboard-match-top {
+  display: block;
+}
+
+.dashboard-match-grid {
+  display: grid;
+  gap: 0.4rem;
 }
 
 .dashboard-match-player {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+  font-weight: 600;
+}
+
+.dashboard-match-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  align-items: center;
+}
+
+.dashboard-match-scores {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 3ch;
+  gap: 0.65rem;
+  justify-content: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-match-score-cell {
+  text-align: right;
+  font-weight: 600;
+  color: var(--public-green-900);
 }
 
 .dashboard-match-name {
-  white-space: nowrap;
-}
-
-.dashboard-match-sep {
-  color: rgba(15, 28, 23, 0.45);
-  font-weight: 600;
-}
-
-.dashboard-match-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--public-green-500);
-  box-shadow: 0 0 0 2px rgba(58, 143, 109, 0.18);
-}
-
-.dashboard-match-score {
-  font-weight: 600;
-  color: var(--public-green-900);
-  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
@@ -377,12 +405,7 @@ body.public-shell {
 
   .dashboard-match-top,
   .dashboard-match-bottom {
-    flex-direction: column;
     align-items: flex-start;
-  }
-
-  .dashboard-match-score {
-    width: 100%;
   }
 
   .dashboard-match-result {

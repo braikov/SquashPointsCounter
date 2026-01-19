@@ -60,7 +60,8 @@ namespace Squash.Web.Areas.Public.Controllers
                 StatsSingles = singlesStats,
                 StatsDoubles = doublesStats,
                 StatsMixed = mixedStats,
-                RecentMatches = BuildRecentMatches(player?.Id, matches)
+                RecentMatches = BuildRecentMatches(player?.Id, matches),
+                TotalMatchesCount = matches.Count
             };
             return View(model);
         }

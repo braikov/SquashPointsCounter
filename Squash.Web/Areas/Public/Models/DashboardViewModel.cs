@@ -16,6 +16,7 @@ namespace Squash.Web.Areas.Public.Models
         public DashboardStatsViewModel StatsDoubles { get; set; } = new();
         public DashboardStatsViewModel StatsMixed { get; set; } = new();
         public List<DashboardMatchViewModel> RecentMatches { get; set; } = new();
+        public int TotalMatchesCount { get; set; }
     }
 
     public class DashboardStatsViewModel
