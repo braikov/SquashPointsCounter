@@ -483,10 +483,11 @@ namespace Squash.Shared.Parsers.Esf
                 }
                 nationalityCode = nationalityCode?.Trim();
 
-                if ((playerId.HasValue || !string.IsNullOrWhiteSpace(playerName)) && string.IsNullOrWhiteSpace(nationalityCode))
-                {
-                    throw new InvalidOperationException($"Missing nationality code for player '{playerName ?? "unknown"}'.");
-                }
+                // It is ok to have missing nationality during initial parsing
+                //if ((playerId.HasValue || !string.IsNullOrWhiteSpace(playerName)) && string.IsNullOrWhiteSpace(nationalityCode))
+                //{
+                //    throw new InvalidOperationException($"Missing nationality code for player '{playerName ?? "unknown"}'.");
+                //}
 
                 Country? nationality = null;
                 if (!string.IsNullOrWhiteSpace(nationalityCode))

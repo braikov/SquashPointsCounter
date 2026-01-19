@@ -94,11 +94,11 @@
             <div class="public-subnav">
                 <div class="container">
                     <nav class="nav nav-pills public-pills">
-                        <a class="nav-link" href="@($"{homeUrl}/dashboard")">@Localizer["Dashboard"]</a>
-                        <a class="nav-link" href="@($"{homeUrl}/matches")">@Localizer["Matches"]</a>
-                        <a class="nav-link" href="@($"{homeUrl}/events")">@Localizer["Events"]</a>
-                        <a class="nav-link" href="@($"{homeUrl}/membership")">@Localizer["Membership"]</a>
-                        <a class="nav-link" href="@($"{homeUrl}/my-tournaments")">@Localizer["MyTournaments"]</a>
+                        <a class="nav-link @(trimmedPath.StartsWith("/dashboard", StringComparison.OrdinalIgnoreCase) ? "active" : "")" href="@($"{homeUrl}/dashboard")">@Localizer["Dashboard"]</a>
+                        <a class="nav-link @(trimmedPath.StartsWith("/matches", StringComparison.OrdinalIgnoreCase) ? "active" : "")" href="@($"{homeUrl}/matches")">@Localizer["Matches"]</a>
+                        <a class="nav-link @(trimmedPath.StartsWith("/events", StringComparison.OrdinalIgnoreCase) ? "active" : "")" href="@($"{homeUrl}/events")">@Localizer["Events"]</a>
+                        <a class="nav-link @(trimmedPath.StartsWith("/membership", StringComparison.OrdinalIgnoreCase) ? "active" : "")" href="@($"{homeUrl}/membership")">@Localizer["Membership"]</a>
+                        <a class="nav-link @(trimmedPath.StartsWith("/my-tournaments", StringComparison.OrdinalIgnoreCase) ? "active" : "")" href="@($"{homeUrl}/my-tournaments")">@Localizer["MyTournaments"]</a>
                     </nav>
                 </div>
             </div>
